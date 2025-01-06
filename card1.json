@@ -1,0 +1,151 @@
+{
+    "$schema": "http://adaptivecards.io/schemas/adaptive-card.json",
+    "type": "AdaptiveCard",
+    "version": "1.4",
+    "body": [
+      {
+        "type": "Container",
+        "items": [
+          {
+            "type": "TextBlock",
+            "text": "Updates & Reminders",
+            "weight": "Bolder",
+            "size": "Medium",
+            "spacing": "Small"
+          },
+          {
+            "type": "Container",
+            "items": [
+              {
+                "type": "ColumnSet",
+                "columns": [
+                  {
+                    "type": "Column",
+                    "items": [
+                      {
+                        "type": "TextBlock",
+                        "text": "Your equipment is on the way",
+                        "weight": "Bolder",
+                        "spacing": "Small"
+                      },
+                      {
+                        "type": "TextBlock",
+                        "text": "Estimated delivery: Oct 1 - Oct 5",
+                        "spacing": "Small",
+                        "isSubtle": true
+                      }
+                    ],
+                    "width": "stretch"
+                  },
+                  {
+                    "type": "Column",
+                    "items": [
+                      {
+                        "type": "Image",
+                        "url": "https://via.placeholder.com/50",
+                        "altText": "Delivery image"
+                      }
+                    ],
+                    "width": "auto"
+                  }
+                ]
+              }
+            ],
+            "style": "default",
+            "spacing": "Small",
+            "separator": true
+          },
+          {
+            "type": "Container",
+            "items": [
+              {
+                "type": "ColumnSet",
+                "columns": [
+                  {
+                    "type": "Column",
+                    "items": [
+                      {
+                        "type": "Image",
+                        "url": "https://via.placeholder.com/100x200",
+                        "altText": "Device image"
+                      }
+                    ],
+                    "width": "auto"
+                  },
+                  {
+                    "type": "Column",
+                    "items": [
+                      {
+                        "type": "TextBlock",
+                        "text": "Let's set up your new [AT&T Internet Air] service",
+                        "weight": "Bolder",
+                        "wrap": true
+                      },
+                      {
+                        "type": "TextBlock",
+                        "text": "Setup takes about 20 minutes",
+                        "spacing": "Small",
+                        "isSubtle": true
+                      }
+                    ],
+                    "width": "stretch"
+                  }
+                ]
+              }
+            ],
+            "style": "default",
+            "spacing": "Medium",
+            "separator": true
+          },
+          {
+            "type": "Container",
+            "items": [
+              {
+                "type": "ColumnSet",
+                "columns": [
+                  {
+                    "type": "Column",
+                    "items": [
+                      {
+                        "type": "TextBlock",
+                        "text": "Your order's on the way",
+                        "weight": "Bolder",
+                        "spacing": "Small"
+                      },
+                      {
+                        "type": "TextBlock",
+                        "text": "Arriving Oct 8th",
+                        "spacing": "Small",
+                        "isSubtle": true
+                      }
+                    ],
+                    "width": "stretch"
+                  },
+                  {
+                    "type": "Column",
+                    "items": [
+                      {
+                        "type": "Image",
+                        "url": "https://via.placeholder.com/50",
+                        "altText": "Order image"
+                      }
+                    ],
+                    "width": "auto"
+                  }
+                ]
+              }
+            ],
+            "style": "default",
+            "spacing": "Medium",
+            "separator": true
+          }
+        ]
+      }
+    ],
+    "actions": [],
+    "backgroundImage": {
+      "url": "https://via.placeholder.com/600x800",
+      "fillMode": "Cover"
+    }
+  }
+  
