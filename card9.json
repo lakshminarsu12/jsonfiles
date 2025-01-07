@@ -1,0 +1,31 @@
+{
+    "$schema": "http://adaptivecards.io/schemas/adaptive-card.json",
+    "type": "AdaptiveCard",
+    "version": "1.3",
+    "body": [
+      {
+        "type": "Container",
+        "items": [
+          {
+            "type": "TextBlock",
+            "text": "Need help",
+            "weight": "Bolder",
+            "size": "Large",
+            "horizontalAlignment": "Center",
+            "wrap": true,
+            "color": "Default"
+          },
+          {
+            "type": "TextBlock",
+            "text": "(Couldn't find the service box)",
+            "horizontalAlignment": "Center",
+            "wrap": true,
+            "spacing": "None"
+          }
+        ],
+        "style": "emphasis",
+        "bleed": true
+      }
+    ]
+  }
+  

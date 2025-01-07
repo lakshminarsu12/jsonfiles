@@ -1,0 +1,29 @@
+{
+    "$schema": "http://adaptivecards.io/schemas/adaptive-card.json",
+    "type": "AdaptiveCard",
+    "version": "1.3",
+    "body": [
+      {
+        "type": "TextBlock",
+        "text": "Take a picture of the ONT outlet",
+        "weight": "Bolder",
+        "size": "Medium",
+        "wrap": true,
+        "horizontalAlignment": "Center"
+      },
+      {
+        "type": "Image",
+        "url": "data:image/png;base64,[BASE64_ENCODED_IMAGE]",
+        "altText": "ONT outlet guide image",
+        "size": "Stretch",
+        "horizontalAlignment": "Center"
+      }
+    ],
+    "actions": [
+      {
+        "type": "Action.Submit",
+        "title": "Take picture"
+      }
+    ]
+  }
+  
