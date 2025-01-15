@@ -1,0 +1,49 @@
+{
+    "$schema": "http://adaptivecards.io/schemas/adaptive-card.json",
+    "type": "AdaptiveCard",
+    "version": "1.3",
+    "body": [
+      {
+        "type": "TextBlock",
+        "text": "Remove the bottom cover from the service box.",
+        "wrap": true,
+        "weight": "Bolder",
+        "size": "Medium",
+        "horizontalAlignment": "Center"
+      },
+      {
+        "type": "TextBlock",
+        "text": "I need more help",
+        "wrap": true,
+        "color": "Accent",
+        "horizontalAlignment": "Left",
+        "size": "Small",
+        "selectAction": {
+          "type": "Action.OpenUrl",
+          "url": "HELP_URL"
+        }
+      },
+      {
+        "type": "Image",
+        "url": "URL_TO_YOUR_IMAGE",
+        "altText": "Service box with the bottom cover removed"
+      }
+    ],
+    "actions": [
+      {
+        "type": "Action.Submit",
+        "title": "Next",
+        "data": {
+          "action": "goToNextStep"
+        }
+      },
+      {
+        "type": "Action.Submit",
+        "title": "Back",
+        "data": {
+          "action": "goToPreviousStep"
+        }
+      }
+    ]
+  }
+  

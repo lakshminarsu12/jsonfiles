@@ -1,0 +1,28 @@
+{
+    "$schema": "http://adaptivecards.io/schemas/adaptive-card.json",
+    "type": "AdaptiveCard",
+    "version": "1.3",
+    "body": [
+      {
+        "type": "TextBlock",
+        "text": "Check to see if the power button is pressed. If not, go ahead and press it.",
+        "size": "Medium",
+        "weight": "Bolder",
+        "wrap": true
+      },
+      {
+        "type": "Image",
+        "url": "https://via.placeholder.com/200",
+        "altText": "Image showing the power button on the service box",
+        "horizontalAlignment": "Center"
+      }
+    ],
+    "actions": [
+      {
+        "type": "Action.Submit",
+        "title": "Next",
+        "style": "positive"
+      }
+    ]
+  }
+  

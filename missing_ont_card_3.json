@@ -1,0 +1,38 @@
+{
+    "$schema": "http://adaptivecards.io/schemas/adaptive-card.json",
+    "type": "AdaptiveCard",
+    "version": "1.3",
+    "body": [
+      {
+        "type": "TextBlock",
+        "text": "Call us",
+        "wrap": true,
+        "weight": "Bolder",
+        "size": "Medium",
+        "horizontalAlignment": "Center"
+      },
+      {
+        "type": "TextBlock",
+        "text": "NNN.NNN.NNNN",
+        "wrap": true,
+        "spacing": "Small",
+        "color": "Accent",
+        "horizontalAlignment": "Center"
+      }
+    ],
+    "actions": [
+      {
+        "type": "Action.OpenUrl",
+        "title": "Call us",
+        "url": "tel:NNNNNNNNNN"
+      },
+      {
+        "type": "Action.Submit",
+        "title": "Cancel",
+        "data": {
+          "action": "cancelCall"
+        }
+      }
+    ]
+  }
+  

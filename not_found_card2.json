@@ -1,0 +1,45 @@
+{
+    "$schema": "http://adaptivecards.io/schemas/adaptive-card.json",
+    "type": "AdaptiveCard",
+    "version": "1.3",
+    "body": [
+      {
+        "type": "TextBlock",
+        "text": "Well done! You've found your service box and it is working properly",
+        "wrap": true,
+        "weight": "Bolder",
+        "size": "Medium",
+        "horizontalAlignment": "Center"
+      },
+      {
+        "type": "TextBlock",
+        "text": "Take a moment to scan your gateway to ensure that it is in proper functioning order.",
+        "wrap": true,
+        "spacing": "Small",
+        "horizontalAlignment": "Center",
+        "color": "Accent"
+      },
+      {
+        "type": "Image",
+        "url": "URL_TO_YOUR_IMAGE",
+        "altText": "Service box with text FPO"
+      }
+    ],
+    "actions": [
+      {
+        "type": "Action.Submit",
+        "title": "Open Scanner",
+        "data": {
+          "action": "openScanner"
+        }
+      },
+      {
+        "type": "Action.Submit",
+        "title": "Skip",
+        "data": {
+          "action": "skipScanning"
+        }
+      }
+    ]
+  }
+  

@@ -1,0 +1,36 @@
+{
+    "$schema": "http://adaptivecards.io/schemas/adaptive-card.json",
+    "type": "AdaptiveCard",
+    "version": "1.3",
+    "body": [
+      {
+        "type": "TextBlock",
+        "text": "Well done! You've found your service box and it is working properly",
+        "size": "Medium",
+        "weight": "Bolder",
+        "horizontalAlignment": "Center",
+        "wrap": true
+      },
+      {
+        "type": "TextBlock",
+        "text": "Your new gateway is on its way and you're all set for installation",
+        "color": "Accent",
+        "horizontalAlignment": "Center",
+        "wrap": true
+      },
+      {
+        "type": "Image",
+        "url": "https://via.placeholder.com/200",
+        "altText": "Image of service box with a green checkmark",
+        "horizontalAlignment": "Center"
+      }
+    ],
+    "actions": [
+      {
+        "type": "Action.Submit",
+        "title": "Done",
+        "style": "positive"
+      }
+    ]
+  }
+  

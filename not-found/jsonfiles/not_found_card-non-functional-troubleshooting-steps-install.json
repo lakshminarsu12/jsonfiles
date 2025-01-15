@@ -1,0 +1,128 @@
+{
+    "$schema": "http://adaptivecards.io/schemas/adaptive-card.json",
+    "type": "AdaptiveCard",
+    "version": "1.3",
+    "body": [
+      {
+        "type": "TextBlock",
+        "text": "Select the service box model that's the closest match",
+        "size": "Medium",
+        "weight": "Bolder",
+        "wrap": true
+      },
+      {
+        "type": "Container",
+        "items": [
+          {
+            "type": "ColumnSet",
+            "columns": [
+              {
+                "type": "Column",
+                "width": "auto",
+                "items": [
+                  {
+                    "type": "Image",
+                    "url": "https://via.placeholder.com/100",
+                    "altText": "Model 1 image"
+                  }
+                ]
+              },
+              {
+                "type": "Column",
+                "width": "stretch",
+                "items": [
+                  {
+                    "type": "TextBlock",
+                    "text": "Model 1",
+                    "size": "Medium",
+                    "weight": "Bolder",
+                    "wrap": true
+                  }
+                ]
+              }
+            ],
+            "selectAction": {
+              "type": "Action.Submit",
+              "title": "Model 1",
+              "data": {
+                "model": "Model 1"
+              }
+            }
+          },
+          {
+            "type": "ColumnSet",
+            "columns": [
+              {
+                "type": "Column",
+                "width": "auto",
+                "items": [
+                  {
+                    "type": "Image",
+                    "url": "https://via.placeholder.com/100",
+                    "altText": "Model 2 image"
+                  }
+                ]
+              },
+              {
+                "type": "Column",
+                "width": "stretch",
+                "items": [
+                  {
+                    "type": "TextBlock",
+                    "text": "Model 2",
+                    "size": "Medium",
+                    "weight": "Bolder",
+                    "wrap": true
+                  }
+                ]
+              }
+            ],
+            "selectAction": {
+              "type": "Action.Submit",
+              "title": "Model 2",
+              "data": {
+                "model": "Model 2"
+              }
+            }
+          },
+          {
+            "type": "ColumnSet",
+            "columns": [
+              {
+                "type": "Column",
+                "width": "auto",
+                "items": [
+                  {
+                    "type": "Image",
+                    "url": "https://via.placeholder.com/100",
+                    "altText": "Model 3 image"
+                  }
+                ]
+              },
+              {
+                "type": "Column",
+                "width": "stretch",
+                "items": [
+                  {
+                    "type": "TextBlock",
+                    "text": "Model 3",
+                    "size": "Medium",
+                    "weight": "Bolder",
+                    "wrap": true
+                  }
+                ]
+              }
+            ],
+            "selectAction": {
+              "type": "Action.Submit",
+              "title": "Model 3",
+              "data": {
+                "model": "Model 3"
+              }
+            }
+          }
+        ]
+      }
+    ]
+  }
+  

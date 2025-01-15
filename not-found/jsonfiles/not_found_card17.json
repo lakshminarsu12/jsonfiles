@@ -1,0 +1,46 @@
+{
+    "$schema": "http://adaptivecards.io/schemas/adaptive-card.json",
+    "type": "AdaptiveCard",
+    "version": "1.3",
+    "body": [
+      {
+        "type": "TextBlock",
+        "text": "Modal - Tray",
+        "size": "Large",
+        "weight": "Bolder",
+        "wrap": true
+      },
+      {
+        "type": "TextBlock",
+        "text": "Storybook (change)",
+        "color": "Accent",
+        "weight": "Bolder",
+        "wrap": true
+      },
+      {
+        "type": "TextBlock",
+        "text": "Modals focus the user's attention exclusively on a single task or piece of information via a window that sits on top of the page content. \n\n- This component only defines the \"shell\" (i.e. padding, color, corner radius of card)\n- Content is custom",
+        "wrap": true
+      },
+      {
+        "type": "TextBlock",
+        "text": "Dependencies:",
+        "weight": "Bolder",
+        "wrap": true
+      },
+      {
+        "type": "TextBlock",
+        "text": "- Spinner [done]",
+        "wrap": true
+      }
+    ],
+    "actions": [
+      {
+        "type": "Action.OpenUrl",
+        "title": "Figma link",
+        "url": "https://figma.com" // Replace with the actual Figma link
+      }
+    ],
+    "backgroundColor": "#E8F8D5" // Light green background
+  }
+  

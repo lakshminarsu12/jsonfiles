@@ -1,0 +1,35 @@
+{
+    "$schema": "http://adaptivecards.io/schemas/adaptive-card.json",
+    "type": "AdaptiveCard",
+    "version": "1.3",
+    "body": [
+      {
+        "type": "Image",
+        "url": "https://via.placeholder.com/200",
+        "altText": "Image of a gateway device with a red light",
+        "horizontalAlignment": "Center"
+      },
+      {
+        "type": "TextBlock",
+        "text": "Looks like your gateway might be overheating. Try moving it to a different location",
+        "size": "Medium",
+        "weight": "Bolder",
+        "horizontalAlignment": "Center",
+        "wrap": true
+      },
+      {
+        "type": "TextBlock",
+        "text": "Make sure it's on a flat surface in an open space.",
+        "horizontalAlignment": "Center",
+        "wrap": true
+      }
+    ],
+    "actions": [
+      {
+        "type": "Action.Submit",
+        "title": "Next",
+        "style": "positive"
+      }
+    ]
+  }
+  

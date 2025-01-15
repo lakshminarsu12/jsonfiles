@@ -1,0 +1,30 @@
+{
+    "$schema": "http://adaptivecards.io/schemas/adaptive-card.json",
+    "type": "AdaptiveCard",
+    "version": "1.3",
+    "body": [
+      {
+        "type": "Container",
+        "items": [
+          {
+            "type": "TextBlock",
+            "text": "Found",
+            "size": "Large",
+            "weight": "Bolder",
+            "horizontalAlignment": "Center",
+            "wrap": true
+          },
+          {
+            "type": "TextBlock",
+            "text": "(Found the service box, need to troubleshoot)",
+            "size": "Small",
+            "horizontalAlignment": "Center",
+            "wrap": true
+          }
+        ],
+        "style": "default",
+        "backgroundColor": "#D3D3D3" // Gray background
+      }
+    ]
+  }
+  

@@ -1,0 +1,45 @@
+{
+    "$schema": "http://adaptivecards.io/schemas/adaptive-card.json",
+    "type": "AdaptiveCard",
+    "version": "1.3",
+    "body": [
+      {
+        "type": "TextBlock",
+        "text": "Well done! You've found your service box but there's an issue.",
+        "wrap": true,
+        "weight": "Bolder",
+        "size": "Medium",
+        "horizontalAlignment": "Center"
+      },
+      {
+        "type": "TextBlock",
+        "text": "Let's troubleshoot the issue.",
+        "wrap": true,
+        "spacing": "Small",
+        "horizontalAlignment": "Center",
+        "color": "Accent"
+      },
+      {
+        "type": "Image",
+        "url": "URL_TO_YOUR_IMAGE",
+        "altText": "Service box with an alert icon"
+      }
+    ],
+    "actions": [
+      {
+        "type": "Action.Submit",
+        "title": "Done",
+        "data": {
+          "action": "completeTroubleshooting"
+        }
+      },
+      {
+        "type": "Action.Submit",
+        "title": "Continue to gateway setup",
+        "data": {
+          "action": "proceedToGatewaySetup"
+        }
+      }
+    ]
+  }
+  

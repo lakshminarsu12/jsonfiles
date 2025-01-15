@@ -1,0 +1,80 @@
+{
+    "$schema": "http://adaptivecards.io/schemas/adaptive-card.json",
+    "type": "AdaptiveCard",
+    "version": "1.3",
+    "body": [
+      {
+        "type": "Container",
+        "items": [
+          {
+            "type": "TextBlock",
+            "text": "Skip scan",
+            "size": "Large",
+            "weight": "Bolder",
+            "color": "Default"
+          },
+          {
+            "type": "TextBlock",
+            "text": "(Send back to the step they left off from)\nIf fails again send to care",
+            "wrap": true
+          }
+        ],
+        "style": "default"
+      },
+      {
+        "type": "Container",
+        "items": [
+          {
+            "type": "TextBlock",
+            "text": "Success",
+            "size": "Large",
+            "weight": "Bolder",
+            "color": "Good"
+          },
+          {
+            "type": "TextBlock",
+            "text": "(Send back to the step they left off from)",
+            "wrap": true
+          }
+        ],
+        "style": "good"
+      },
+      {
+        "type": "Container",
+        "items": [
+          {
+            "type": "TextBlock",
+            "text": "Other issue",
+            "size": "Large",
+            "weight": "Bolder",
+            "color": "Warning"
+          },
+          {
+            "type": "TextBlock",
+            "text": "(Troubleshoot new issue)",
+            "wrap": true
+          }
+        ],
+        "style": "attention"
+      },
+      {
+        "type": "Container",
+        "items": [
+          {
+            "type": "TextBlock",
+            "text": "Failure",
+            "size": "Large",
+            "weight": "Bolder",
+            "color": "Attention"
+          },
+          {
+            "type": "TextBlock",
+            "text": "(Send to care)",
+            "wrap": true
+          }
+        ],
+        "style": "attention"
+      }
+    ]
+  }
+  

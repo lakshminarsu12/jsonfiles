@@ -1,0 +1,46 @@
+{
+    "$schema": "http://adaptivecards.io/schemas/adaptive-card.json",
+    "type": "AdaptiveCard",
+    "version": "1.3",
+    "body": [
+      {
+        "type": "TextBlock",
+        "text": "Make sure the power cable is securely connected to the wall and service box.",
+        "size": "Medium",
+        "weight": "Bolder",
+        "wrap": true
+      },
+      {
+        "type": "TextBlock",
+        "text": "Pro tip: attics are too hot for Wi-Fi devices.",
+        "color": "Accent",
+        "wrap": true
+      },
+      {
+        "type": "TextBlock",
+        "text": "I need more help",
+        "color": "Accent",
+        "horizontalAlignment": "Left",
+        "wrap": true,
+        "selectAction": {
+          "type": "Action.OpenUrl",
+          "title": "I need more help",
+          "url": "https://support.example.com" // Replace with the actual support URL
+        }
+      },
+      {
+        "type": "Image",
+        "url": "https://via.placeholder.com/200",
+        "altText": "Image of a service box with a power cable connected",
+        "horizontalAlignment": "Center"
+      }
+    ],
+    "actions": [
+      {
+        "type": "Action.Submit",
+        "title": "Next",
+        "style": "positive"
+      }
+    ]
+  }
+  

@@ -1,0 +1,43 @@
+{
+    "$schema": "http://adaptivecards.io/schemas/adaptive-card.json",
+    "type": "AdaptiveCard",
+    "version": "1.3",
+    "body": [
+      {
+        "type": "TextBlock",
+        "text": "We couldn't identify your service box",
+        "wrap": true,
+        "weight": "Bolder",
+        "size": "Medium",
+        "horizontalAlignment": "Center"
+      },
+      {
+        "type": "TextBlock",
+        "text": "Your new gateway is on its way and you're all set for installation.",
+        "wrap": true,
+        "spacing": "Small",
+        "horizontalAlignment": "Center",
+        "color": "Accent"
+      },
+      {
+        "type": "Image",
+        "url": "URL_TO_YOUR_IMAGE",
+        "altText": "Alert icon with text FPO"
+      }
+    ],
+    "actions": [
+      {
+        "type": "Action.Submit",
+        "title": "Try again",
+        "data": {
+          "action": "retryIdentifyServiceBox"
+        }
+      },
+      {
+        "type": "Action.OpenUrl",
+        "title": "We can help",
+        "url": "HELP_URL"
+      }
+    ]
+  }
+  

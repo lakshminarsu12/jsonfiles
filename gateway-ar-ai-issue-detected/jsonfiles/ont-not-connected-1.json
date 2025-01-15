@@ -1,0 +1,40 @@
+{
+    "$schema": "http://adaptivecards.io/schemas/adaptive-card.json",
+    "type": "AdaptiveCard",
+    "version": "1.3",
+    "body": [
+      {
+        "type": "Image",
+        "url": "https://via.placeholder.com/200",
+        "altText": "Image showing ONT cable not connected",
+        "horizontalAlignment": "Center"
+      },
+      {
+        "type": "TextBlock",
+        "text": "Looks like the ONT cable is not connected",
+        "size": "Medium",
+        "weight": "Bolder",
+        "horizontalAlignment": "Center",
+        "wrap": true
+      },
+      {
+        "type": "TextBlock",
+        "text": "Plug the cable in please",
+        "horizontalAlignment": "Center",
+        "wrap": true
+      }
+    ],
+    "actions": [
+      {
+        "type": "Action.Submit",
+        "title": "Open Scanner",
+        "style": "positive"
+      },
+      {
+        "type": "Action.Submit",
+        "title": "Skip",
+        "style": "default"
+      }
+    ]
+  }
+  

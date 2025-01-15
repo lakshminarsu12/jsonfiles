@@ -1,0 +1,194 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Adaptive Card Example</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background-color: #f7efff; /* Matches the purple/pinkish background */
+      margin: 0;
+      padding: 0;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+    }
+
+    .card-container {
+      width: 360px;
+      border-radius: 12px;
+      overflow: hidden;
+      box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
+    }
+  </style>
+</head>
+<body>
+  <div id="adaptive-card-container" class="card-container"></div>
+
+ <script src="https://unpkg.com/adaptivecards/dist/adaptivecards.js"></script>
+
+  <script>
+    // Define the Adaptive Card JSON
+    const adaptiveCardJson = {
+      "$schema": "http://adaptivecards.io/schemas/adaptive-card.json",
+      "type": "AdaptiveCard",
+      "version": "1.4",
+      "backgroundImage": {
+        "url": "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mNkAAAAAgAB9HFkfwAAAABJRU5ErkJggg==",
+        "fillMode": "Cover"
+      },
+      "body": [
+        {
+          "type": "TextBlock",
+          "text": "Updates & Reminders",
+          "weight": "Bolder",
+          "size": "Medium",
+          "spacing": "Small",
+          "horizontalAlignment": "Center"
+        },
+        {
+          "type": "Container",
+          "style": "default",
+          "items": [
+            {
+              "type": "ColumnSet",
+              "columns": [
+                {
+                  "type": "Column",
+                  "width": "stretch",
+                  "items": [
+                    {
+                      "type": "TextBlock",
+                      "text": "Your equipment is on the way",
+                      "weight": "Bolder",
+                      "wrap": true
+                    },
+                    {
+                      "type": "TextBlock",
+                      "text": "Estimated delivery: Oct 1 - Oct 5",
+                      "isSubtle": true,
+                      "wrap": true
+                    }
+                  ]
+                },
+                {
+                  "type": "Column",
+                  "width": "auto",
+                  "items": [
+                    {
+                      "type": "Image",
+                      "url": "https://via.placeholder.com/50",
+                      "size": "Small",
+                      "altText": "Equipment Icon"
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "type": "Container",
+          "style": "default",
+          "items": [
+            {
+              "type": "ColumnSet",
+              "columns": [
+                {
+                  "type": "Column",
+                  "width": "stretch",
+                  "items": [
+                    {
+                      "type": "TextBlock",
+                      "text": "Let's set up your new AT&T Internet Air service",
+                      "weight": "Bolder",
+                      "wrap": true
+                    },
+                    {
+                      "type": "TextBlock",
+                      "text": "Setup takes about 20 minutes",
+                      "isSubtle": true,
+                      "wrap": true
+                    }
+                  ]
+                },
+                {
+                  "type": "Column",
+                  "width": "auto",
+                  "items": [
+                    {
+                      "type": "Image",
+                      "url": "https://via.placeholder.com/50",
+                      "size": "Small",
+                      "altText": "Service Icon"
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "type": "Container",
+          "style": "default",
+          "items": [
+            {
+              "type": "ColumnSet",
+              "columns": [
+                {
+                  "type": "Column",
+                  "width": "stretch",
+                  "items": [
+                    {
+                      "type": "TextBlock",
+                      "text": "Your order's on the way",
+                      "weight": "Bolder",
+                      "wrap": true
+                    },
+                    {
+                      "type": "TextBlock",
+                      "text": "Arriving Oct 8th",
+                      "isSubtle": true,
+                      "wrap": true
+                    }
+                  ]
+                },
+                {
+                  "type": "Column",
+                  "width": "auto",
+                  "items": [
+                    {
+                      "type": "Image",
+                      "url": "https://via.placeholder.com/50",
+                      "size": "Small",
+                      "altText": "Order Icon"
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    };
+
+import * as AdaptiveCards from "adaptivecards";
+
+// or require it
+var AdaptiveCards = require("adaptivecards");
+    // Create an instance of AdaptiveCards
+    const adaptiveCard = new AdaptiveCards.AdaptiveCard();
+
+    // Set the card's JSON payload
+    adaptiveCard.parse(adaptiveCardJson);
+
+    // Render the card to an HTML element
+    const renderedCard = adaptiveCard.render();
+
+    // Append the rendered card to the container
+    document.getElementById('adaptive-card-container').appendChild(renderedCard);
+  </script>
+</body>
+</html>

@@ -1,0 +1,43 @@
+{
+    "$schema": "http://adaptivecards.io/schemas/adaptive-card.json",
+    "type": "AdaptiveCard",
+    "version": "1.3",
+    "body": [
+      {
+        "type": "TextBlock",
+        "text": "This is your Gateway, please search for your Service Box",
+        "wrap": true,
+        "weight": "Bolder",
+        "size": "Medium",
+        "horizontalAlignment": "Center"
+      },
+      {
+        "type": "TextBlock",
+        "text": "The service box will look similar to the example below.",
+        "wrap": true,
+        "spacing": "Small",
+        "horizontalAlignment": "Center",
+        "color": "Accent"
+      },
+      {
+        "type": "Image",
+        "url": "URL_TO_YOUR_IMAGE",
+        "altText": "Image of the gateway with text FPO"
+      }
+    ],
+    "actions": [
+      {
+        "type": "Action.Submit",
+        "title": "Try again",
+        "data": {
+          "action": "retrySearchServiceBox"
+        }
+      },
+      {
+        "type": "Action.OpenUrl",
+        "title": "We can help",
+        "url": "HELP_URL"
+      }
+    ]
+  }
+  

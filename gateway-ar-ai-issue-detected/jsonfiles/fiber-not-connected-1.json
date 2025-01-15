@@ -1,0 +1,40 @@
+{
+    "$schema": "http://adaptivecards.io/schemas/adaptive-card.json",
+    "type": "AdaptiveCard",
+    "version": "1.3",
+    "body": [
+      {
+        "type": "Image",
+        "url": "https://via.placeholder.com/200",
+        "altText": "Image of a gateway showing fiber cable not fully connected",
+        "horizontalAlignment": "Center"
+      },
+      {
+        "type": "TextBlock",
+        "text": "Looks like the fiber cable is not completely connected",
+        "size": "Medium",
+        "weight": "Bolder",
+        "horizontalAlignment": "Center",
+        "wrap": true
+      },
+      {
+        "type": "TextBlock",
+        "text": "Plug the cable in till it makes a light click please",
+        "horizontalAlignment": "Center",
+        "wrap": true
+      }
+    ],
+    "actions": [
+      {
+        "type": "Action.Submit",
+        "title": "Open Scanner",
+        "style": "positive"
+      },
+      {
+        "type": "Action.Submit",
+        "title": "Skip",
+        "style": "default"
+      }
+    ]
+  }
+  

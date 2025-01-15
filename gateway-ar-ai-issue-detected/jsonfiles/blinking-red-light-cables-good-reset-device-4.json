@@ -1,0 +1,42 @@
+{
+    "$schema": "http://adaptivecards.io/schemas/adaptive-card.json",
+    "type": "AdaptiveCard",
+    "version": "1.3",
+    "body": [
+      {
+        "type": "TextBlock",
+        "text": "Please wait while we let the gateway rests",
+        "size": "Medium",
+        "weight": "Bolder",
+        "horizontalAlignment": "Center",
+        "wrap": true
+      },
+      {
+        "type": "TextBlock",
+        "text": "This will take around (x) minutes.",
+        "size": "Small",
+        "horizontalAlignment": "Center",
+        "spacing": "Small",
+        "wrap": true
+      },
+      {
+        "type": "Image",
+        "url": "https://via.placeholder.com/200",
+        "altText": "Image of the gateway device",
+        "horizontalAlignment": "Center"
+      }
+    ],
+    "actions": [
+      {
+        "type": "Action.Submit",
+        "title": "Open Scanner",
+        "style": "positive"
+      },
+      {
+        "type": "Action.Submit",
+        "title": "Skip",
+        "style": "default"
+      }
+    ]
+  }
+  

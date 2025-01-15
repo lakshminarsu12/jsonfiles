@@ -1,0 +1,44 @@
+{
+    "$schema": "http://adaptivecards.io/schemas/adaptive-card.json",
+    "type": "AdaptiveCard",
+    "version": "1.3",
+    "body": [
+      {
+        "type": "TextBlock",
+        "text": "Select the service box model that's the closest match",
+        "wrap": true,
+        "weight": "Bolder",
+        "size": "Medium",
+        "horizontalAlignment": "Center"
+      },
+      {
+        "type": "Input.ChoiceSet",
+        "id": "serviceBoxModel",
+        "style": "expanded",
+        "choices": [
+          {
+            "title": "Model 1",
+            "value": "model1"
+          },
+          {
+            "title": "Model 2",
+            "value": "model2"
+          },
+          {
+            "title": "Model 3",
+            "value": "model3"
+          }
+        ]
+      }
+    ],
+    "actions": [
+      {
+        "type": "Action.Submit",
+        "title": "Submit",
+        "data": {
+          "action": "submitServiceBoxSelection"
+        }
+      }
+    ]
+  }
+  

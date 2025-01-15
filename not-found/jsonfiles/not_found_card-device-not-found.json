@@ -1,0 +1,41 @@
+{
+    "$schema": "http://adaptivecards.io/schemas/adaptive-card.json",
+    "type": "AdaptiveCard",
+    "version": "1.3",
+    "body": [
+      {
+        "type": "TextBlock",
+        "text": "We couldn't identify your service box",
+        "size": "Medium",
+        "weight": "Bolder",
+        "horizontalAlignment": "Center",
+        "wrap": true
+      },
+      {
+        "type": "TextBlock",
+        "text": "Your new gateway is on its way and you're all set for installation",
+        "color": "Accent",
+        "horizontalAlignment": "Center",
+        "wrap": true
+      },
+      {
+        "type": "Image",
+        "url": "https://via.placeholder.com/200",
+        "altText": "Warning icon",
+        "horizontalAlignment": "Center"
+      }
+    ],
+    "actions": [
+      {
+        "type": "Action.Submit",
+        "title": "Try again",
+        "style": "positive"
+      },
+      {
+        "type": "Action.OpenUrl",
+        "title": "We can help",
+        "url": "https://support.example.com" // Replace with the actual support link
+      }
+    ]
+  }
+  

@@ -1,0 +1,92 @@
+{
+    "$schema": "http://adaptivecards.io/schemas/adaptive-card.json",
+    "type": "AdaptiveCard",
+    "version": "1.3",
+    "body": [
+      {
+        "type": "Container",
+        "items": [
+          {
+            "type": "TextBlock",
+            "text": "Skip scan",
+            "size": "Large",
+            "weight": "Bolder",
+            "color": "Default",
+            "horizontalAlignment": "Center"
+          },
+          {
+            "type": "TextBlock",
+            "text": "(Send back to the step they left off from)\nIf fails again send to care",
+            "wrap": true,
+            "horizontalAlignment": "Center"
+          }
+        ],
+        "style": "default",
+        "backgroundColor": "#D3D3D3" // Gray background color
+      },
+      {
+        "type": "Container",
+        "items": [
+          {
+            "type": "TextBlock",
+            "text": "Success",
+            "size": "Large",
+            "weight": "Bolder",
+            "color": "Good",
+            "horizontalAlignment": "Center"
+          },
+          {
+            "type": "TextBlock",
+            "text": "(Send back to the step they left off from)",
+            "wrap": true,
+            "horizontalAlignment": "Center"
+          }
+        ],
+        "style": "good",
+        "backgroundColor": "#008000" // Green background color
+      },
+      {
+        "type": "Container",
+        "items": [
+          {
+            "type": "TextBlock",
+            "text": "Other issue",
+            "size": "Large",
+            "weight": "Bolder",
+            "color": "Warning",
+            "horizontalAlignment": "Center"
+          },
+          {
+            "type": "TextBlock",
+            "text": "(Troubleshoot new issue)",
+            "wrap": true,
+            "horizontalAlignment": "Center"
+          }
+        ],
+        "style": "attention",
+        "backgroundColor": "#FFA500" // Orange background color
+      },
+      {
+        "type": "Container",
+        "items": [
+          {
+            "type": "TextBlock",
+            "text": "Failure",
+            "size": "Large",
+            "weight": "Bolder",
+            "color": "Attention",
+            "horizontalAlignment": "Center"
+          },
+          {
+            "type": "TextBlock",
+            "text": "(Send to care)",
+            "wrap": true,
+            "horizontalAlignment": "Center"
+          }
+        ],
+        "style": "attention",
+        "backgroundColor": "#800000" // Red background color
+      }
+    ]
+  }
+  

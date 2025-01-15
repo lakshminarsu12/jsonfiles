@@ -1,0 +1,44 @@
+{
+    "$schema": "http://adaptivecards.io/schemas/adaptive-card.json",
+    "type": "AdaptiveCard",
+    "version": "1.3",
+    "body": [
+      {
+        "type": "Image",
+        "url": "URL_TO_YOUR_IMAGE",
+        "altText": "Service box with text FPO"
+      },
+      {
+        "type": "TextBlock",
+        "text": "To start, please locate your service box",
+        "wrap": true,
+        "weight": "Bolder",
+        "size": "Medium",
+        "horizontalAlignment": "Center"
+      },
+      {
+        "type": "TextBlock",
+        "text": "Your service box is located in the [living room].",
+        "wrap": true,
+        "spacing": "Small",
+        "horizontalAlignment": "Center"
+      }
+    ],
+    "actions": [
+      {
+        "type": "Action.Submit",
+        "title": "Need help finding it",
+        "data": {
+          "action": "helpFindingServiceBox"
+        }
+      },
+      {
+        "type": "Action.Submit",
+        "title": "Found it",
+        "data": {
+          "action": "serviceBoxFound"
+        }
+      }
+    ]
+  }
+  
