@@ -1,0 +1,40 @@
+{
+    "$schema": "http://adaptivecards.io/schemas/adaptive-card.json",
+    "type": "AdaptiveCard",
+    "version": "1.3",
+    "body": [
+      {
+        "type": "Image",
+        "url": "https://via.placeholder.com/462x213",
+        "altText": "Image of ONT outlet",
+        "horizontalAlignment": "Center"
+      },
+      {
+        "type": "TextBlock",
+        "text": "Let's find your ONT outlet",
+        "size": "Medium",
+        "weight": "Bolder",
+        "horizontalAlignment": "Center",
+        "wrap": true
+      },
+      {
+        "type": "TextBlock",
+        "text": "Your ONT outlet may be located in the living room, bedrooms, office, etc.",
+        "horizontalAlignment": "Center",
+        "wrap": true
+      }
+    ],
+    "actions": [
+      {
+        "type": "Action.Submit",
+        "title": "Need help finding it",
+        "style": "default"
+      },
+      {
+        "type": "Action.Submit",
+        "title": "Found it",
+        "style": "positive"
+      }
+    ]
+  }
+  
