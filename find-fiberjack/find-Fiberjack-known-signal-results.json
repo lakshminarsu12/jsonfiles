@@ -1,0 +1,40 @@
+{
+    "$schema": "http://adaptivecards.io/schemas/adaptive-card.json",
+    "type": "AdaptiveCard",
+    "version": "1.3",
+    "body": [
+      {
+        "type": "TextBlock",
+        "text": "Let's check the condition of your outlet",
+        "size": "Medium",
+        "weight": "Bolder",
+        "horizontalAlignment": "Center",
+        "wrap": true
+      },
+      {
+        "type": "TextBlock",
+        "text": "Take a moment to scan your gateway to ensure that it is in proper functioning order",
+        "horizontalAlignment": "Center",
+        "wrap": true
+      },
+      {
+        "type": "Image",
+        "url": "https://via.placeholder.com/200",
+        "altText": "Image of AT&T ONT outlet",
+        "horizontalAlignment": "Center"
+      }
+    ],
+    "actions": [
+      {
+        "type": "Action.Submit",
+        "title": "Scan outlet",
+        "style": "positive"
+      },
+      {
+        "type": "Action.Submit",
+        "title": "Skip",
+        "style": "default"
+      }
+    ]
+  }
+  

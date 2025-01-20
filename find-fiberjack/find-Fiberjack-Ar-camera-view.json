@@ -1,0 +1,33 @@
+{
+    "$schema": "http://adaptivecards.io/schemas/adaptive-card.json",
+    "type": "AdaptiveCard",
+    "version": "1.3",
+    "body": [
+      {
+        "type": "Image",
+        "url": "https://via.placeholder.com/467x212",
+        "altText": "AR camera view scanning the service box",
+        "horizontalAlignment": "Center"
+      },
+      {
+        "type": "TextBlock",
+        "text": "Scan the service box for a few seconds",
+        "size": "Medium",
+        "horizontalAlignment": "Center",
+        "wrap": true
+      }
+    ],
+    "actions": [
+      {
+        "type": "Action.Submit",
+        "title": "Capture",
+        "style": "positive"
+      },
+      {
+        "type": "Action.Submit",
+        "title": "Cancel",
+        "style": "default"
+      }
+    ]
+  }
+  
