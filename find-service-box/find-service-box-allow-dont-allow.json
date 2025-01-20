@@ -1,0 +1,34 @@
+{
+    "$schema": "http://adaptivecards.io/schemas/adaptive-card.json",
+    "type": "AdaptiveCard",
+    "version": "1.3",
+    "body": [
+      {
+        "type": "TextBlock",
+        "text": "Allow myAtt would like to access your camera while using the app?",
+        "size": "Medium",
+        "weight": "Bolder",
+        "wrap": true,
+        "horizontalAlignment": "Center"
+      },
+      {
+        "type": "TextBlock",
+        "text": "This will help us find the service box and troubleshoot any problems that may come up.",
+        "wrap": true,
+        "horizontalAlignment": "Center"
+      }
+    ],
+    "actions": [
+      {
+        "type": "Action.Submit",
+        "title": "Don't allow",
+        "style": "default"
+      },
+      {
+        "type": "Action.Submit",
+        "title": "Allow",
+        "style": "positive"
+      }
+    ]
+  }
+  
