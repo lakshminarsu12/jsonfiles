@@ -1,0 +1,29 @@
+{
+    "type": "AdaptiveCard",
+    "version": "1.3",
+    "body": [
+      {
+        "type": "TextBlock",
+        "text": "Medium",
+        "weight": "Bolder",
+        "size": "Medium",
+        "wrap": true,
+        "color": "Accent"
+      },
+      {
+        "type": "TextBlock",
+        "text": "Impact",
+        "weight": "Bolder",
+        "color": "Accent",
+        "wrap": true,
+        "spacing": "Small"
+      },
+      {
+        "type": "TextBlock",
+        "text": "Indicates a collision between medium-sized or medium-weight UI objects.",
+        "wrap": true,
+        "spacing": "Medium"
+      }
+    ]
+  }
+  

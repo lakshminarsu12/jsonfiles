@@ -1,0 +1,50 @@
+{
+  "type": "AdaptiveCard",
+  "version": "1.3",
+  "body": [
+    {
+      "type": "TextBlock",
+      "text": "To do",
+      "weight": "Bolder",
+      "size": "Large",
+      "color": "Accent",
+      "wrap": true
+    },
+    {
+      "type": "TextBlock",
+      "text": "Copy & strings",
+      "weight": "Bolder",
+      "size": "Medium",
+      "wrap": true,
+      "spacing": "Small"
+    },
+    {
+      "type": "Container",
+      "items": [
+        {
+          "type": "TextBlock",
+          "text": "**header-5268**: Place your gateway {{itemnumber}} near your AT&T Service Box",
+          "wrap": true
+        },
+        {
+          "type": "TextBlock",
+          "text": "**header-5934**: Place your gateway {{itemnumber}} near your AT&T ONT jack",
+          "wrap": true,
+          "spacing": "Small"
+        },
+        {
+          "type": "TextBlock",
+          "text": "**header-5925**: Place your gateway {{itemnumber}} near your AT&T service box found {{boxlocation}}",
+          "wrap": true,
+          "spacing": "Small"
+        }
+      ]
+    }
+  ],
+  "actions": [
+    {
+      "type": "Action.Submit",
+      "title": "Next"
+    }
+  ]
+}

@@ -1,0 +1,31 @@
+{
+    "$schema": "http://adaptivecards.io/schemas/adaptive-card.json",
+    "type": "AdaptiveCard",
+    "version": "1.3",
+    "body": [
+      {
+        "type": "TextBlock",
+        "text": "Plug the ONT cable into the AT&T ONT jack",
+        "size": "Medium",
+        "weight": "Bolder",
+        "color": "Accent",
+        "wrap": true
+      },
+      {
+        "type": "Image",
+        "url": "https://via.placeholder.com/360x163",
+        "altText": "ONT cable being plugged in",
+        "horizontalAlignment": "Center"
+      }
+    ],
+    "actions": [
+      {
+        "type": "Action.Submit",
+        "title": "Next",
+        "style": "positive"
+      }
+    ],
+    "style": "default",
+    "backgroundColor": "#F8F5F9"
+  }
+  

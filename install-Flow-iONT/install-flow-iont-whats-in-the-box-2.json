@@ -1,0 +1,45 @@
+{
+    "type": "AdaptiveCard",
+    "version": "1.3",
+    "body": [
+      {
+        "type": "TextBlock",
+        "text": "Here's what's in the box:",
+        "weight": "Bolder",
+        "size": "Medium",
+        "wrap": true
+      },
+      {
+        "type": "FactSet",
+        "facts": [
+          {
+            "title": "1.",
+            "value": "Wi-Fi gateway\nSerial Number: N931A12000999"
+          },
+          {
+            "title": "2.",
+            "value": "ONT cable"
+          },
+          {
+            "title": "3.",
+            "value": "Power supply"
+          },
+          {
+            "title": "4.",
+            "value": "Optional cables"
+          }
+        ]
+      }
+    ],
+    "actions": [
+      {
+        "type": "Action.Submit",
+        "title": "Missing something"
+      },
+      {
+        "type": "Action.Submit",
+        "title": "Next"
+      }
+    ]
+  }
+  

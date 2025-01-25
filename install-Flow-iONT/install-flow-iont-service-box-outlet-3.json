@@ -1,0 +1,50 @@
+{
+    "type": "AdaptiveCard",
+    "body": [
+      {
+        "type": "Image",
+        "url": "https://your_image_url_here.com", 
+        "altText": "ONT outlet image",
+        "size": "Medium",
+        "horizontalAlignment": "Center"
+      },
+      {
+        "type": "TextBlock",
+        "text": "To start, please locate your ONT outlet",
+        "wrap": true,
+        "weight": "Bolder",
+        "size": "Medium",
+        "horizontalAlignment": "Center"
+      },
+      {
+        "type": "TextBlock",
+        "text": "This is your data connection to the internet",
+        "wrap": true,
+        "size": "Small",
+        "horizontalAlignment": "Center"
+      },
+      {
+        "type": "ActionSet",
+        "actions": [
+          {
+            "type": "Action.Submit",
+            "title": "Need help finding it",
+            "data": {
+              "action": "help_find_ont"
+            }
+          },
+          {
+            "type": "Action.Submit",
+            "title": "Next",
+            "data": {
+              "action": "next"
+            }
+          }
+        ],
+        "horizontalAlignment": "Center"
+      }
+    ],
+    "$schema": "http://adaptivecards.io/schemas/adaptive-card.json",
+    "version": "1.3"
+  }
+  

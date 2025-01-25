@@ -1,0 +1,35 @@
+{
+  "type": "AdaptiveCard",
+  "version": "1.3",
+  "body": [
+    {
+      "type": "TextBlock",
+      "text": "Sticky Footer",
+      "weight": "Bolder",
+      "size": "Large",
+      "color": "Accent",
+      "wrap": true
+    },
+    {
+      "type": "TextBlock",
+      "text": "Behaviors",
+      "weight": "Bolder",
+      "size": "Medium",
+      "color": "Attention",
+      "wrap": true
+    },
+    {
+      "type": "Image",
+      "url": "data:image/png;base64,[BASE64_ENCODED_IMAGE]",
+      "size": "Medium",
+      "spacing": "Medium",
+      "altText": "Sticky Footer Image"
+    },
+    {
+      "type": "TextBlock",
+      "text": "[Sharepoint](https://example.com)",
+      "color": "Accent",
+      "wrap": true
+    }
+  ]
+}

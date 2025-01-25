@@ -1,0 +1,56 @@
+{
+  "type": "AdaptiveCard",
+  "version": "1.3",
+  "body": [
+    {
+      "type": "TextBlock",
+      "text": "To do",
+      "weight": "Bolder",
+      "size": "Large",
+      "color": "Accent",
+      "wrap": true
+    },
+    {
+      "type": "TextBlock",
+      "text": "Copy & strings",
+      "weight": "Bolder",
+      "size": "Medium",
+      "wrap": true,
+      "spacing": "Small"
+    },
+    {
+      "type": "Container",
+      "items": [
+        {
+          "type": "TextBlock",
+          "text": "**message-266**: Here’s what’s in the box:",
+          "wrap": true
+        },
+        {
+          "type": "TextBlock",
+          "text": "**label-204**: Wi-Fi gateway",
+          "wrap": true,
+          "spacing": "Small"
+        },
+        {
+          "type": "TextBlock",
+          "text": "**label-207**: Power supply",
+          "wrap": true,
+          "spacing": "Small"
+        },
+        {
+          "type": "TextBlock",
+          "text": "**cta-60**: Next",
+          "wrap": true,
+          "spacing": "Small"
+        }
+      ]
+    }
+  ],
+  "actions": [
+    {
+      "type": "Action.Submit",
+      "title": "Next"
+    }
+  ]
+}

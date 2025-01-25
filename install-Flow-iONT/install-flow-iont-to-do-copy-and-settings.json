@@ -1,0 +1,56 @@
+{
+  "type": "AdaptiveCard",
+  "version": "1.3",
+  "body": [
+    {
+      "type": "TextBlock",
+      "text": "To do",
+      "weight": "Bolder",
+      "size": "Large",
+      "color": "Accent",
+      "wrap": true
+    },
+    {
+      "type": "TextBlock",
+      "text": "Copy & strings",
+      "weight": "Bolder",
+      "size": "Medium",
+      "wrap": true,
+      "spacing": "Small"
+    },
+    {
+      "type": "Container",
+      "items": [
+        {
+          "type": "TextBlock",
+          "text": "**header-5323**: Plug the power supply {{itemnumber}} into an outlet and then the gateway.",
+          "wrap": true
+        },
+        {
+          "type": "TextBlock",
+          "text": "**cta-5168**: Troubleshooting tips",
+          "wrap": true,
+          "spacing": "Small"
+        },
+        {
+          "type": "TextBlock",
+          "text": "**message-5240**: Activation will take around 10 minutes.",
+          "wrap": true,
+          "spacing": "Small"
+        },
+        {
+          "type": "TextBlock",
+          "text": "**cta-3424**: Activate",
+          "wrap": true,
+          "spacing": "Small"
+        }
+      ]
+    }
+  ],
+  "actions": [
+    {
+      "type": "Action.Submit",
+      "title": "Activate"
+    }
+  ]
+}

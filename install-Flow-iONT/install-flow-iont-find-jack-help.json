@@ -1,0 +1,21 @@
+{
+    "$schema": "http://adaptivecards.io/schemas/adaptive-card.json",
+    "type": "AdaptiveCard",
+    "version": "1.3",
+    "body": [
+      {
+        "type": "TextBlock",
+        "text": "1.0 Find Jack help",
+        "size": "Medium",
+        "weight": "Bolder",
+        "color": "Attention",
+        "wrap": true
+      },
+      {
+        "type": "TextBlock",
+        "text": "Annotation/destination",
+        "wrap": true
+      }
+    ]
+  }
+  
