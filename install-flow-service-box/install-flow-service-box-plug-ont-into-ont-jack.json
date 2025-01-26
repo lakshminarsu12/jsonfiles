@@ -1,0 +1,46 @@
+{
+    "type": "AdaptiveCard",
+    "version": "1.3",
+    "body": [
+      {
+        "type": "TextBlock",
+        "text": "Plug ONT into ONT Jack",
+        "weight": "Bolder",
+        "size": "Large",
+        "wrap": true
+      },
+      {
+        "type": "TextBlock",
+        "text": "motion",
+        "color": "Accent",
+        "weight": "Bolder",
+        "wrap": true
+      },
+      {
+        "type": "ActionSet",
+        "actions": [
+          {
+            "type": "Action.OpenUrl",
+            "title": "Animation asset",
+            "url": "https://example.com" 
+          }
+        ]
+      },
+      {
+        "type": "TextBlock",
+        "text": "mp4",
+        "wrap": true
+      },
+      {
+        "type": "ActionSet",
+        "actions": [
+          {
+            "type": "Action.OpenUrl",
+            "title": "Sharepoint",
+            "url": "https://example.com" 
+          }
+        ]
+      }
+    ]
+  }
+  

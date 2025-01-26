@@ -1,0 +1,43 @@
+{
+    "type": "AdaptiveCard",
+    "version": "1.3",
+    "body": [
+      {
+        "type": "TextBlock",
+        "text": "06_Power_plug_in_Outlet",
+        "weight": "Bolder",
+        "size": "Large",
+        "wrap": true
+      },
+      {
+        "type": "TextBlock",
+        "text": "Animation asset",
+        "color": "Accent",
+        "spacing": "Small",
+        "wrap": true
+      },
+      {
+        "type": "Image",
+        "url": "data:image/png;base64,[BASE64_ENCODED_IMAGE]",
+        "size": "Medium",
+        "altText": "Power plug in outlet animation"
+      },
+      {
+        "type": "TextBlock",
+        "text": "mp4",
+        "spacing": "Small",
+        "wrap": true
+      },
+      {
+        "type": "ActionSet",
+        "actions": [
+          {
+            "type": "Action.OpenUrl",
+            "title": "Sharepoint",
+            "url": "https://example.com"
+          }
+        ]
+      }
+    ]
+  }
+  

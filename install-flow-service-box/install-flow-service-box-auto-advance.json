@@ -1,0 +1,30 @@
+{
+    "type": "AdaptiveCard",
+    "version": "1.3",
+    "body": [
+      {
+        "type": "Image",
+        "url": "data:image/png;base64,[BASE64_ENCODED_IMAGE]",
+        "altText": "Auto-Advance behaviors with haptic feedback on modal appearance",
+        "size": "Stretch"
+      },
+      {
+        "type": "TextBlock",
+        "text": "**Auto-Advance**\n\n- Behaviors\n- Delay between progressing automatically.\n- Trigger haptic when modal appears.",
+        "wrap": true,
+        "size": "Default",
+        "spacing": "Medium"
+      },
+      {
+        "type": "ActionSet",
+        "actions": [
+          {
+            "type": "Action.OpenUrl",
+            "title": "Sharepoint",
+            "url": "[SHAREPOINT_URL]"
+          }
+        ]
+      }
+    ]
+  }
+  

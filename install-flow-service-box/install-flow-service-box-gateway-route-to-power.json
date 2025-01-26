@@ -1,0 +1,40 @@
+{
+    "type": "AdaptiveCard",
+    "version": "1.3",
+    "body": [
+      {
+        "type": "TextBlock",
+        "text": "Gateway Rotate to Power",
+        "weight": "Bolder",
+        "size": "Large",
+        "color": "Accent",
+        "spacing": "Medium"
+      },
+      {
+        "type": "TextBlock",
+        "text": "Animation asset",
+        "wrap": true,
+        "spacing": "Small",
+        "color": "Default"
+      },
+      {
+        "type": "Image",
+        "url": "data:image/png;base64,[BASE64_ENCODED_IMAGE]",
+        "altText": "Gateway Rotate to Power",
+        "size": "Stretch",
+        "spacing": "Medium"
+      },
+      {
+        "type": "ActionSet",
+        "actions": [
+          {
+            "type": "Action.OpenUrl",
+            "title": "SharePoint",
+            "url": "https://example.com"
+          }
+        ],
+        "spacing": "Medium"
+      }
+    ]
+  }
+  

@@ -1,0 +1,44 @@
+{
+    "type": "AdaptiveCard",
+    "version": "1.3",
+    "body": [
+      {
+        "type": "TextBlock",
+        "text": "Button Resize Width",
+        "weight": "Bolder",
+        "size": "Large",
+        "spacing": "Medium"
+      },
+      {
+        "type": "TextBlock",
+        "text": "State changes",
+        "color": "Accent",
+        "wrap": true,
+        "spacing": "None"
+      },
+      {
+        "type": "TextBlock",
+        "text": "Adjusting the width so that a new button appears.",
+        "wrap": true,
+        "spacing": "Small"
+      },
+      {
+        "type": "Image",
+        "url": "data:image/png;base64,[BASE64_ENCODED_IMAGE]",
+        "altText": "Button Resize Width",
+        "size": "Stretch",
+        "spacing": "Medium"
+      },
+      {
+        "type": "ActionSet",
+        "actions": [
+          {
+            "type": "Action.OpenUrl",
+            "title": "Sharepoint",
+            "url": "[SHAREPOINT_URL]"
+          }
+        ]
+      }
+    ]
+  }
+  

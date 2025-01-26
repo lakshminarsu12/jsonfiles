@@ -1,0 +1,26 @@
+{
+    "$schema": "http://adaptivecards.io/schemas/adaptive-card.json",
+    "type": "AdaptiveCard",
+    "version": "1.3",
+    "body": [
+      {
+        "type": "TextBlock",
+        "text": "Plug the power supply 🔌 into an outlet and then the gateway",
+        "wrap": true,
+        "size": "Medium",
+        "weight": "Bolder"
+      },
+      {
+        "type": "Image",
+        "url": "data:image/png;base64,[BASE64_ENCODED_IMAGE]",
+        "altText": "Gateway setup instruction"
+      }
+    ],
+    "actions": [
+      {
+        "type": "Action.Submit",
+        "title": "Next"
+      }
+    ]
+  }
+  
