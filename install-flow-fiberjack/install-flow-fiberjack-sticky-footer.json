@@ -1,0 +1,41 @@
+{
+    "type": "AdaptiveCard",
+    "version": "1.3",
+    "body": [
+      {
+        "type": "Container",
+        "items": [
+          {
+            "type": "TextBlock",
+            "text": "Sticky Footer",
+            "weight": "Bolder",
+            "size": "Large",
+            "wrap": true
+          },
+          {
+            "type": "TextBlock",
+            "text": "Behaviors",
+            "weight": "Bolder",
+            "color": "Accent",
+            "wrap": true
+          },
+          {
+            "type": "TextBlock",
+            "text": "This component ensures the footer remains fixed at the bottom of the screen while allowing the content above it to scroll.",
+            "wrap": true
+          }
+        ]
+      },
+      {
+        "type": "ActionSet",
+        "actions": [
+          {
+            "type": "Action.OpenUrl",
+            "title": "Sharepoint",
+            "url": "https://sharepoint-link-placeholder.com"
+          }
+        ]
+      }
+    ]
+  }
+  

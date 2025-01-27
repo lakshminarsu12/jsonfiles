@@ -1,0 +1,47 @@
+{
+    "type": "AdaptiveCard",
+    "version": "1.3",
+    "body": [
+      {
+        "type": "Container",
+        "items": [
+          {
+            "type": "TextBlock",
+            "text": "To do",
+            "weight": "Bolder",
+            "size": "Large",
+            "wrap": true
+          },
+          {
+            "type": "TextBlock",
+            "text": "Description",
+            "isSubtle": true,
+            "wrap": true
+          }
+        ]
+      },
+      {
+        "type": "Container",
+        "items": [
+          {
+            "type": "FactSet",
+            "facts": [
+              {
+                "title": "header-5268:",
+                "value": "Place your gateway {{itemnumber}} near your AT&T Service Box"
+              },
+              {
+                "title": "header-5934:",
+                "value": "Place your gateway {{itemnumber}} near your AT&T ONT jack"
+              },
+              {
+                "title": "header-5925:",
+                "value": "Place your gateway {{itemnumber}} near your AT&T service box found {{boxlocation}}"
+              }
+            ]
+          }
+        ]
+      }
+    ]
+  }
+  

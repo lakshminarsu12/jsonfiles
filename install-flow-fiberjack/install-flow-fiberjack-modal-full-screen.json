@@ -1,0 +1,66 @@
+{
+    "type": "AdaptiveCard",
+    "version": "1.3",
+    "body": [
+      {
+        "type": "TextBlock",
+        "text": "Modal - Full screen",
+        "weight": "Bolder",
+        "size": "Large",
+        "color": "Accent",
+        "wrap": true
+      },
+      {
+        "type": "TextBlock",
+        "text": "Storybook (new)",
+        "weight": "Bolder",
+        "color": "Attention",
+        "wrap": true,
+        "spacing": "Small"
+      },
+      {
+        "type": "TextBlock",
+        "text": "Modals focus the user's attention exclusively on a single task or piece of information via a window that sits on top of the page content. This component only defines the \"shell\" i.e., padding, color, corner radius of card. Content is custom.",
+        "wrap": true,
+        "spacing": "Medium"
+      },
+      {
+        "type": "TextBlock",
+        "text": "Dependencies:",
+        "weight": "Bolder",
+        "wrap": true,
+        "spacing": "Medium"
+      },
+      {
+        "type": "FactSet",
+        "facts": [
+          {
+            "title": "Tray modal",
+            "value": "[CR]"
+          },
+          {
+            "title": "Progress Tracker",
+            "value": "[done]"
+          },
+          {
+            "title": "Spinner",
+            "value": "[done]"
+          }
+        ]
+      },
+      {
+        "type": "ActionSet",
+        "actions": [
+          {
+            "type": "Action.OpenUrl",
+            "title": "Figma link",
+            "url": "https://figma.com" 
+          }
+        ]
+      }
+    ],
+    "backgroundImage": {
+      "url": "data:image/png;base64,<base64_encoded_image>"
+    }
+  }
+  

@@ -1,0 +1,39 @@
+{
+    "type": "AdaptiveCard",
+    "version": "1.3",
+    "body": [
+      {
+        "type": "TextBlock",
+        "text": "Auto-Advance",
+        "weight": "Bolder",
+        "size": "Large",
+        "wrap": true,
+        "color": "Accent"
+      },
+      {
+        "type": "TextBlock",
+        "text": "Behaviors",
+        "wrap": true,
+        "color": "Attention",
+        "size": "Medium",
+        "spacing": "Small"
+      },
+      {
+        "type": "TextBlock",
+        "text": "Delay between progressing automatically.\n\n**Trigger haptic when modal appears**",
+        "wrap": true,
+        "spacing": "Medium"
+      },
+      {
+        "type": "ActionSet",
+        "actions": [
+          {
+            "type": "Action.OpenUrl",
+            "title": "Sharepoint",
+            "url": "https://placeholder-url.com/sharepoint"
+          }
+        ]
+      }
+    ]
+  }
+  

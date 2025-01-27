@@ -1,0 +1,34 @@
+{
+    "type": "AdaptiveCard",
+    "version": "1.3",
+    "body": [
+      {
+        "type": "Container",
+        "items": [
+          {
+            "type": "TextBlock",
+            "text": "Gateway rotate to Power",
+            "weight": "Bolder",
+            "size": "Medium"
+          },
+          {
+            "type": "ActionSet",
+            "actions": [
+              {
+                "type": "Action.OpenUrl",
+                "title": "Animation asset",
+                "url": "https://sharepoint-link-placeholder.com"
+              }
+            ]
+          },
+          {
+            "type": "TextBlock",
+            "text": "mp4 - Gateway rotates to Power",
+            "wrap": true,
+            "spacing": "Small"
+          }
+        ]
+      }
+    ]
+  }
+  

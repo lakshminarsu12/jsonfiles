@@ -1,0 +1,46 @@
+{
+    "type": "AdaptiveCard",
+    "version": "1.3",
+    "body": [
+      {
+        "type": "Image",
+        "url": "data:image/png;base64,<base64_encoded_image>",
+        "size": "Medium",
+        "style": "Person"
+      },
+      {
+        "type": "TextBlock",
+        "text": "To start, please locate your Service box",
+        "weight": "Bolder",
+        "size": "Large",
+        "wrap": true
+      },
+      {
+        "type": "TextBlock",
+        "text": "This is your data connection to the internet",
+        "size": "Medium",
+        "wrap": true
+      },
+      {
+        "type": "ActionSet",
+        "actions": [
+          {
+            "type": "Action.Submit",
+            "title": "Need help finding it",
+            "data": {
+              "action": "needHelp"
+            }
+          },
+          {
+            "type": "Action.Submit",
+            "title": "Next",
+            "style": "positive",
+            "data": {
+              "action": "nextStep"
+            }
+          }
+        ]
+      }
+    ]
+  }
+  

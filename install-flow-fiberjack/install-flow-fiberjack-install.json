@@ -1,0 +1,50 @@
+{
+    "type": "AdaptiveCard",
+    "version": "1.3",
+    "body": [
+      {
+        "type": "TextBlock",
+        "text": "Here’s what’s in the box:",
+        "weight": "Bolder",
+        "size": "Medium",
+        "wrap": true
+      },
+      {
+        "type": "Container",
+        "items": [
+          {
+            "type": "FactSet",
+            "facts": [
+              {
+                "title": "1.",
+                "value": "AT&T All-Fi Hub™\nSerial Number: N93VA12000999"
+              },
+              {
+                "title": "3.",
+                "value": "Power supply"
+              }
+            ]
+          }
+        ]
+      }
+    ],
+    "actions": [
+      {
+        "type": "Action.Submit",
+        "title": "Missing something",
+        "style": "default",
+        "data": {
+          "action": "reportMissing"
+        }
+      },
+      {
+        "type": "Action.Submit",
+        "title": "Next",
+        "style": "positive",
+        "data": {
+          "action": "nextStep"
+        }
+      }
+    ]
+  }
+  

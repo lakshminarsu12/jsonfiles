@@ -1,0 +1,29 @@
+{
+    "type": "AdaptiveCard",
+    "version": "1.3",
+    "body": [
+      {
+        "type": "Container",
+        "items": [
+          {
+            "type": "TextBlock",
+            "text": "Error",
+            "weight": "Bolder",
+            "size": "Large",
+            "color": "Attention",
+            "horizontalAlignment": "Center"
+          },
+          {
+            "type": "TextBlock",
+            "text": "(Something's off, wrong gateway, or another issue can be seen with the outlet)",
+            "wrap": true,
+            "horizontalAlignment": "Center",
+            "spacing": "Small"
+          }
+        ],
+        "style": "emphasis",
+        "bleed": true
+      }
+    ]
+  }
+  

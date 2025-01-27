@@ -1,0 +1,24 @@
+{
+    "type": "AdaptiveCard",
+    "version": "1.3",
+    "body": [
+      {
+        "type": "Container",
+        "items": [
+          {
+            "type": "TextBlock",
+            "text": "Find outlet flow",
+            "weight": "Bolder",
+            "size": "Medium"
+          },
+          {
+            "type": "TextBlock",
+            "text": "Send the user to the find {outlet} flow",
+            "wrap": true,
+            "spacing": "Small"
+          }
+        ]
+      }
+    ]
+  }
+  
