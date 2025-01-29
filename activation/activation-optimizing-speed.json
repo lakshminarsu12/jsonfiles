@@ -1,0 +1,41 @@
+{
+    "type": "AdaptiveCard",
+    "version": "1.3",
+    "body": [
+      {
+        "type": "TextBlock",
+        "text": "Optimizing Speed",
+        "weight": "Bolder",
+        "size": "Large",
+        "wrap": true,
+        "horizontalAlignment": "Center"
+      },
+      {
+        "type": "Image",
+        "url": "https://www.w3schools.com/w3css/img_lights.jpg",
+        "altText": "Optimizing speed image",
+        "horizontalAlignment": "Center",
+        "size": "Medium"
+      },
+      {
+        "type": "TextBlock",
+        "text": "About 3 min left",
+        "size": "Small",
+        "horizontalAlignment": "Center",
+        "wrap": true,
+        "color": "Accent"
+      },
+      {
+        "type": "RichTextBlock",
+        "inlines": [
+          {
+            "type": "TextRun",
+            "text": "We're optimizing your speed for the best performance. Please wait while the process completes.",
+            "size": "Small",
+            "wrap": true
+          }
+        ]
+      }
+    ]
+  }
+  

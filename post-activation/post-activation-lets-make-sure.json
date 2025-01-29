@@ -1,0 +1,64 @@
+{
+    "type": "AdaptiveCard",
+    "version": "1.3",
+    "body": [
+      {
+        "type": "TextBlock",
+        "text": "Let's Make Sure It's You",
+        "weight": "Bolder",
+        "size": "Large",
+        "wrap": true
+      },
+      {
+        "type": "TextBlock",
+        "text": "To keep your info safe, we’ll send you a verification code to confirm your identity.",
+        "wrap": true,
+        "size": "Medium"
+      },
+      {
+        "type": "TextBlock",
+        "text": "Already have a code? [Enter it now](#)",
+        "wrap": true,
+        "weight": "Bolder",
+        "color": "Accent"
+      },
+      {
+        "type": "TextBlock",
+        "text": "How do you want to get your code?",
+        "weight": "Bolder",
+        "size": "Medium",
+        "wrap": true
+      },
+      {
+        "type": "Input.ChoiceSet",
+        "id": "verificationMethod",
+        "style": "expanded",
+        "choices": [
+          {
+            "title": "Email to a*************m",
+            "value": "email"
+          },
+          {
+            "title": "Text to ***-***-7890",
+            "value": "text"
+          }
+        ]
+      },
+      {
+        "type": "ActionSet",
+        "actions": [
+          {
+            "type": "Action.Submit",
+            "title": "Send Code",
+            "style": "positive"
+          },
+          {
+            "type": "Action.Submit",
+            "title": "Cancel",
+            "style": "destructive"
+          }
+        ]
+      }
+    ]
+  }
+  

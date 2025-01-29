@@ -1,0 +1,40 @@
+{
+    "type": "AdaptiveCard",
+    "version": "1.3",
+    "body": [
+      {
+        "type": "TextBlock",
+        "text": "Activation Successful!",
+        "weight": "Bolder",
+        "size": "Large",
+        "wrap": true,
+        "horizontalAlignment": "Center",
+        "color": "Good"
+      },
+      {
+        "type": "TextBlock",
+        "text": "Next, we'll find the best location for your extender.",
+        "size": "Medium",
+        "wrap": true,
+        "horizontalAlignment": "Center"
+      },
+      {
+        "type": "Image",
+        "url": "https://www.w3schools.com/w3css/img_lights.jpg",
+        "altText": "Activation successful image",
+        "horizontalAlignment": "Center",
+        "size": "Medium"
+      },
+      {
+        "type": "ActionSet",
+        "actions": [
+          {
+            "type": "Action.Submit",
+            "title": "Let's go",
+            "style": "positive"
+          }
+        ]
+      }
+    ]
+  }
+  

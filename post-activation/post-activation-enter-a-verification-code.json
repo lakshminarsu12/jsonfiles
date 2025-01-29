@@ -1,0 +1,48 @@
+{
+    "type": "AdaptiveCard",
+    "version": "1.3",
+    "body": [
+      {
+        "type": "TextBlock",
+        "text": "Enter a Verification Code",
+        "weight": "Bolder",
+        "size": "Large",
+        "wrap": true
+      },
+      {
+        "type": "TextBlock",
+        "text": "Got your code? Keep in mind, it can take a few minutes to get it. We sent a verification code to your registered email or phone number.",
+        "wrap": true,
+        "size": "Medium"
+      },
+      {
+        "type": "Input.Text",
+        "id": "verificationCode",
+        "placeholder": "Enter your code",
+        "maxLength": 6,
+        "isRequired": true,
+        "errorMessage": "Please enter a valid verification code."
+      },
+      {
+        "type": "ActionSet",
+        "actions": [
+          {
+            "type": "Action.Submit",
+            "title": "Continue",
+            "style": "positive"
+          },
+          {
+            "type": "Action.Submit",
+            "title": "Get a new code",
+            "style": "default"
+          },
+          {
+            "type": "Action.Submit",
+            "title": "Cancel",
+            "style": "destructive"
+          }
+        ]
+      }
+    ]
+  }
+  

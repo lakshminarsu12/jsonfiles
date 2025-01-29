@@ -1,0 +1,66 @@
+{
+    "type": "AdaptiveCard",
+    "version": "1.3",
+    "body": [
+      {
+        "type": "Image",
+        "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/e/e3/AT%26T_logo_2016.svg/1200px-AT%26T_logo_2016.svg.png",
+        "size": "Small",
+        "horizontalAlignment": "Center"
+      },
+      {
+        "type": "TextBlock",
+        "text": "Register your ID",
+        "weight": "Bolder",
+        "size": "Large",
+        "wrap": true
+      },
+      {
+        "type": "TextBlock",
+        "text": "You can update your info after you finish signing up.",
+        "wrap": true,
+        "size": "Medium"
+      },
+      {
+        "type": "Input.Text",
+        "id": "firstName",
+        "placeholder": "Enter first name",
+        "label": "First name",
+        "isRequired": true
+      },
+      {
+        "type": "Input.Text",
+        "id": "lastName",
+        "placeholder": "Enter last name",
+        "label": "Last name",
+        "isRequired": true
+      },
+      {
+        "type": "Input.Text",
+        "id": "email",
+        "placeholder": "Enter email",
+        "label": "Email",
+        "style": "email",
+        "isRequired": true
+      },
+      {
+        "type": "Input.Text",
+        "id": "phone",
+        "placeholder": "Enter wireless number",
+        "label": "Wireless number",
+        "style": "tel",
+        "isRequired": true
+      },
+      {
+        "type": "ActionSet",
+        "actions": [
+          {
+            "type": "Action.Submit",
+            "title": "Continue",
+            "style": "positive"
+          }
+        ]
+      }
+    ]
+  }
+  

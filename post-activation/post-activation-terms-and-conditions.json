@@ -1,0 +1,70 @@
+{
+    "type": "AdaptiveCard",
+    "version": "1.3",
+    "body": [
+      {
+        "type": "Image",
+        "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/e/e3/AT%26T_logo_2016.svg/1200px-AT%26T_logo_2016.svg.png",
+        "size": "Small",
+        "horizontalAlignment": "Center"
+      },
+      {
+        "type": "TextBlock",
+        "text": "Terms & Conditions",
+        "weight": "Bolder",
+        "size": "Large",
+        "wrap": true
+      },
+      {
+        "type": "TextBlock",
+        "text": "**Terms & Conditions to be accepted**",
+        "weight": "Bolder",
+        "wrap": true
+      },
+      {
+        "type": "TextBlock",
+        "text": "You'll have to accept the Terms & Conditions to continue with your order: **#[XXXXXXXX]**",
+        "wrap": true
+      },
+      {
+        "type": "TextBlock",
+        "text": "You have to accept the following Terms & Conditions to continue:",
+        "wrap": true
+      },
+      {
+        "type": "Input.Toggle",
+        "id": "terms1",
+        "title": "I have read and agree to the [Consent to Electronic Delivery of Disclosures](https://www.att.com/)",
+        "value": "false"
+      },
+      {
+        "type": "Input.Toggle",
+        "id": "terms2",
+        "title": "I have read and agree to the [AT&T Consumer Service Agreement](https://www.att.com/) (includes binding arbitration and auto-renewal terms)",
+        "value": "false"
+      },
+      {
+        "type": "Input.Toggle",
+        "id": "terms3",
+        "title": "I have read and agree to the [wBTC](https://www.att.com/)",
+        "value": "false"
+      },
+      {
+        "type": "TextBlock",
+        "text": "For more information about AT&T's broadband internet access services, visit [att.com/broadbandinfo](https://www.att.com/broadbandinfo).",
+        "wrap": true,
+        "color": "Accent"
+      },
+      {
+        "type": "ActionSet",
+        "actions": [
+          {
+            "type": "Action.Submit",
+            "title": "Agree & Continue",
+            "style": "positive"
+          }
+        ]
+      }
+    ]
+  }
+  

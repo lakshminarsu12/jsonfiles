@@ -1,0 +1,90 @@
+{
+    "type": "AdaptiveCard",
+    "version": "1.3",
+    "body": [
+      {
+        "type": "Image",
+        "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/e/e3/AT%26T_logo_2016.svg/1200px-AT%26T_logo_2016.svg.png",
+        "size": "Small",
+        "horizontalAlignment": "Center"
+      },
+      {
+        "type": "TextBlock",
+        "text": "Register your ID",
+        "weight": "Bolder",
+        "size": "Large",
+        "wrap": true
+      },
+      {
+        "type": "TextBlock",
+        "text": "Create a user ID and password.",
+        "wrap": true,
+        "size": "Medium"
+      },
+      {
+        "type": "Input.Text",
+        "id": "userId",
+        "placeholder": "Enter your email",
+        "label": "User ID (must be in email format)",
+        "style": "email",
+        "isRequired": true
+      },
+      {
+        "type": "TextBlock",
+        "text": "[Already have an ID?](https://www.att.com/)",
+        "wrap": true,
+        "color": "Accent"
+      },
+      {
+        "type": "Input.Text",
+        "id": "password",
+        "placeholder": "Enter your password",
+        "label": "Password",
+        "style": "password",
+        "isRequired": true
+      },
+      {
+        "type": "TextBlock",
+        "text": "Passwords must use:\n- 8 to 24 characters\n- An uppercase letter\n- A lowercase letter\n- A number\n- One of these special characters: *+=?@$!%*#-_",
+        "wrap": true,
+        "size": "Small"
+      },
+      {
+        "type": "Input.Text",
+        "id": "confirmPassword",
+        "placeholder": "Confirm your password",
+        "label": "Confirm Password",
+        "style": "password",
+        "isRequired": true
+      },
+      {
+        "type": "Input.Toggle",
+        "id": "keepSignedIn",
+        "title": "Keep me signed in",
+        "value": "false"
+      },
+      {
+        "type": "Input.Toggle",
+        "id": "terms",
+        "title": "I have read and agree to the [AT&T user ID Terms of Service](https://www.att.com/)",
+        "value": "false",
+        "isRequired": true
+      },
+      {
+        "type": "ActionSet",
+        "actions": [
+          {
+            "type": "Action.Submit",
+            "title": "Continue",
+            "style": "positive"
+          },
+          {
+            "type": "Action.Submit",
+            "title": "Back",
+            "style": "destructive"
+          }
+        ]
+      }
+    ]
+  }
+  
