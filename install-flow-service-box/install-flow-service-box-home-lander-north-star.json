@@ -5,37 +5,51 @@
   "body": [
       {
           "type": "TextBlock",
-          "text": "📢 Updates & Reminders",
+          "text": "🔔 UPDATES & REMINDERS",
           "weight": "Bolder",
           "size": "Large",
+          "color": "light",
           "wrap": true
       },
       {
           "type": "Container",
           "style": "attention",
-          "spacing": "ExtraLarge",
+          "spacing": "Large",
           "items": [
               {
-                  "type": "TextBlock",
-                  "text": "📦 Your Equipment is on the Way",
-                  "weight": "Bolder",
-                  "size": "Medium",
-                  "color": "light",
-                  "wrap": true
-              },
-              {
-                  "type": "TextBlock",
-                  "text": "Estimated delivery: **Oct 1 - Oct 5**",
-                  "color": "light",
-                  "wrap": true
-              },
-              {
-                  "type": "ActionSet",
-                  "actions": [
+                  "type": "ColumnSet",
+                  "columns": [
                       {
-                          "type": "Action.OpenUrl",
-                          "title": "Track Order",
-                          "url": "https://www.att.com/"
+                          "type": "Column",
+                          "width": "auto",
+                          "items": [
+                              {
+                                  "type": "Image",
+                                  "url": "YOUR_ICON_URL_HERE",
+                                  "size": "Small",
+                                  "altText": "Delivery Icon"
+                              }
+                          ]
+                      },
+                      {
+                          "type": "Column",
+                          "width": "stretch",
+                          "items": [
+                              {
+                                  "type": "TextBlock",
+                                  "text": "📦 Your equipment is on the way",
+                                  "weight": "Bolder",
+                                  "size": "Medium",
+                                  "color": "light",
+                                  "wrap": true
+                              },
+                              {
+                                  "type": "TextBlock",
+                                  "text": "Estimated delivery: **Oct 1 - Oct 5**",
+                                  "color": "light",
+                                  "wrap": true
+                              }
+                          ]
                       }
                   ]
               }
@@ -44,49 +58,17 @@
       {
           "type": "Container",
           "style": "attention",
-          "spacing": "ExtraLarge",
+          "spacing": "Large",
           "items": [
               {
-                  "type": "TextBlock",
-                  "text": "⚙️ Set Up Your AT&T Internet Air Service",
-                  "weight": "Bolder",
-                  "size": "Medium",
-                  "color": "light",
-                  "wrap": true
-              },
-              {
                   "type": "Image",
-                  "url": "YOUR_IMAGE_URL_HERE",
+                  "url": "YOUR_DEVICE_IMAGE_URL",
                   "size": "Medium",
-                  "style": "Person",
                   "altText": "AT&T Internet Air Device"
               },
               {
                   "type": "TextBlock",
-                  "text": "Setup takes about **20 minutes**. Follow the instructions in the AT&T app to get started.",
-                  "color": "light",
-                  "wrap": true
-              },
-              {
-                  "type": "ActionSet",
-                  "actions": [
-                      {
-                          "type": "Action.OpenUrl",
-                          "title": "Setup Guide",
-                          "url": "https://www.att.com/internet/"
-                      }
-                  ]
-              }
-          ]
-      },
-      {
-          "type": "Container",
-          "style": "attention",
-          "spacing": "ExtraLarge",
-          "items": [
-              {
-                  "type": "TextBlock",
-                  "text": "🚚 Your Order is on the Way",
+                  "text": "📶 Let’s set up your new **AT&T Internet Air** service",
                   "weight": "Bolder",
                   "size": "Medium",
                   "color": "light",
@@ -94,17 +76,51 @@
               },
               {
                   "type": "TextBlock",
-                  "text": "Arriving: **Oct 8th**",
+                  "text": "Setup takes about **20 minutes**",
                   "color": "light",
                   "wrap": true
-              },
+              }
+          ]
+      },
+      {
+          "type": "Container",
+          "style": "attention",
+          "spacing": "Large",
+          "items": [
               {
-                  "type": "ActionSet",
-                  "actions": [
+                  "type": "ColumnSet",
+                  "columns": [
                       {
-                          "type": "Action.OpenUrl",
-                          "title": "View Order Details",
-                          "url": "https://www.att.com/"
+                          "type": "Column",
+                          "width": "auto",
+                          "items": [
+                              {
+                                  "type": "Image",
+                                  "url": "YOUR_ORDER_ICON_URL",
+                                  "size": "Small",
+                                  "altText": "Order Icon"
+                              }
+                          ]
+                      },
+                      {
+                          "type": "Column",
+                          "width": "stretch",
+                          "items": [
+                              {
+                                  "type": "TextBlock",
+                                  "text": "🚚 Your order’s on the way",
+                                  "weight": "Bolder",
+                                  "size": "Medium",
+                                  "color": "light",
+                                  "wrap": true
+                              },
+                              {
+                                  "type": "TextBlock",
+                                  "text": "Arriving: **Oct 8th**",
+                                  "color": "light",
+                                  "wrap": true
+                              }
+                          ]
                       }
                   ]
               }
