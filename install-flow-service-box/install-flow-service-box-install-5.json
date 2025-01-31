@@ -1,0 +1,30 @@
+{
+    "type": "AdaptiveCard",
+    "version": "1.3",
+    "body": [
+      {
+        "type": "TextBlock",
+        "text": "Place your gateway near your AT&T service box",
+        "weight": "Bolder",
+        "size": "Medium",
+        "wrap": true
+      },
+      {
+        "type": "Image",
+        "url": "data:image/png;base64,[BASE64_ENCODED_IMAGE]",
+        "altText": "FPO - Media",
+        "size": "Stretch",
+        "backgroundColor": "#D8A3DD"
+      }
+    ],
+    "actions": [
+      {
+        "type": "Action.Submit",
+        "title": "Next",
+        "data": {
+          "action": "next"
+        }
+      }
+    ]
+  }
+  
