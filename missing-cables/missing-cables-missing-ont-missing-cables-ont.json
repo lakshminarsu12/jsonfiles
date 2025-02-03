@@ -1,0 +1,45 @@
+{
+    "type": "AdaptiveCard",
+    "version": "1.3",
+    "body": [
+      {
+        "type": "Container",
+        "items": [
+          {
+            "type": "Image",
+            "url": "YOUR_IMAGE_URL",  // Replace with the actual URL of the uploaded image
+            "size": "Medium",
+            "horizontalAlignment": "Center"
+          },
+          {
+            "type": "TextBlock",
+            "text": "We apologize for the inconvenience.",
+            "wrap": true,
+            "weight": "Bolder",
+            "size": "Medium",
+            "horizontalAlignment": "Center"
+          },
+          {
+            "type": "TextBlock",
+            "text": "If possible, please empty the box. The cable could have become loose inside the box.",
+            "wrap": true,
+            "spacing": "Small",
+            "horizontalAlignment": "Center"
+          }
+        ]
+      }
+    ],
+    "actions": [
+      {
+        "type": "Action.Submit",
+        "title": "Found the cable",
+        "data": { "action": "found_ont_cable" }
+      },
+      {
+        "type": "Action.Submit",
+        "title": "Couldn't find the cable",
+        "data": { "action": "missing_ont_cable" }
+      }
+    ]
+  }
+  

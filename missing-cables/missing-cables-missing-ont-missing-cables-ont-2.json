@@ -1,0 +1,40 @@
+{
+    "type": "AdaptiveCard",
+    "version": "1.3",
+    "body": [
+      {
+        "type": "Container",
+        "items": [
+          {
+            "type": "Image",
+            "url": "YOUR_IMAGE_URL",  
+            "size": "Medium",
+            "horizontalAlignment": "Center"
+          },
+          {
+            "type": "TextBlock",
+            "text": "Let's get you a new cable.",
+            "wrap": true,
+            "weight": "Bolder",
+            "size": "Medium",
+            "horizontalAlignment": "Center"
+          },
+          {
+            "type": "TextBlock",
+            "text": "One of our agents can help.",
+            "wrap": true,
+            "spacing": "Small",
+            "horizontalAlignment": "Center"
+          }
+        ]
+      }
+    ],
+    "actions": [
+      {
+        "type": "Action.OpenUrl",
+        "title": "Call us",
+        "url": "tel:YOUR_PHONE_NUMBER"  
+      }
+    ]
+  }
+  
