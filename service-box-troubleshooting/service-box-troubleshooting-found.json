@@ -1,0 +1,33 @@
+{
+    "type": "AdaptiveCard",
+    "version": "1.3",
+    "body": [
+      {
+        "type": "Container",
+        "items": [
+          {
+            "type": "TextBlock",
+            "text": "Found",
+            "weight": "Bolder",
+            "size": "Large",
+            "horizontalAlignment": "Center"
+          },
+          {
+            "type": "TextBlock",
+            "text": "(Found the service box, need to troubleshoot)",
+            "wrap": true,
+            "size": "Medium",
+            "horizontalAlignment": "Center",
+            "spacing": "Small"
+          }
+        ]
+      }
+    ],
+    "actions": [
+      {
+        "type": "Action.Submit",
+        "title": "Start Troubleshooting"
+      }
+    ]
+  }
+  

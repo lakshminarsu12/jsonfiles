@@ -1,0 +1,36 @@
+{
+    "type": "AdaptiveCard",
+    "version": "1.3",
+    "body": [
+      {
+        "type": "TextBlock",
+        "text": "Do you have a black power cable connected to the service box?",
+        "weight": "Bolder",
+        "size": "Medium",
+        "wrap": true
+      },
+      {
+        "type": "Image",
+        "url": "YOUR_IMAGE_URL",
+        "size": "Medium",
+        "altText": "Service box with black power cable connection"
+      }
+    ],
+    "actions": [
+      {
+        "type": "Action.Submit",
+        "title": "Yes",
+        "data": {
+          "response": "yes_black_power_cable_connected"
+        }
+      },
+      {
+        "type": "Action.Submit",
+        "title": "No that I can see",
+        "data": {
+          "response": "no_black_power_cable_visible"
+        }
+      }
+    ]
+  }
+  

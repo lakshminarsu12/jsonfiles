@@ -1,0 +1,48 @@
+{
+    "type": "AdaptiveCard",
+    "version": "1.3",
+    "body": [
+      {
+        "type": "TextBlock",
+        "text": "This is your Gateway, please search for your Service Box",
+        "weight": "Bolder",
+        "size": "Medium",
+        "wrap": true
+      },
+      {
+        "type": "TextBlock",
+        "text": "The service box will look similar to the example below",
+        "size": "Small",
+        "color": "Accent",
+        "wrap": true
+      },
+      {
+        "type": "Image",
+        "url": "YOUR_IMAGE_URL",
+        "size": "Medium",
+        "altText": "Service Box Example"
+      },
+      {
+        "type": "ActionSet",
+        "actions": [
+          {
+            "type": "Action.Submit",
+            "title": "Try again",
+            "style": "positive",
+            "data": {
+              "response": "retry_scan"
+            }
+          }
+        ]
+      },
+      {
+        "type": "TextBlock",
+        "text": "If you're still having trouble, [we can help](#)",
+        "size": "Small",
+        "horizontalAlignment": "Center",
+        "wrap": true,
+        "color": "Accent"
+      }
+    ]
+  }
+  

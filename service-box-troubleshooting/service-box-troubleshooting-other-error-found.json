@@ -1,0 +1,49 @@
+{
+    "type": "AdaptiveCard",
+    "version": "1.3",
+    "body": [
+      {
+        "type": "TextBlock",
+        "text": "Well done! You've found your service box but there's an issue.",
+        "weight": "Bolder",
+        "size": "Medium",
+        "wrap": true
+      },
+      {
+        "type": "TextBlock",
+        "text": "Let's troubleshoot the issue",
+        "size": "Small",
+        "color": "Accent",
+        "horizontalAlignment": "Center",
+        "wrap": true
+      },
+      {
+        "type": "Image",
+        "url": "YOUR_IMAGE_URL",
+        "size": "Medium",
+        "altText": "Service Box Issue Detected"
+      },
+      {
+        "type": "ActionSet",
+        "actions": [
+          {
+            "type": "Action.Submit",
+            "title": "Done",
+            "style": "positive",
+            "data": {
+              "response": "issue_resolved"
+            }
+          },
+          {
+            "type": "Action.Submit",
+            "title": "Continue to gateway setup",
+            "style": "default",
+            "data": {
+              "response": "continue_setup"
+            }
+          }
+        ]
+      }
+    ]
+  }
+  

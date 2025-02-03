@@ -1,0 +1,45 @@
+{
+    "type": "AdaptiveCard",
+    "version": "1.3",
+    "body": [
+      {
+        "type": "TextBlock",
+        "text": "Make sure the power cable is securely connected to the wall and service box.",
+        "weight": "Bolder",
+        "size": "Medium",
+        "wrap": true
+      },
+      {
+        "type": "TextBlock",
+        "text": "Pro tip: attics are too hot for Wi-Fi devices.",
+        "size": "Small",
+        "weight": "Lighter",
+        "wrap": true,
+        "color": "Attention"
+      },
+      {
+        "type": "Image",
+        "url": "YOUR_IMAGE_URL",
+        "size": "Medium",
+        "altText": "Service box with power cable connection"
+      },
+      {
+        "type": "ActionSet",
+        "actions": [
+          {
+            "type": "Action.Submit",
+            "title": "Next",
+            "data": {
+              "response": "power_cable_checked"
+            }
+          },
+          {
+            "type": "Action.OpenUrl",
+            "title": "I need more help",
+            "url": "YOUR_HELP_URL"
+          }
+        ]
+      }
+    ]
+  }
+  

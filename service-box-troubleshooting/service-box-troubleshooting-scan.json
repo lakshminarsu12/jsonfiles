@@ -1,0 +1,50 @@
+{
+    "type": "AdaptiveCard",
+    "version": "1.3",
+    "body": [
+      {
+        "type": "TextBlock",
+        "text": "Scan",
+        "weight": "Bolder",
+        "size": "Large",
+        "wrap": true,
+        "horizontalAlignment": "Center"
+      },
+      {
+        "type": "TextBlock",
+        "text": "(Open the AR scan tool)",
+        "size": "Medium",
+        "wrap": true,
+        "horizontalAlignment": "Center"
+      },
+      {
+        "type": "Image",
+        "url": "YOUR_IMAGE_URL",
+        "size": "Medium",
+        "horizontalAlignment": "Center",
+        "altText": "AR Scan Tool Prompt"
+      },
+      {
+        "type": "ActionSet",
+        "actions": [
+          {
+            "type": "Action.Submit",
+            "title": "Open AR Scan Tool",
+            "style": "positive",
+            "data": {
+              "action": "open_scan_tool"
+            }
+          },
+          {
+            "type": "Action.Submit",
+            "title": "Cancel",
+            "style": "default",
+            "data": {
+              "action": "cancel_scan"
+            }
+          }
+        ]
+      }
+    ]
+  }
+  

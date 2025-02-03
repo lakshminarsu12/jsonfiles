@@ -1,0 +1,49 @@
+{
+    "type": "AdaptiveCard",
+    "version": "1.3",
+    "body": [
+      {
+        "type": "TextBlock",
+        "text": "Skipped Scan",
+        "weight": "Bolder",
+        "size": "Large",
+        "wrap": true,
+        "horizontalAlignment": "Center"
+      },
+      {
+        "type": "TextBlock",
+        "text": "(User doesn’t want to use their phone camera to scan the device)",
+        "size": "Medium",
+        "wrap": true,
+        "horizontalAlignment": "Center"
+      },
+      {
+        "type": "TextBlock",
+        "text": "Send them to care.",
+        "weight": "Bolder",
+        "size": "Medium",
+        "color": "Accent",
+        "wrap": true,
+        "horizontalAlignment": "Center"
+      },
+      {
+        "type": "ActionSet",
+        "actions": [
+          {
+            "type": "Action.OpenUrl",
+            "title": "Contact Support",
+            "url": "YOUR_SUPPORT_URL"
+          },
+          {
+            "type": "Action.Submit",
+            "title": "Retry Scan",
+            "style": "positive",
+            "data": {
+              "action": "retry_scan"
+            }
+          }
+        ]
+      }
+    ]
+  }
+  

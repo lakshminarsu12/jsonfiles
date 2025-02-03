@@ -1,0 +1,52 @@
+{
+    "type": "AdaptiveCard",
+    "version": "1.3",
+    "body": [
+      {
+        "type": "Image",
+        "url": "YOUR_IMAGE_URL_HERE",
+        "size": "Large",
+        "horizontalAlignment": "Center"
+      },
+      {
+        "type": "TextBlock",
+        "text": "Missing Cables",
+        "weight": "Bolder",
+        "size": "Large",
+        "color": "Accent",
+        "horizontalAlignment": "Center",
+        "wrap": true
+      },
+      {
+        "type": "TextBlock",
+        "text": "(Open flow)",
+        "size": "Medium",
+        "color": "Accent",
+        "horizontalAlignment": "Center",
+        "wrap": true
+      },
+      {
+        "type": "TextBlock",
+        "text": "Check the Gateway box for the power cable",
+        "size": "Medium",
+        "weight": "Bolder",
+        "wrap": true
+      },
+      {
+        "type": "TextBlock",
+        "text": "Were you able to find the power cable?",
+        "wrap": true
+      }
+    ],
+    "actions": [
+      {
+        "type": "Action.Submit",
+        "title": "Yes"
+      },
+      {
+        "type": "Action.Submit",
+        "title": "No that I can see"
+      }
+    ]
+  }
+  

@@ -1,0 +1,54 @@
+{
+    "type": "AdaptiveCard",
+    "version": "1.3",
+    "body": [
+      {
+        "type": "TextBlock",
+        "text": "Tips that may help",
+        "weight": "Bolder",
+        "size": "Large",
+        "wrap": true
+      },
+      {
+        "type": "TextBlock",
+        "text": "Keep an eye out for a white box with wires sticking out of it.",
+        "wrap": true,
+        "size": "Medium"
+      },
+      {
+        "type": "TextBlock",
+        "text": "Also try checking:",
+        "weight": "Bolder",
+        "wrap": true,
+        "size": "Medium"
+      },
+      {
+        "type": "TextBlock",
+        "text": "• Near or inside your wiring panel\n• Inside closets or pantries\n• Behind furniture",
+        "wrap": true,
+        "size": "Medium"
+      },
+      {
+        "type": "TextBlock",
+        "text": "If you're still having trouble, [we can help](YOUR_HELP_URL).",
+        "wrap": true,
+        "size": "Small",
+        "horizontalAlignment": "Center",
+        "color": "Accent"
+      },
+      {
+        "type": "ActionSet",
+        "actions": [
+          {
+            "type": "Action.Submit",
+            "title": "Close",
+            "style": "positive",
+            "data": {
+              "action": "close_tips"
+            }
+          }
+        ]
+      }
+    ]
+  }
+  

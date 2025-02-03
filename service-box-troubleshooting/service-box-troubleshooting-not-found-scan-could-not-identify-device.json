@@ -1,0 +1,45 @@
+{
+    "type": "AdaptiveCard",
+    "version": "1.3",
+    "body": [
+      {
+        "type": "TextBlock",
+        "text": "We couldn't identify your service box",
+        "weight": "Bolder",
+        "size": "Medium",
+        "wrap": true
+      },
+      {
+        "type": "TextBlock",
+        "text": "Your new gateway is on its way and you're all set for installation",
+        "size": "Small",
+        "color": "Accent",
+        "wrap": true
+      },
+      {
+        "type": "Image",
+        "url": "YOUR_IMAGE_URL",
+        "size": "Medium",
+        "altText": "Warning icon indicating service box identification failure"
+      },
+      {
+        "type": "ActionSet",
+        "actions": [
+          {
+            "type": "Action.Submit",
+            "title": "Try again",
+            "style": "positive",
+            "data": {
+              "response": "retry_service_box_identification"
+            }
+          },
+          {
+            "type": "Action.OpenUrl",
+            "title": "We can help",
+            "url": "YOUR_HELP_URL"
+          }
+        ]
+      }
+    ]
+  }
+  

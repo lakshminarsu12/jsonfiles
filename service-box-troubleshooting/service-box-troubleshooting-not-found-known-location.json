@@ -1,0 +1,46 @@
+{
+    "type": "AdaptiveCard",
+    "version": "1.3",
+    "body": [
+      {
+        "type": "Image",
+        "url": "YOUR_IMAGE_URL",
+        "size": "Medium",
+        "altText": "Service box illustration"
+      },
+      {
+        "type": "TextBlock",
+        "text": "To start, please locate your service box",
+        "weight": "Bolder",
+        "size": "Medium",
+        "wrap": true
+      },
+      {
+        "type": "TextBlock",
+        "text": "Your service box is located in the {living room}.",
+        "size": "Small",
+        "wrap": true
+      },
+      {
+        "type": "ActionSet",
+        "actions": [
+          {
+            "type": "Action.Submit",
+            "title": "Need help finding it",
+            "data": {
+              "response": "need_help_finding_service_box"
+            }
+          },
+          {
+            "type": "Action.Submit",
+            "title": "Found it",
+            "style": "positive",
+            "data": {
+              "response": "service_box_found"
+            }
+          }
+        ]
+      }
+    ]
+  }
+  
