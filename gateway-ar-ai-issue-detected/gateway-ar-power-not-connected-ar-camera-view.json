@@ -1,0 +1,22 @@
+{
+    "$schema": "http://adaptivecards.io/schemas/adaptive-card.json",
+    "type": "AdaptiveCard",
+    "version": "1.3",
+    "body": [
+      {
+        "type": "Image",
+        "url": "URL_TO_YOUR_IMAGE",
+        "altText": "ONT gateway with highlighted power port for plugging in"
+      },
+      {
+        "type": "TextBlock",
+        "text": "Plug in here",
+        "wrap": true,
+        "weight": "Bolder",
+        "size": "Medium",
+        "horizontalAlignment": "Center",
+        "color": "Accent"
+      }
+    ]
+  }
+  
