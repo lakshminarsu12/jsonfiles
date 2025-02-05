@@ -1,0 +1,47 @@
+{
+    "$schema": "http://adaptivecards.io/schemas/adaptive-card.json",
+    "type": "AdaptiveCard",
+    "version": "1.3",
+    "body": [
+      {
+        "type": "TextBlock",
+        "text": "Please wait while we let the gateway cool off and rest",
+        "wrap": true,
+        "weight": "Bolder",
+        "size": "Medium",
+        "horizontalAlignment": "Center"
+      },
+      {
+        "type": "TextBlock",
+        "text": "ℹ️ This will take around 10 minutes.",
+        "wrap": true,
+        "spacing": "Small",
+        "horizontalAlignment": "Center",
+        "color": "Accent"
+      },
+      {
+        "type": "Image",
+        "url": "URL_TO_YOUR_IMAGE",
+        "altText": "Gateway cooling down"
+      }
+    ],
+    "actions": [
+      {
+        "type": "Action.Submit",
+        "title": "Open Scanner",
+        "data": {
+          "action": "openScanner"
+        },
+        "isEnabled": false
+      },
+      {
+        "type": "Action.Submit",
+        "title": "Skip",
+        "data": {
+          "action": "skipWait"
+        },
+        "isEnabled": false
+      }
+    ]
+  }
+  
