@@ -1,0 +1,39 @@
+{
+    "$schema": "http://adaptivecards.io/schemas/adaptive-card.json",
+    "type": "AdaptiveCard",
+    "version": "1.3",
+    "body": [
+        {
+            "type": "Image",
+            "url": "<INSERT_IMAGE_URL>",
+            "size": "Medium",
+            "horizontalAlignment": "Left"
+        },
+        {
+            "type": "TextBlock",
+            "text": "Let’s set up your new All-Fi Hub",
+            "weight": "Bolder",
+            "size": "Medium",
+            "color": "Accent",
+            "horizontalAlignment": "Left"
+        },
+        {
+            "type": "TextBlock",
+            "text": "We’ll help you with placement so you get a good signal.",
+            "wrap": true,
+            "horizontalAlignment": "Left",
+            "spacing": "Small"
+        },
+        {
+            "type": "ActionSet",
+            "actions": [
+                {
+                    "type": "Action.Submit",
+                    "title": "Let's go",
+                    "style": "positive"
+                }
+            ],
+            "horizontalAlignment": "Center"
+        }
+    ]
+}
