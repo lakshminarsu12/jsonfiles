@@ -1,0 +1,40 @@
+{
+  "$schema": "http://adaptivecards.io/schemas/adaptive-card.json",
+  "type": "AdaptiveCard",
+  "version": "1.3",
+  "body": [
+      {
+          "type": "ActionSet",
+          "actions": [
+              {
+                  "type": "Action.Submit",
+                  "title": "Continue",
+                  "style": "positive"
+              },
+              {
+                "type": "Action.Submit",
+                "title": "Skip",
+                "style": "default"
+            },
+            {
+              "type": "Action.Submit",
+              "title": "Open scanner",
+              "iconUrl": "https://cdn-icons-png.flaticon.com/512/685/685655.png",
+              "style": "positive"
+            },
+            {
+              "type": "Action.Submit",
+              "title": "",
+              "iconUrl": "https://cdn-icons-png.flaticon.com/512/271/271220.png",
+              "style": "positive"
+          },
+          {
+            "type": "Action.Submit",
+            "title": "Check my power supply >",
+            "style": "positive"
+        }
+          ],
+          "horizontalAlignment": "Center"
+      }
+  ]
+}
