@@ -32,9 +32,23 @@
             "type": "Action.Submit",
             "title": "Check my power supply >",
             "style": "positive"
-        }
+          }
           ],
           "horizontalAlignment": "Center"
       }
   ]
+}
+
+.button {
+  background-color: #0033a0; /* Deep blue background */
+  color: white; /* White text */
+  border: none; /* No border */
+  padding: 12px 24px; /* Comfortable padding */
+  border-radius: 30px; /* Fully rounded corners */
+  font-size: 16px; /* Readable font size */
+  font-weight: normal;
+  text-align: center;
+  display: inline-block;
+  cursor: pointer;
+  transition: background-color 0.3s ease-in-out;
 }
