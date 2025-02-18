@@ -52,3 +52,15 @@
   cursor: pointer;
   transition: background-color 0.3s ease-in-out;
 }
+
+.button-skip {
+  background: none; /* No background */
+  color: #0033a0; /* Deep blue text */
+  border: none; /* No border */
+  font-size: 16px; /* Readable font size */
+  font-weight: normal;
+  text-align: center;
+  cursor: pointer;
+  padding: 8px 16px; /* Minimal padding */
+  display: inline-block;
+}
