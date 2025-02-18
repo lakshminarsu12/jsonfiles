@@ -64,3 +64,47 @@
   padding: 8px 16px; /* Minimal padding */
   display: inline-block;
 }
+
+
+<style>
+    /* Custom styling for the Open Scanner button */
+    .scanner-button {
+        background-color: #0047AB !important; /* Deep blue */
+        color: white !important;
+        border-radius: 25px !important;
+        border: none !important;
+        padding: 12px 20px !important;
+        font-size: 16px !important;
+        font-weight: bold !important;
+        cursor: pointer !important;
+        display: flex !important;
+        align-items: center !important;
+        justify-content: center !important;
+        gap: 10px !important;
+    }
+
+    .scanner-button:hover {
+        background-color: #003399 !important; /* Darker blue on hover */
+    }
+
+    /* Ensure the icon appears before the text */
+    .scanner-button::before {
+        content: url('https://cdn-icons-png.flaticon.com/512/685/685655.png');
+        width: 20px;
+        height: 20px;
+        display: inline-block;
+    }
+</style>
+
+
+"actions": [
+  {
+      "type": "Action.Submit",
+      "title": "Open Scanner",
+      "id": "openScannerButton",
+      "iconUrl": "https://cdn-icons-png.flaticon.com/512/685/685655.png",  // Camera icon URL
+      "data": {
+          "action": "scan"
+      }
+  }
+]
