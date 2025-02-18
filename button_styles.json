@@ -89,7 +89,7 @@
 
     /* Ensure the icon appears before the text */
     .scanner-button::before {
-        content: url('https://cdn-icons-png.flaticon.com/512/685/685655.png');
+        content: url('https://cdn-icons-png.flaticon.com/512/2920/2920312.png');
         width: 20px;
         height: 20px;
         display: inline-block;
@@ -102,7 +102,7 @@
       "type": "Action.Submit",
       "title": "Open Scanner",
       "id": "openScannerButton",
-      "iconUrl": "https://cdn-icons-png.flaticon.com/512/685/685655.png",  // Camera icon URL
+      "iconUrl": "https://cdn-icons-png.flaticon.com/512/2920/2920312.png",  // Camera icon URL
       "data": {
           "action": "scan"
       }
