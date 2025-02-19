@@ -1,0 +1,97 @@
+{
+    "$schema": "http://adaptivecards.io/schemas/adaptive-card.json",
+    "version": "1.3",
+    "type": "AdaptiveCard",
+    "body": [
+        {
+            "type": "Image",
+            "url": "data:image/png;base64,IMAGE_BASE64_STRING",
+            "size": "Medium",
+            "altText": "ONT Outlet"
+        },
+        {
+            "type": "TextBlock",
+            "text": "First, find your ONT outlet",
+            "weight": "Bolder",
+            "size": "Medium",
+            "color": "Accent"
+        },
+        {
+            "type": "TextBlock",
+            "text": "You can find it in your [room].",
+            "wrap": true
+        },
+        {
+            "type": "ColumnSet",
+            "selectAction": {
+                "type": "Action.OpenUrl",
+                "title": "Help me find it",
+                "url": "https://www.att.com/support/"
+            },
+            "columns": [
+                {
+                    "type": "Column",
+                    "width": "stretch",
+                    "items": [
+                        {
+                            "type": "TextBlock",
+                            "text": "Help me find it",
+                            "wrap": true,
+                            "color": "Accent",
+                            "weight": "Bolder"
+                        }
+                    ]
+                },
+                {
+                    "type": "Column",
+                    "width": "auto",
+                    "items": [
+                        {
+                            "type": "Image",
+                            "url": "https://fonts.gstatic.com/s/i/materialicons/chevron_right/v14/24px.svg",
+                            "size": "Small",
+                            "altText": "Greater than icon"
+                        }
+                    ]
+                }
+            ]
+        },
+        {
+            "type": "ColumnSet",
+            "columns": [
+                {
+                    "type": "Column",
+                    "width": "auto",
+                    "items": [
+                        {
+                            "type": "Image",
+                            "url": "https://img.icons8.com/ios-filled/50/007BFF/circled-left-2.png",
+                            "size": "Small",
+                            "altText": "Back Button",
+                            "selectAction": {
+                                "type": "Action.OpenUrl",
+                                "title": "Back",
+                                "url": "#"
+                            }
+                        }
+                    ]
+                },
+                {
+                    "type": "Column",
+                    "width": "stretch",
+                    "items": [
+                        {
+                            "type": "ActionSet",
+                            "actions": [
+                                {
+                                    "type": "Action.Submit",
+                                    "title": "Next"
+                                }
+                            ]
+                        }
+                    ]
+                }
+            ]
+        }
+    ]
+}
