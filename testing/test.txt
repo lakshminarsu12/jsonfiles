@@ -1,0 +1,20 @@
+function findActions(obj, actionsList = []) {
+    if (!obj || typeof obj !== "object") return;
+
+    // If the object contains an actions array, add its actions to actionsList
+    if (Array.isArray(obj.actions)) {
+        actionsList.push(...obj.actions);
+    }
+
+    // Recursively check all properties of the object
+    for (const key in obj) {
+        if (obj.hasOwnProperty(key) && typeof obj[key] === "object") {
+            findActions(obj[key], actionsList);
+        }
+    }
+
+    return actionsList;
+}
+
+
+const allActions = findActions(adaptiveCardObject);
