@@ -1,0 +1,55 @@
+{
+    "type": "AdaptiveCard",
+    "$schema": "http://adaptivecards.io/schemas/adaptive-card.json",
+    "version": "1.3",
+    "body": [
+        {
+            "type": "Container",
+            "items": [
+                {
+                    "type": "Image",
+                    "url": "https://example.com/all-fi-hub-error.png",
+                    "size": "Medium",
+                    "horizontalAlignment": "Center"
+                },
+                {
+                    "type": "Image",
+                    "url": "https://example.com/error-icon.png",
+                    "size": "Small",
+                    "horizontalAlignment": "Right"
+                }
+            ]
+        },
+        {
+            "type": "Container",
+            "style": "emphasis",
+            "items": [
+                {
+                    "type": "TextBlock",
+                    "text": "We can’t connect your All-Fi Hub",
+                    "weight": "Bolder",
+                    "size": "Medium",
+                    "color": "Attention"
+                },
+                {
+                    "type": "TextBlock",
+                    "text": "Let’s figure this out together.",
+                    "isSubtle": true,
+                    "wrap": true,
+                    "color": "Accent"
+                }
+            ]
+        },
+        {
+            "type": "ActionSet",
+            "actions": [
+                {
+                    "type": "Action.OpenUrl",
+                    "title": "Call us",
+                    "url": "tel:+18001234567"
+                }
+            ],
+            "horizontalAlignment": "Center"
+        }
+    ]
+}

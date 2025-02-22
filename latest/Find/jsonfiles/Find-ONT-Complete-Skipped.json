@@ -1,0 +1,45 @@
+{
+    "type": "AdaptiveCard",
+    "$schema": "http://adaptivecards.io/schemas/adaptive-card.json",
+    "version": "1.3",
+    "body": [
+        {
+            "type": "Image",
+            "url": "https://example.com/delivery-image.png",
+            "size": "Medium",
+            "horizontalAlignment": "Center"
+        },
+        {
+            "type": "Container",
+            "style": "emphasis",
+            "items": [
+                {
+                    "type": "TextBlock",
+                    "text": "Your outlet is ready",
+                    "weight": "Bolder",
+                    "size": "Medium",
+                    "color": "Accent"
+                },
+                {
+                    "type": "TextBlock",
+                    "text": "Your new All-Fi Hub is on the way. Once it arrives, we can help you get set up.",
+                    "isSubtle": true,
+                    "wrap": true
+                }
+            ]
+        },
+        {
+            "type": "ActionSet",
+            "actions": [
+                {
+                    "type": "Action.Submit",
+                    "title": "Done",
+                    "data": {
+                        "action": "complete"
+                    }
+                }
+            ],
+            "horizontalAlignment": "Center"
+        }
+    ]
+}

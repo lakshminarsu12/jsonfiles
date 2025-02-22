@@ -1,0 +1,46 @@
+{
+    "type": "AdaptiveCard",
+    "$schema": "http://adaptivecards.io/schemas/adaptive-card.json",
+    "version": "1.3",
+    "body": [
+        {
+            "type": "Image",
+            "url": "https://example.com/all-fi-hub-placement.png",
+            "size": "Medium",
+            "horizontalAlignment": "Center"
+        },
+        {
+            "type": "Container",
+            "style": "emphasis",
+            "items": [
+                {
+                    "type": "TextBlock",
+                    "text": "Place your All-Fi Hub near your AT&T ONT outlet",
+                    "weight": "Bolder",
+                    "size": "Medium",
+                    "wrap": true
+                }
+            ]
+        },
+        {
+            "type": "ActionSet",
+            "actions": [
+                {
+                    "type": "Action.Submit",
+                    "title": "⬅",
+                    "data": {
+                        "action": "previous"
+                    }
+                },
+                {
+                    "type": "Action.Submit",
+                    "title": "Next",
+                    "data": {
+                        "action": "next"
+                    }
+                }
+            ],
+            "horizontalAlignment": "Center"
+        }
+    ]
+}

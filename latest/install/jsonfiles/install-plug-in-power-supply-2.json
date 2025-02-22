@@ -1,0 +1,57 @@
+{
+    "type": "AdaptiveCard",
+    "$schema": "http://adaptivecards.io/schemas/adaptive-card.json",
+    "version": "1.3",
+    "body": [
+        {
+            "type": "Image",
+            "url": "https://example.com/all-fi-hub-power.png",
+            "size": "Medium",
+            "horizontalAlignment": "Center"
+        },
+        {
+            "type": "Container",
+            "style": "emphasis",
+            "items": [
+                {
+                    "type": "TextBlock",
+                    "text": "Plug the power supply 🔌 into an outlet and then the All-Fi Hub",
+                    "weight": "Bolder",
+                    "size": "Medium",
+                    "wrap": true
+                }
+            ]
+        },
+        {
+            "type": "ActionSet",
+            "actions": [
+                {
+                    "type": "Action.OpenUrl",
+                    "title": "Check my power supply",
+                    "url": "#"
+                }
+            ],
+            "horizontalAlignment": "Left"
+        },
+        {
+            "type": "ActionSet",
+            "actions": [
+                {
+                    "type": "Action.Submit",
+                    "title": "⬅",
+                    "data": {
+                        "action": "previous"
+                    }
+                },
+                {
+                    "type": "Action.Submit",
+                    "title": "Next",
+                    "data": {
+                        "action": "next"
+                    }
+                }
+            ],
+            "horizontalAlignment": "Center"
+        }
+    ]
+}

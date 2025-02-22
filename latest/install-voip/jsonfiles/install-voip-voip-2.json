@@ -1,0 +1,46 @@
+{
+    "type": "AdaptiveCard",
+    "$schema": "http://adaptivecards.io/schemas/adaptive-card.json",
+    "version": "1.3",
+    "body": [
+        {
+            "type": "Image",
+            "url": "https://example.com/phone-connection.png",
+            "size": "Medium",
+            "horizontalAlignment": "Center"
+        },
+        {
+            "type": "Container",
+            "style": "emphasis",
+            "items": [
+                {
+                    "type": "TextBlock",
+                    "text": "Use a voice cable to connect your phone to its port",
+                    "weight": "Bolder",
+                    "size": "Medium",
+                    "wrap": true
+                }
+            ]
+        },
+        {
+            "type": "ActionSet",
+            "actions": [
+                {
+                    "type": "Action.Submit",
+                    "title": "⬅",
+                    "data": {
+                        "action": "previous"
+                    }
+                },
+                {
+                    "type": "Action.Submit",
+                    "title": "Next",
+                    "data": {
+                        "action": "next"
+                    }
+                }
+            ],
+            "horizontalAlignment": "Center"
+        }
+    ]
+}

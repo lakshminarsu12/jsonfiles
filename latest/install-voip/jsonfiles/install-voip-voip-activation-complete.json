@@ -1,0 +1,56 @@
+{
+    "type": "AdaptiveCard",
+    "$schema": "http://adaptivecards.io/schemas/adaptive-card.json",
+    "version": "1.3",
+    "body": [
+        {
+            "type": "Container",
+            "items": [
+                {
+                    "type": "Image",
+                    "url": "https://example.com/all-fi-hub.png",
+                    "size": "Medium",
+                    "horizontalAlignment": "Center"
+                },
+                {
+                    "type": "Image",
+                    "url": "data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNjQiIGhlaWdodD0iNjQiIHZpZXdCb3g9IjAgMCA2NCA2NCIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KICA8Y2lyY2xlIGN4PSIzMiIgY3k9IjMyIiByPSIzMiIgc3Ryb2tlPSIjMjhmODI1IiBzdHJva2Utd2lkdGg9IjgiIGZpbGw9Im5vbmUiIC8+CiAgPHBhdGggZD0iTTIwIDI5LjY0TDI5LjMgMzguNjNMMzggMjUiIHN0cm9rZT0iIzI4Zjg1MiIgc3Ryb2tlLXdpZHRoPSI4IiBzdHJva2UtbGluZWNhcD0icm91bmQiIGZpbGw9Im5vbmUiIC8+Cjwvc3ZnPg==",
+                    "size": "Small",
+                    "horizontalAlignment": "Right"
+                }
+            ]
+        },
+        {
+            "type": "Container",
+            "style": "emphasis",
+            "items": [
+                {
+                    "type": "TextBlock",
+                    "text": "Activation successful!",
+                    "weight": "Bolder",
+                    "size": "Medium",
+                    "color": "Default"
+                },
+                {
+                    "type": "TextBlock",
+                    "text": "Let’s set up your phone line.",
+                    "isSubtle": true,
+                    "wrap": true
+                }
+            ]
+        },
+        {
+            "type": "ActionSet",
+            "actions": [
+                {
+                    "type": "Action.Submit",
+                    "title": "Continue",
+                    "data": {
+                        "action": "continue"
+                    }
+                }
+            ],
+            "horizontalAlignment": "Center"
+        }
+    ]
+}

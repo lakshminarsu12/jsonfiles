@@ -1,0 +1,69 @@
+{
+    "type": "AdaptiveCard",
+    "$schema": "http://adaptivecards.io/schemas/adaptive-card.json",
+    "version": "1.3",
+    "body": [
+        {
+            "type": "Image",
+            "url": "https://example.com/all-fi-hub.png",
+            "size": "Medium",
+            "horizontalAlignment": "Center"
+        },
+        {
+            "type": "Container",
+            "style": "emphasis",
+            "items": [
+                {
+                    "type": "TextBlock",
+                    "text": "Verifying account",
+                    "weight": "Bolder",
+                    "size": "Medium",
+                    "horizontalAlignment": "Center"
+                },
+                {
+                    "type": "ColumnSet",
+                    "columns": [
+                        {
+                            "type": "Column",
+                            "width": "stretch",
+                            "items": [
+                                {
+                                    "type": "TextBlock",
+                                    "text": " ",
+                                    "height": "stretch"
+                                },
+                                {
+                                    "type": "FactSet",
+                                    "facts": [
+                                        {
+                                            "title": " ",
+                                            "value": " "
+                                        }
+                                    ]
+                                },
+                                {
+                                    "type": "TextBlock",
+                                    "text": "About 10 minutes left",
+                                    "horizontalAlignment": "Center",
+                                    "isSubtle": true,
+                                    "wrap": true
+                                }
+                            ]
+                        }
+                    ]
+                },
+                {
+                    "type": "Container",
+                    "items": [
+                        {
+                            "type": "ProgressBar",
+                            "label": "Verification Progress",
+                            "value": 0.5,
+                            "color": "Accent"
+                        }
+                    ]
+                }
+            ]
+        }
+    ]
+}

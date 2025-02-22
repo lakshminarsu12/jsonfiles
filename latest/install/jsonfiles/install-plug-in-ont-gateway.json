@@ -1,0 +1,52 @@
+{
+    "type": "AdaptiveCard",
+    "$schema": "http://adaptivecards.io/schemas/adaptive-card.json",
+    "version": "1.3",
+    "body": [
+        {
+            "type": "Image",
+            "url": "https://example.com/all-fi-hub-ont-port.png",
+            "size": "Medium",
+            "horizontalAlignment": "Center"
+        },
+        {
+            "type": "Container",
+            "style": "emphasis",
+            "items": [
+                {
+                    "type": "TextBlock",
+                    "text": "Plug the other end into the ONT port on the back of the All-Fi Hub",
+                    "weight": "Bolder",
+                    "size": "Medium",
+                    "wrap": true
+                },
+                {
+                    "type": "TextBlock",
+                    "text": "ℹ️ If your ONT port has a black cap, remove it before inserting it into the hub.",
+                    "isSubtle": true,
+                    "wrap": true
+                }
+            ]
+        },
+        {
+            "type": "ActionSet",
+            "actions": [
+                {
+                    "type": "Action.Submit",
+                    "title": "⬅",
+                    "data": {
+                        "action": "previous"
+                    }
+                },
+                {
+                    "type": "Action.Submit",
+                    "title": "Next",
+                    "data": {
+                        "action": "next"
+                    }
+                }
+            ],
+            "horizontalAlignment": "Center"
+        }
+    ]
+}

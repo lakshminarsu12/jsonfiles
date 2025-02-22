@@ -1,0 +1,66 @@
+{
+    "type": "AdaptiveCard",
+    "$schema": "http://adaptivecards.io/schemas/adaptive-card.json",
+    "version": "1.3",
+    "body": [
+        {
+            "type": "Image",
+            "url": "https://example.com/all-fi-hub.png",
+            "size": "Medium",
+            "horizontalAlignment": "Center"
+        },
+        {
+            "type": "Container",
+            "style": "emphasis",
+            "items": [
+                {
+                    "type": "TextBlock",
+                    "text": "Let’s check your All-Fi Hub",
+                    "weight": "Bolder",
+                    "size": "Medium",
+                    "color": "Accent"
+                },
+                {
+                    "type": "TextBlock",
+                    "text": "Run a quick scan with your camera to make sure your All-Fi Hub is working.",
+                    "isSubtle": true,
+                    "wrap": true
+                }
+            ]
+        },
+        {
+            "type": "ActionSet",
+            "actions": [
+                {
+                    "type": "Action.Submit",
+                    "title": "⬅",
+                    "data": {
+                        "action": "previous"
+                    }
+                },
+                {
+                    "type": "Action.Submit",
+                    "title": "Scan All-Fi Hub",
+                    "iconUrl": "https://example.com/camera-icon.png",
+                    "data": {
+                        "action": "scan"
+                    }
+                }
+            ],
+            "horizontalAlignment": "Center"
+        },
+        {
+            "type": "ActionSet",
+            "actions": [
+                {
+                    "type": "Action.Submit",
+                    "title": "Skip",
+                    "data": {
+                        "action": "skip"
+                    }
+                }
+            ],
+            "horizontalAlignment": "Center"
+        }
+    ]
+}
