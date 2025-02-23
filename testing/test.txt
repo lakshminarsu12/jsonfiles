@@ -158,3 +158,59 @@ const allActions = findActions(adaptiveCardObject);
 }
 
 
+{
+    "type": "AdaptiveCard",
+    "$schema": "http://adaptivecards.io/schemas/adaptive-card.json",
+    "version": "1.3",
+    "body": [
+        {
+            "type": "Container",
+            "items": [
+                {
+                    "type": "Image",
+                    "id": "ontOutletImage",  // Unique ID for JavaScript & CSS
+                    "url": "https://example.com/ont-outlet.svg",
+                    "size": "Medium",
+                    "horizontalAlignment": "Center"
+                },
+                {
+                    "type": "Image",
+                    "id": "successCheckmark",  // Unique ID for JavaScript & CSS
+                    "url": "https://example.com/success-checkmark.svg",
+                    "size": "Small",
+                    "horizontalAlignment": "Right"
+                }
+            ]
+        }
+    ]
+}
+
+.ont-outlet-style {
+    width: 300px; /* Adjust based on requirements */
+    display: block;
+    position: relative;
+}
+
+.success-checkmark-style {
+    position: absolute;
+    top: 10px;  /* Adjust position */
+    right: 10px; /* Moves checkmark to the top-right corner */
+    width: 50px; /* Adjust size */
+}
+
+window.onload = function() {
+    // Select elements by their Adaptive Card 'id'
+    let ontOutletImage = document.querySelector("[id='ontOutletImage']");
+    let successCheckmark = document.querySelector("[id='successCheckmark']");
+
+    // Apply external CSS class dynamically
+    if (ontOutletImage) {
+        ontOutletImage.classList.add("ont-outlet-style");
+    }
+
+    if (successCheckmark) {
+        successCheckmark.classList.add("success-checkmark-style");
+    }
+};
+
+
