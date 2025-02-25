@@ -1,0 +1,138 @@
+{
+    "$schema": "http://adaptivecards.io/schemas/adaptive-card.json",
+    "version": "1.6",
+    "type": "AdaptiveCard",
+    "body": [
+        {
+            "type": "TextBlock",
+            "text": "⚠️ Can't Find Service Box",
+            "weight": "Bolder",
+            "size": "Large",
+            "color": "Attention",
+            "horizontalAlignment": "Center"
+        },
+        {
+            "type": "TextBlock",
+            "text": "(Open Tray Modal)",
+            "wrap": true,
+            "horizontalAlignment": "Center",
+            "size": "Small",
+            "isSubtle": true
+        },
+        {
+            "type": "TextBlock",
+            "text": "Here are some tips that may help",
+            "weight": "Bolder",
+            "size": "Medium",
+            "spacing": "Medium"
+        },
+        {
+            "type": "TextBlock",
+            "text": "The AT&T Service Box is typically installed near the floor in your closet or living room.",
+            "wrap": true,
+            "spacing": "Small"
+        },
+        {
+            "type": "TextBlock",
+            "text": "If you're having trouble locating it, try checking:",
+            "weight": "Bolder",
+            "spacing": "Small"
+        },
+        {
+            "type": "ColumnSet",
+            "columns": [
+                {
+                    "type": "Column",
+                    "width": "auto",
+                    "items": [
+                        {
+                            "type": "Image",
+                            "url": "data:image/png;base64,[BASE64_ENCODED_IMAGE_1]",
+                            "size": "Small",
+                            "altText": "Closet or network closet"
+                        }
+                    ]
+                },
+                {
+                    "type": "Column",
+                    "width": "stretch",
+                    "items": [
+                        {
+                            "type": "TextBlock",
+                            "text": "In a closet or network closet",
+                            "wrap": true
+                        }
+                    ]
+                }
+            ]
+        },
+        {
+            "type": "ColumnSet",
+            "columns": [
+                {
+                    "type": "Column",
+                    "width": "auto",
+                    "items": [
+                        {
+                            "type": "Image",
+                            "url": "data:image/png;base64,[BASE64_ENCODED_IMAGE_2]",
+                            "size": "Small",
+                            "altText": "Behind furniture"
+                        }
+                    ]
+                },
+                {
+                    "type": "Column",
+                    "width": "stretch",
+                    "items": [
+                        {
+                            "type": "TextBlock",
+                            "text": "Behind furniture",
+                            "wrap": true
+                        }
+                    ]
+                }
+            ]
+        },
+        {
+            "type": "ColumnSet",
+            "columns": [
+                {
+                    "type": "Column",
+                    "width": "auto",
+                    "items": [
+                        {
+                            "type": "Image",
+                            "url": "data:image/png;base64,[BASE64_ENCODED_IMAGE_3]",
+                            "size": "Small",
+                            "altText": "Troubleshooting article"
+                        }
+                    ]
+                },
+                {
+                    "type": "Column",
+                    "width": "stretch",
+                    "items": [
+                        {
+                            "type": "TextBlock",
+                            "text": "If the service box looks different from the previous image, here's a troubleshooting article.",
+                            "wrap": true
+                        }
+                    ]
+                }
+            ]
+        },
+        {
+            "type": "ActionSet",
+            "actions": [
+                {
+                    "type": "Action.Submit",
+                    "title": "Still having trouble",
+                    "data": {
+                        "action": "open_troubleshooting"
+                    }
+                }
+            ]
+        }
+    ]
+}
