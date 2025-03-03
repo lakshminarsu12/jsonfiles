@@ -1,3 +1,15 @@
+function updateImageStylesRecursively(obj) {
+    if (Array.isArray(obj)) {
+        obj.forEach(item => updateImageStylesRecursively(item)); // Loop through arrays
+    } else if (typeof obj === "object" && obj !== null) {
+        if (obj.type === "Image" && obj.style === "icon") {
+            obj.size = "Small"; // Add size property
+        }
+        // Recursively check all properties of the object
+        Object.keys(obj).forEach(key => updateImageStylesRecursively(obj[key]));
+    }
+}
+
 function findActions(obj, actionsList = []) {
     if (!obj || typeof obj !== "object") return;
 
