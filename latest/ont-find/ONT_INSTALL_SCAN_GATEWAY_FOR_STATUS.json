@@ -1,0 +1,73 @@
+{
+    "type": "AdaptiveCard",
+    "$schema": "http://adaptivecards.io/schemas/adaptive-card.json",
+    "version": "1.6",
+    "id": "ONT_INSTALL_SCAN_GATEWAY_FOR_STATUS",
+    "body": [
+      {
+        "type": "Container",
+        "style": "emphasis",
+        "items": [
+          {
+            "type": "Image",
+            "url": "${bgImageUrl}",
+            "size": "Large",
+            "horizontalAlignment": "Left"
+          },
+          {
+            "type": "TextBlock",
+            "text": "${checkYourAllHub}",
+            "weight": "Bolder",
+            "size": "Medium",
+            "color": "Accent",
+            "wrap": true
+          },
+          {
+            "type": "TextBlock",
+            "text": "${focusedBlackCap}",
+            "isSubtle": true,
+            "wrap": true
+          },
+          {
+            "type": "ActionSet",
+            "actions": [
+              {
+                "type": "Action.Submit",
+                "title": "",
+                "style": "button-utility-solo-icon",
+                "iconUrl": "https://cdn-icons-png.flaticon.com/512/271/271228.png",
+                "data": {
+                  "action": "previous"
+                }
+              },
+              {
+                "type": "Action.Submit",
+                "title": "Scan All-Fi Hub",
+                "iconUrl": "https://cdn-icons-png.flaticon.com/512/685/685685.png",
+                "style": "button-primary-icon",
+                "data": {
+                  "action": "scan"
+                }
+              }
+            ],
+            "horizontalAlignment": "Left"
+          },
+          {
+            "type": "ActionSet",
+            "actions": [
+              {
+                "type": "Action.Submit",
+                "title": "Skip",
+                "style": "button-link",
+                "data": {
+                  "action": "skip"
+                }
+              }
+            ],
+            "horizontalAlignment": "Left"
+          }
+        ]
+      }
+    ]
+  }
+  

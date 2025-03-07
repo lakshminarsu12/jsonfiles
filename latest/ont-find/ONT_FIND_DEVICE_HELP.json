@@ -1,0 +1,61 @@
+{
+    "type": "AdaptiveCard",
+    "$schema": "http://adaptivecards.io/schemas/adaptive-card.json",
+    "version": "1.6",
+    "id": "ONT_FIND_DEVICE_HELP",
+    "body": [
+      {
+        "type": "Container",
+        "items": [
+          {
+            "type": "Image",
+            "url": "${fiberEquipmentImageUrl}",
+            "size": "Large",
+            "horizontalAlignment": "Left"
+          },
+          {
+            "type": "TextBlock",
+            "text": "${findOntOutlet}",
+            "weight": "Bolder",
+            "size": "Medium",
+            "color": "Accent"
+          },
+          {
+            "type": "TextBlock",
+            "text": "${tryLookingInIndoorSpaces}",
+            "isSubtle": true,
+            "wrap": true
+          },
+          {
+            "type": "TextBlock",
+            "text": "${helpMeFindIt}",
+            "color": "Accent",
+            "wrap": true
+          },
+          {
+            "type": "ActionSet",
+            "actions": [
+              {
+                "type": "Action.Submit",
+                "title": "",
+                "style": "button-utility-solo-icon",
+                "iconUrl": "https://cdn-icons-png.flaticon.com/512/271/271220.png",
+                "data": {
+                  "action": "previous"
+                }
+              },
+              {
+                "type": "Action.Submit",
+                "title": "Next",
+                "style": "button-primary",
+                "data": {
+                  "action": "next"
+                }
+              }
+            ]
+          }
+        ]
+      }
+    ]
+  }
+  

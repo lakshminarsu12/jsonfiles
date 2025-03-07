@@ -1,0 +1,64 @@
+{
+    "type": "AdaptiveCard",
+    "$schema": "http://adaptivecards.io/schemas/adaptive-card.json",
+    "version": "1.6",
+    "id": "ONT_INSTALL_PLUG_CABLE_INTO_SERVICE_DEVICE",
+    "body": [
+      {
+        "type": "Container",
+        "style": "emphasis",
+        "items": [
+          {
+            "type": "Image",
+            "url": "${bgImageUrl}",
+            "size": "Medium",
+            "horizontalAlignment": "Center"
+          },
+          {
+            "type": "TextBlock",
+            "text": "${allSetupReady}",
+            "weight": "Bolder",
+            "size": "Medium",
+            "wrap": true
+          },
+          {
+            "type": "ActionSet",
+            "actions": [
+              {
+                "type": "Action.OpenUrl",
+                "title": "Check my outlet",
+                "style": "button-link",
+                "url": "${checkOutletUrl}"
+              }
+            ],
+            "horizontalAlignment": "Left"
+          },
+          {
+            "type": "ActionSet",
+            "actions": [
+              {
+                "type": "Action.Submit",
+                "title": "",
+                "style": "button-utility-solo-icon",
+                "iconUrl": "https://cdn-icons-png.flaticon.com/512/271/271228.png",
+                "data": {
+                  "action": "previous"
+                }
+              },
+              {
+                "type": "Action.Submit",
+                "title": "Next",
+                "iconUrl": "https://cdn-icons-png.flaticon.com/512/685/685685.png",
+                "style": "button-primary-icon",
+                "data": {
+                  "action": "next"
+                }
+              }
+            ],
+            "horizontalAlignment": "Left"
+          }
+        ]
+      }
+    ]
+  }
+  

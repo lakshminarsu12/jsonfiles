@@ -1,0 +1,59 @@
+{
+    "type": "AdaptiveCard",
+    "$schema": "http://adaptivecards.io/schemas/adaptive-card.json",
+    "version": "1.6",
+    "id": "ONT_FIND_DEVICE_COMPLETE",
+    "body": [
+      {
+        "type": "Image",
+        "url": "${successIconUrl}",
+        "size": "Small"
+      },
+      {
+        "type": "Image",
+        "url": "${fiberEquipmentCompleteImgUrl}",
+        "size": "Large"
+      },
+      {
+        "type": "TextBlock",
+        "text": "${youCalAllHubReadyToGo}",
+        "weight": "Bolder",
+        "size": "Medium",
+        "color": "Accent"
+      },
+      {
+        "type": "TextBlock",
+        "text": "${helpSetup}",
+        "isSubtle": true,
+        "wrap": true
+      },
+      {
+        "type": "ActionSet",
+        "actions": [
+          {
+            "type": "Action.Submit",
+            "title": "Let's go",
+            "style": "button-primary",
+            "data": {
+              "action": "setup"
+            }
+          }
+        ]
+      },
+      {
+        "type": "ActionSet",
+        "actions": [
+          {
+            "type": "Action.Submit",
+            "title": "Set up later",
+            "style": "button-link",
+            "data": {
+              "action": "setup_later"
+            }
+          }
+        ],
+        "horizontalAlignment": "Left"
+      }
+    ]
+  }
+  

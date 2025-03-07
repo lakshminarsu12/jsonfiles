@@ -1,0 +1,43 @@
+{
+    "$schema": "http://adaptivecards.io/schemas/adaptive-card.json",
+    "version": "1.6",
+    "type": "AdaptiveCard",
+    "id": "ONT_FIND_DEVICE_SCAN_AR",
+    "body": [
+      {
+        "type": "Container",
+        "items": [
+          {
+            "type": "TextBlock",
+            "text": "${scanTheOntOutlet}",
+            "weight": "Bolder",
+            "size": "Medium"
+          },
+          {
+            "type": "Image",
+            "url": "/images/camera.svg",
+            "size": "Medium",
+            "altText": "ONT Outlet Scan Prompt"
+          }
+        ]
+      }
+    ],
+    "actions": [
+      {
+        "type": "Action.Submit",
+        "title": "Scan Now",
+        "style": "positive",
+        "data": {
+          "action": "scan"
+        }
+      },
+      {
+        "type": "Action.Submit",
+        "title": "Cancel",
+        "data": {
+          "action": "cancel"
+        }
+      }
+    ]
+  }
+  
