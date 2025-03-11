@@ -269,29 +269,33 @@ window.onload = function() {
     text-align: left;
 }
 
-// **Function to apply custom styles to TextBlocks after rendering**
 function applyCustomStyles(renderedCard, templateData) {
     let textBlocks = renderedCard.getElementsByClassName("ac-textBlock");
 
-    let textBlockIndex = 0; // Track index to match JSON structure
     function traverseElements(elements) {
         elements.forEach(element => {
             if (element.type === "TextBlock") {
-                if (textBlocks[textBlockIndex]) {
-                    if (element.style === "title") {
-                        textBlocks[textBlockIndex].classList.add("textBlockTitle");
-                    } else if (element.style === "description") {
-                        textBlocks[textBlockIndex].classList.add("textBlockDescription");
+                // Find the correct rendered TextBlock by matching innerText
+                for (let i = 0; i < textBlocks.length; i++) {
+                    if (textBlocks[i].innerText.trim() === element.text.trim()) {
+                        if (element.style === "title") {
+                            textBlocks[i].classList.add("textBlockTitle");
+                        } else if (element.style === "description") {
+                            textBlocks[i].classList.add("textBlockDescription");
+                        } else if (element.style === "subtitle") {
+                            textBlocks[i].classList.add("textBlockSubtitle");
+                        } else if (element.style === "footnote") {
+                            textBlocks[i].classList.add("textBlockFootnote");
+                        }
+                        break; // Stop searching once we find a match
                     }
                 }
-                textBlockIndex++; // Move to next element
             } else if (element.items) {
-                traverseElements(element.items); // Recursively check items
+                traverseElements(element.items); // Recursively check nested items
             }
         });
     }
 
-    // Start recursion from the main body
     traverseElements(templateData.body);
 }
 
