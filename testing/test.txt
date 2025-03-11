@@ -225,4 +225,76 @@ window.onload = function() {
     }
 };
 
+/* Title TextBlock Styling */
+.textBlockTitle {
+    font-family: 'Arial', sans-serif;
+    font-size: 24px;  /* XL */
+    font-weight: bold;
+    line-height: 1.5;  /* L */
+    letter-spacing: 1px;  /* M */
+    color: #333; /* Dark gray */
+    text-align: center;
+}
+
+/* Description TextBlock Styling */
+.textBlockDescription {
+    font-family: 'Arial', sans-serif;
+    font-size: 16px;  /* S */
+    font-weight: normal;
+    line-height: 1.2;  /* S */
+    letter-spacing: 2px;  /* '2XL' */
+    color: #555; /* Medium gray */
+    text-align: left;
+}
+
+/* Subtitle TextBlock Styling */
+.textBlockSubtitle {
+    font-family: 'Arial', sans-serif;
+    font-size: 18px;  /* M */
+    font-weight: 500;  /* Medium */
+    line-height: 1.3;  /* M */
+    letter-spacing: 2px;  /* '2XL' */
+    color: #444; /* Slightly dark gray */
+    text-align: left;
+}
+
+/* Footnote TextBlock Styling */
+.textBlockFootnote {
+    font-family: 'Arial', sans-serif;
+    font-size: 14px;  /* XS */
+    font-weight: normal;
+    line-height: 1.1;  /* XS */
+    letter-spacing: 2px;  /* '2XL' */
+    color: #777; /* Light gray */
+    text-align: left;
+}
+
+// **Function to apply custom styles to TextBlocks after rendering**
+function applyCustomStyles(renderedCard, templateData) {
+    let textBlocks = renderedCard.getElementsByClassName("ac-textBlock");
+
+    let textBlockIndex = 0; // Track index to match JSON structure
+    function traverseElements(elements) {
+        elements.forEach(element => {
+            if (element.type === "TextBlock") {
+                if (textBlocks[textBlockIndex]) {
+                    if (element.style === "title") {
+                        textBlocks[textBlockIndex].classList.add("textBlockTitle");
+                    } else if (element.style === "description") {
+                        textBlocks[textBlockIndex].classList.add("textBlockDescription");
+                    }
+                }
+                textBlockIndex++; // Move to next element
+            } else if (element.items) {
+                traverseElements(element.items); // Recursively check items
+            }
+        });
+    }
+
+    // Start recursion from the main body
+    traverseElements(templateData.body);
+}
+
+applyCustomStyles(renderedCard, expandedTemplate);
+
 
