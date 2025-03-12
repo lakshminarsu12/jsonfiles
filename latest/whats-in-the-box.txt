@@ -131,16 +131,41 @@
                     ]
                 }
             ]
-        }
-    ],
-    "actions": [
-        {
-            "type": "Action.Submit",
-            "title": "Missing anything?"
         },
         {
-            "type": "Action.Submit",
-            "title": "It's all here!"
+            "type": "ColumnSet",
+            "columns": [
+                {
+                    "type": "Column",
+                    "items": [
+                        {
+                            "type": "ActionSet",
+                            "actions": [
+                                {
+                                    "type": "Action.Submit",
+                                    "title": "Missing anything?"
+                                }
+                            ]
+                        }
+                    ],
+                    "width": "stretch"
+                },
+                {
+                    "type": "Column",
+                    "items": [
+                        {
+                            "type": "ActionSet",
+                            "actions": [
+                                {
+                                    "type": "Action.Submit",
+                                    "title": "It's all here!"
+                                }
+                            ]
+                        }
+                    ],
+                    "width": "stretch"
+                }
+            ]
         }
     ]
 }
