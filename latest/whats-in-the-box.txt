@@ -7,45 +7,53 @@
             "items": [
                 {
                     "type": "TextBlock",
-                    "text": "Here's what's in the box",
+                    "text": "Here's what’s in the box",
                     "weight": "Bolder",
                     "size": "Medium"
                 },
                 {
                     "type": "TextBlock",
                     "text": "Make sure all the equipment is there before we begin.",
-                    "color": "Accent",
-                    "wrap": true
+                    "size": "Small",
+                    "color": "Accent"
                 },
                 {
                     "type": "ColumnSet",
                     "columns": [
                         {
                             "type": "Column",
+                            "width": "auto",
                             "items": [
                                 {
                                     "type": "Image",
-                                    "url": "https://example.com/all-fi-hub.png",
-                                    "size": "Small"
+                                    "url": "data:image/svg+xml;base64,...",
+                                    "size": "Medium"
                                 }
-                            ],
-                            "width": "auto"
+                            ]
                         },
                         {
                             "type": "Column",
+                            "width": "stretch",
                             "items": [
                                 {
-                                    "type": "TextBlock",
-                                    "text": "AT&T All-Fi Hub™",
-                                    "weight": "Bolder"
+                                    "type": "Image",
+                                    "url": "data:image/svg+xml;base64,...",
+                                    "size": "Small",
+                                    "horizontalAlignment": "Left"
                                 },
                                 {
                                     "type": "TextBlock",
-                                    "text": "Serial Number: N93VA12000999",
-                                    "spacing": "None"
+                                    "text": "AT&T All-Fi Hub™",
+                                    "weight": "Bolder",
+                                    "horizontalAlignment": "Left"
+                                },
+                                {
+                                    "type": "TextBlock",
+                                    "text": "Serial Number: N93VA1200099",
+                                    "size": "Small",
+                                    "horizontalAlignment": "Left"
                                 }
-                            ],
-                            "width": "stretch"
+                            ]
                         }
                     ]
                 },
@@ -54,25 +62,32 @@
                     "columns": [
                         {
                             "type": "Column",
+                            "width": "auto",
                             "items": [
                                 {
                                     "type": "Image",
-                                    "url": "https://example.com/ont-cable.png",
-                                    "size": "Small"
+                                    "url": "data:image/svg+xml;base64,...",
+                                    "size": "Medium"
                                 }
-                            ],
-                            "width": "auto"
+                            ]
                         },
                         {
                             "type": "Column",
+                            "width": "stretch",
                             "items": [
+                                {
+                                    "type": "Image",
+                                    "url": "data:image/svg+xml;base64,...",
+                                    "size": "Small",
+                                    "horizontalAlignment": "Left"
+                                },
                                 {
                                     "type": "TextBlock",
                                     "text": "ONT cable",
-                                    "weight": "Bolder"
+                                    "weight": "Bolder",
+                                    "horizontalAlignment": "Left"
                                 }
-                            ],
-                            "width": "stretch"
+                            ]
                         }
                     ]
                 },
@@ -81,25 +96,32 @@
                     "columns": [
                         {
                             "type": "Column",
+                            "width": "auto",
                             "items": [
                                 {
                                     "type": "Image",
-                                    "url": "https://example.com/power-supply.png",
-                                    "size": "Small"
+                                    "url": "data:image/svg+xml;base64,...",
+                                    "size": "Medium"
                                 }
-                            ],
-                            "width": "auto"
+                            ]
                         },
                         {
                             "type": "Column",
+                            "width": "stretch",
                             "items": [
+                                {
+                                    "type": "Image",
+                                    "url": "data:image/svg+xml;base64,...",
+                                    "size": "Small",
+                                    "horizontalAlignment": "Left"
+                                },
                                 {
                                     "type": "TextBlock",
                                     "text": "Power supply",
-                                    "weight": "Bolder"
+                                    "weight": "Bolder",
+                                    "horizontalAlignment": "Left"
                                 }
-                            ],
-                            "width": "stretch"
+                            ]
                         }
                     ]
                 },
@@ -108,62 +130,47 @@
                     "columns": [
                         {
                             "type": "Column",
+                            "width": "auto",
                             "items": [
                                 {
                                     "type": "Image",
-                                    "url": "https://example.com/optional-cables.png",
-                                    "size": "Small"
+                                    "url": "data:image/svg+xml;base64,...",
+                                    "size": "Medium"
                                 }
-                            ],
-                            "width": "auto"
+                            ]
                         },
                         {
                             "type": "Column",
+                            "width": "stretch",
                             "items": [
+                                {
+                                    "type": "Image",
+                                    "url": "data:image/svg+xml;base64,...",
+                                    "size": "Small",
+                                    "horizontalAlignment": "Left"
+                                },
                                 {
                                     "type": "TextBlock",
                                     "text": "Optional cables",
-                                    "weight": "Bolder"
+                                    "weight": "Bolder",
+                                    "horizontalAlignment": "Left"
                                 }
-                            ],
-                            "width": "stretch"
+                            ]
                         }
                     ]
-                }
-            ]
-        },
-        {
-            "type": "ColumnSet",
-            "columns": [
-                {
-                    "type": "Column",
-                    "items": [
-                        {
-                            "type": "ActionSet",
-                            "actions": [
-                                {
-                                    "type": "Action.Submit",
-                                    "title": "Missing anything?"
-                                }
-                            ]
-                        }
-                    ],
-                    "width": "stretch"
                 },
                 {
-                    "type": "Column",
-                    "items": [
+                    "type": "ActionSet",
+                    "actions": [
                         {
-                            "type": "ActionSet",
-                            "actions": [
-                                {
-                                    "type": "Action.Submit",
-                                    "title": "It's all here!"
-                                }
-                            ]
+                            "type": "Action.Submit",
+                            "title": "Missing anything?"
+                        },
+                        {
+                            "type": "Action.Submit",
+                            "title": "It's all here!"
                         }
-                    ],
-                    "width": "stretch"
+                    ]
                 }
             ]
         }
