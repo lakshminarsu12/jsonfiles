@@ -1,0 +1,231 @@
+Here is the full final cleaned-up code for your project that dynamically updates the progress and remaining time.
+
+1. FirmwareUpdateSimulator.java (Backend)
+This class simulates the firmware update progress and remaining time.
+
+package com.example;
+
+import org.springframework.stereotype.Component;
+
+@Component
+public class FirmwareUpdateSimulator {
+
+    private int progress = 0;
+    private int totalTimeInSeconds = 300;  // 5 minutes in seconds
+    private int secondsLeft = totalTimeInSeconds;
+
+    public int getProgress() {
+        return progress;
+    }
+
+    public String getRemainingTime() {
+        return formatTime(secondsLeft);
+    }
+
+    public void simulateUpdate() {
+        // Simulate the progress update and remaining time
+        new Thread(() -> {
+            while (progress < 100) {
+                try {
+                    Thread.sleep(500);  // Update every half-second
+                    progress++;
+                    secondsLeft--;
+
+                    if (progress == 100) {
+                        secondsLeft = 0;  // Time is zero when 100% is reached
+                    }
+
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+            }
+        }).start();
+    }
+
+    private String formatTime(int seconds) {
+        int minutes = seconds / 60;
+        int remainingSeconds = seconds % 60;
+        return String.format("%02d:%02d", minutes, remainingSeconds);
+    }
+}
+2. FirmwareUpdateController.java (Backend)
+This controller handles the update initiation and sends progress updates via WebSockets.
+
+package com.example;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.messaging.simp.SimpMessagingTemplate;
+import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
+
+@Controller
+@RequestMapping("/update")
+public class FirmwareUpdateController {
+
+    @Autowired
+    private FirmwareUpdateSimulator simulator;
+
+    @Autowired
+    private SimpMessagingTemplate messagingTemplate;
+
+    @GetMapping
+    public String initiateUpdate() {
+        simulator.simulateUpdate();
+        return "index"; // Return to the frontend page (index.html)
+    }
+
+    // WebSocket endpoint to broadcast progress and remaining time
+    @RequestMapping("/progress")
+    public void sendProgressUpdates() {
+        while (simulator.getProgress() < 100) {
+            messagingTemplate.convertAndSend("/topic/progress", 
+                new ProgressUpdate(simulator.getProgress(), simulator.getRemainingTime()));
+            try {
+                Thread.sleep(1000); // Send updates every second
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+        }
+        messagingTemplate.convertAndSend("/topic/progress", 
+                new ProgressUpdate(100, "00:00")); // Send 100% completion message
+    }
+}
+3. ProgressUpdate.java (Backend)
+This is a simple model class used to send progress and remaining time via WebSockets.
+
+package com.example;
+
+public class ProgressUpdate {
+
+    private int progress;
+    private String remainingTime;
+
+    public ProgressUpdate(int progress, String remainingTime) {
+        this.progress = progress;
+        this.remainingTime = remainingTime;
+    }
+
+    public int getProgress() {
+        return progress;
+    }
+
+    public String getRemainingTime() {
+        return remainingTime;
+    }
+}
+4. WebSocketConfig.java (Backend)
+This configuration class sets up WebSocket endpoints and allows communication from the server to the frontend.
+
+package com.example;
+
+import org.springframework.context.annotation.Configuration;
+import org.springframework.messaging.simp.config.MessageBrokerRegistry;
+import org.springframework.web.socket.config.annotation.EnableWebSocketMessageBroker;
+import org.springframework.web.socket.config.annotation.StompEndpointRegistry;
+import org.springframework.web.socket.config.annotation.WebSocketMessageBrokerConfigurer;
+
+@Configuration
+@EnableWebSocketMessageBroker
+public class WebSocketConfig implements WebSocketMessageBrokerConfigurer {
+
+    @Override
+    public void configureMessageBroker(MessageBrokerRegistry config) {
+        config.enableSimpleBroker("/topic");
+        config.setApplicationDestinationPrefixes("/app");
+    }
+
+    @Override
+    public void registerStompEndpoints(StompEndpointRegistry registry) {
+        registry.addEndpoint("/ws").withSockJS();
+    }
+}
+5. Application.java (Main Application)
+The main entry point for the Spring Boot application.
+
+package com.example;
+
+import org.springframework.boot.SpringApplication;
+import org.springframework.boot.autoconfigure.SpringBootApplication;
+
+@SpringBootApplication
+public class Application {
+
+    public static void main(String[] args) {
+        SpringApplication.run(Application.class, args);
+    }
+}
+6. index.html (Frontend)
+This is the HTML file that displays the progress bar and remaining time dynamically using WebSocket communication.
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Firmware Update Progress</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/sockjs-client/1.5.0/sockjs.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/stompjs@2.3.3/dist/stomp.min.js"></script>
+    <style>
+        #progressBar {
+            width: 100%;
+            background-color: #f3f3f3;
+        }
+        #progressBarFilled {
+            height: 30px;
+            width: 0;
+            background-color: green;
+            text-align: center;
+            color: white;
+        }
+    </style>
+</head>
+<body>
+    <h2>Firmware Update Progress</h2>
+    <div id="progressBar">
+        <div id="progressBarFilled">0%</div>
+    </div>
+    <h3>Time Remaining: <span id="remainingTime">05:00</span></h3>
+    
+    <button onclick="startUpdate()">Start Update</button>
+
+    <script>
+        var stompClient = null;
+
+        function connect() {
+            var socket = new SockJS('/ws');
+            stompClient = Stomp.over(socket);
+            stompClient.connect({}, function (frame) {
+                console.log('Connected: ' + frame);
+                stompClient.subscribe('/topic/progress', function (messageOutput) {
+                    var progressData = JSON.parse(messageOutput.body);
+                    updateProgress(progressData);
+                });
+            });
+        }
+
+        function updateProgress(progressData) {
+            document.getElementById('progressBarFilled').style.width = progressData.progress + '%';
+            document.getElementById('progressBarFilled').textContent = progressData.progress + '%';
+            document.getElementById('remainingTime').textContent = progressData.remainingTime;
+        }
+
+        function startUpdate() {
+            fetch('/update')
+                .then(response => response.json())
+                .then(data => {
+                    connect();
+                    setInterval(() => {
+                        fetch('/update/progress')
+                            .then(response => response.json());
+                    }, 1000);
+                });
+        }
+    </script>
+</body>
+</html>
+7. application.properties (Configuration)
+Here are the necessary properties for Spring Boot and WebSocket configuration.
+
+spring.websocket.enabled=true
+spring.websocket.stomp.endpoint=/ws
