@@ -1,0 +1,23 @@
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.ApplicationContext;
+import org.springframework.stereotype.Component;
+
+import javax.annotation.PostConstruct;
+import java.util.Arrays;
+
+@Component
+public class BeanDebugger {
+
+    @Autowired
+    private ApplicationContext applicationContext;
+
+    @PostConstruct
+    public void printAllBeans() {
+        String[] beanNames = applicationContext.getBeanDefinitionNames();
+        Arrays.sort(beanNames); // Sort for easier reading
+        System.out.println("Beans in ApplicationContext:");
+        for (String beanName : beanNames) {
+            System.out.println(beanName);
+        }
+    }
+}
