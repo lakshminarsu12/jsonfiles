@@ -1,0 +1,27 @@
+{
+    "$schema": "http://adaptivecards.io/schemas/adaptive-card.json",
+    "type": "AdaptiveCard",
+    "version": "1.6",
+    "body": [
+        {
+            "type": "TextBlock",
+            "text": "Updating firmware",
+            "weight": "Bolder",
+            "size": "Medium",
+            "horizontalAlignment": "Center"
+        },
+        {
+            "type": "Image",
+            "url": "https://example.com/progress-bar.svg",
+            "altText": "Firmware update progress",
+            "size": "Stretch"
+        },
+        {
+            "type": "TextBlock",
+            "text": "About 5 minutes left",
+            "horizontalAlignment": "Center",
+            "size": "Small",
+            "color": "Accent"
+        }
+    ]
+};
