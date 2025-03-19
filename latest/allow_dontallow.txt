@@ -1,0 +1,39 @@
+{
+    "$schema": "http://adaptivecards.io/schemas/adaptive-card.json",
+    "type": "AdaptiveCard",
+    "version": "1.6",
+    "body": [
+        {
+            "type": "TextBlock",
+            "text": "Allow AT&T to access your camera while using the app",
+            "wrap": true,
+            "weight": "Bolder",
+            "size": "Medium",
+            "horizontalAlignment": "Center"
+        },
+        {
+            "type": "TextBlock",
+            "text": "This will help us find the service box and troubleshoot any issues that may come up.",
+            "wrap": true,
+            "size": "Small",
+            "horizontalAlignment": "Center"
+        }
+    ],
+    "actions": [
+        {
+            "type": "Action.Submit",
+            "title": "Don't allow",
+            "data": {
+                "permission": "denied"
+            }
+        },
+        {
+            "type": "Action.Submit",
+            "title": "Allow",
+            "style": "positive",
+            "data": {
+                "permission": "granted"
+            }
+        }
+    ]
+}
