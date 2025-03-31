@@ -1,0 +1,16 @@
+{
+  "type": "AdaptiveCard",
+  "version": "1.6",
+  "body": [
+    {
+      "type": "Media",
+      "poster": "https://yourdomain.com/thumbnail.jpg",
+      "sources": [
+        {
+          "mimeType": "video/mp4",
+          "url": "https://yourdomain.com/video.mp4"
+        }
+      ]
+    }
+  ]
+}
