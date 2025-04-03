@@ -1,0 +1,41 @@
+import org.bytedeco.javacv.*;
+import org.bytedeco.opencv.opencv_core.*;
+
+import java.io.File;
+
+public class VideoFrameExtractor {
+
+    public static void main(String[] args) throws Exception {
+        String videoFilePath = "path/to/video.mp4";
+        String outputDir = "frames/";
+
+        // Create output directory if it doesn't exist
+        new File(outputDir).mkdirs();
+
+        // Open the video file
+        FFmpegFrameGrabber frameGrabber = new FFmpegFrameGrabber(videoFilePath);
+        frameGrabber.start();
+
+        Frame frame;
+        int frameNumber = 0;
+        double frameRate = frameGrabber.getFrameRate();
+        int totalFrames = frameGrabber.getLengthInFrames();
+        double durationInSec = (double) totalFrames / frameRate;
+
+        System.out.println("Total duration: " + durationInSec + " seconds");
+
+        for (int i = 0; i < totalFrames; i++) {
+            frame = frameGrabber.grabImage();
+            if (frame != null && i % ((int) frameRate) == 0) { // 1 frame per second
+                Java2DFrameConverter converter = new Java2DFrameConverter();
+                BufferedImage bufferedImage = converter.getBufferedImage(frame);
+                File output = new File(outputDir + "frame_" + frameNumber + ".png");
+                ImageIO.write(bufferedImage, "png", output);
+                frameNumber++;
+            }
+        }
+
+        frameGrabber.stop();
+        System.out.println("Frames extracted: " + frameNumber);
+    }
+}
