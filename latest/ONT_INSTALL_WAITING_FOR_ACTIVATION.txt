@@ -1,0 +1,54 @@
+{
+  "$schema": "http://adaptivecards.io/schemas/adaptive-card.json",
+  "type": "AdaptiveCard",
+  "version": "1.6",
+  "body": [
+    {
+      "type": "Image",
+      "url": "https://example.com/device-image.png",
+      "size": "Medium",
+      "horizontalAlignment": "Center"
+    },
+    {
+      "type": "Container",
+      "items": [
+        {
+          "type": "TextBlock",
+          "text": "Hold on while we set things up",
+          "weight": "Bolder",
+          "size": "Medium",
+          "horizontalAlignment": "Center",
+          "wrap": true
+        },
+        {
+          "type": "TextBlock",
+          "text": "About {{minutes}} minutes left",
+          "isSubtle": true,
+          "spacing": "Small",
+          "horizontalAlignment": "Center",
+          "wrap": true
+        },
+        {
+          "type": "FactSet",
+          "facts": []
+        },
+        {
+          "type": "Container",
+          "items": [
+            {
+              "type": "ProgressBar",
+              "title": "",
+              "value": 0.3,
+              "valueFormat": "Percentage"
+            }
+          ],
+          "style": "emphasis",
+          "bleed": true
+        }
+      ],
+      "spacing": "Medium",
+      "style": "default",
+      "bleed": false
+    }
+  ]
+}
