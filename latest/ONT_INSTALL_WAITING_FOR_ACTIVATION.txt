@@ -5,50 +5,37 @@
   "body": [
     {
       "type": "Image",
-      "url": "https://example.com/device-image.png",
-      "size": "Medium",
-      "horizontalAlignment": "Center"
+      "url": "data:image/png;base64,<BASE64_IMAGE_DATA>",
+      "altText": "Firmware update progress",
+      "horizontalAlignment": "Center",
+      "size": "Stretch"
     },
     {
       "type": "Container",
       "items": [
         {
           "type": "TextBlock",
-          "text": "Hold on while we set things up",
+          "text": "Updating firmware",
           "weight": "Bolder",
           "size": "Medium",
+          "horizontalAlignment": "Center"
+        },
+        {
+          "type": "Image",
+          "url": "data:image/png;base64,<BASE64_PROGRESS_BAR_IMAGE_DATA>",
+          "altText": "Progress bar",
           "horizontalAlignment": "Center",
-          "wrap": true
+          "size": "Stretch"
         },
         {
           "type": "TextBlock",
-          "text": "About {{minutes}} minutes left",
-          "isSubtle": true,
-          "spacing": "Small",
+          "text": "About 5 minutes left",
           "horizontalAlignment": "Center",
-          "wrap": true
-        },
-        {
-          "type": "FactSet",
-          "facts": []
-        },
-        {
-          "type": "Container",
-          "items": [
-            {
-              "type": "ProgressBar",
-              "title": "",
-              "value": 0.3,
-              "valueFormat": "Percentage"
-            }
-          ],
-          "style": "emphasis",
-          "bleed": true
+          "spacing": "Small",
+          "isSubtle": true
         }
       ],
-      "spacing": "Medium",
-      "style": "default",
-      "bleed": false
+      "spacing": "Medium"
     }
   ]
 }
