@@ -1,0 +1,35 @@
+{
+  "$schema": "http://adaptivecards.io/schemas/adaptive-card.json",
+  "type": "AdaptiveCard",
+  "version": "1.6",
+  "body": [
+    {
+      "type": "Image",
+      "url": "https://example.com/silver-power-brick-replacement.png",
+      "altText": "Silver power brick with cord",
+      "horizontalAlignment": "Center",
+      "size": "Medium"
+    },
+    {
+      "type": "TextBlock",
+      "text": "Let’s get you a new cord",
+      "weight": "Bolder",
+      "color": "Attention",
+      "wrap": true,
+      "size": "Large"
+    },
+    {
+      "type": "TextBlock",
+      "text": "One of our agents can help.",
+      "wrap": true,
+      "spacing": "None"
+    }
+  ],
+  "actions": [
+    {
+      "type": "Action.OpenUrl",
+      "title": "Call us",
+      "url": "tel:18001234567"
+    }
+  ]
+}

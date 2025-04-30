@@ -1,0 +1,36 @@
+{
+    "$schema": "http://adaptivecards.io/schemas/adaptive-card.json",
+    "type": "AdaptiveCard",
+    "version": "1.6",
+    "body": [
+      {
+        "type": "Image",
+        "url": "https://example.com/green-cable-image.png",
+        "altText": "Cable image with green connectors",
+        "horizontalAlignment": "Center",
+        "size": "Medium"
+      },
+      {
+        "type": "TextBlock",
+        "text": "Let’s get you a new cable",
+        "weight": "Bolder",
+        "color": "Attention",
+        "wrap": true,
+        "size": "Large"
+      },
+      {
+        "type": "TextBlock",
+        "text": "One of our agents can help.",
+        "wrap": true,
+        "spacing": "None"
+      }
+    ],
+    "actions": [
+      {
+        "type": "Action.OpenUrl",
+        "title": "Call us",
+        "url": "tel:18001234567"
+      }
+    ]
+  }
+  

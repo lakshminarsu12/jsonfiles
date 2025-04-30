@@ -1,0 +1,45 @@
+{
+    "$schema": "http://adaptivecards.io/schemas/adaptive-card.json",
+    "type": "AdaptiveCard",
+    "version": "1.6",
+    "body": [
+      {
+        "type": "Image",
+        "url": "https://example.com/silver-power-brick.png",
+        "altText": "Silver power brick cord image",
+        "horizontalAlignment": "Center",
+        "size": "Medium"
+      },
+      {
+        "type": "TextBlock",
+        "text": "Well, that’s unexpected",
+        "weight": "Bolder",
+        "color": "Attention",
+        "wrap": true,
+        "size": "Large"
+      },
+      {
+        "type": "TextBlock",
+        "text": "If possible, try emptying the box—the cord may have gotten loose inside the box.",
+        "wrap": true,
+        "spacing": "None"
+      }
+    ],
+    "actions": [
+      {
+        "type": "Action.Submit",
+        "title": "Found the cable",
+        "data": {
+          "response": "found_silver_brick"
+        }
+      },
+      {
+        "type": "Action.Submit",
+        "title": "Couldn’t find it",
+        "data": {
+          "response": "not_found_silver_brick"
+        }
+      }
+    ]
+  }
+  
