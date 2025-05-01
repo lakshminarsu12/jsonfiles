@@ -1,32 +1,145 @@
 {
-    "type": "AdaptiveCard",
-    "version": "1.6",
-    "body": [
-      {
-        "type": "TextBlock",
-        "text": "Show Details"
-      },
-      {
-        "type": "ActionSet",
-        "actions": [
-          {
-            "type": "Action.ShowCard",
-            "title": "More Info",
-            "targetElements": ["detailSection"]
+  "$schema": "http://adaptivecards.io/schemas/adaptive-card.json",
+  "type": "AdaptiveCard",
+  "version": "1.6",
+  "body": [
+    {
+      "type": "TextBlock",
+      "text": "Setup successful!",
+      "weight": "Bolder",
+      "size": "Large"
+    },
+    {
+      "type": "TextBlock",
+      "text": "You can now connect your devices.",
+      "spacing": "Small"
+    },
+    {
+      "type": "ActionSet",
+      "actions": [
+        {
+          "type": "Action.ToggleVisibility",
+          "title": "Show Wi-Fi Details",
+          "targetElements": ["wifiDetailsContainer"]
+        }
+      ]
+    },
+    {
+      "type": "Container",
+      "id": "wifiDetailsContainer",
+      "isVisible": false,
+      "style": "emphasis",
+      "bleed": true,
+      "items": [
+        {
+          "type": "ColumnSet",
+          "columns": [
+            {
+              "type": "Column",
+              "width": "stretch",
+              "items": [
+                {
+                  "type": "TextBlock",
+                  "text": "Wi-Fi name",
+                  "isSubtle": true,
+                  "spacing": "Small"
+                },
+                {
+                  "type": "TextBlock",
+                  "text": "MattsNetwork",
+                  "weight": "Bolder",
+                  "wrap": true
+                }
+              ]
+            },
+            {
+              "type": "Column",
+              "width": "auto",
+              "items": [
+                {
+                  "type": "ActionSet",
+                  "actions": [
+                    {
+                      "type": "Action.Submit",
+                      "title": "Edit",
+                      "data": {
+                        "action": "edit_wifi_name"
+                      }
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "type": "ColumnSet",
+          "columns": [
+            {
+              "type": "Column",
+              "width": "stretch",
+              "items": [
+                {
+                  "type": "TextBlock",
+                  "text": "Wi-Fi password",
+                  "isSubtle": true,
+                  "spacing": "Small"
+                },
+                {
+                  "type": "TextBlock",
+                  "text": "Wifi password who?",
+                  "weight": "Bolder",
+                  "wrap": true
+                }
+              ]
+            },
+            {
+              "type": "Column",
+              "width": "auto",
+              "items": [
+                {
+                  "type": "ActionSet",
+                  "actions": [
+                    {
+                      "type": "Action.Submit",
+                      "title": "Edit",
+                      "data": {
+                        "action": "edit_wifi_password"
+                      }
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "type": "ActionSet",
+          "actions": [
+            {
+              "type": "Action.Submit",
+              "title": "Share my wifi",
+              "style": "positive",
+              "data": {
+                "action": "share_wifi"
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "type": "ActionSet",
+      "actions": [
+        {
+          "type": "Action.Submit",
+          "title": "Done",
+          "style": "positive",
+          "data": {
+            "action": "done"
           }
-        ]
-      },
-      {
-        "type": "Container",
-        "id": "detailSection",
-        "isVisible": false,
-        "items": [
-          {
-            "type": "TextBlock",
-            "text": "Here is some additional information."
-          }
-        ]
-      }
-    ]
-  }
-  
+        }
+      ]
+    }
+  ]
+}
