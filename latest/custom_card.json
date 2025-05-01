@@ -1,0 +1,32 @@
+{
+    "type": "AdaptiveCard",
+    "version": "1.6",
+    "body": [
+      {
+        "type": "TextBlock",
+        "text": "Show Details"
+      },
+      {
+        "type": "ActionSet",
+        "actions": [
+          {
+            "type": "Action.ShowCard",
+            "title": "More Info",
+            "targetElements": ["detailSection"]
+          }
+        ]
+      },
+      {
+        "type": "Container",
+        "id": "detailSection",
+        "isVisible": false,
+        "items": [
+          {
+            "type": "TextBlock",
+            "text": "Here is some additional information."
+          }
+        ]
+      }
+    ]
+  }
+  
