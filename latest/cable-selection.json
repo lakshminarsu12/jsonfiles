@@ -1,0 +1,91 @@
+{
+    "type": "AdaptiveCard",
+    "version": "1.6",
+    "body": [
+      {
+        "type": "TextBlock",
+        "text": "Which cable are you missing?",
+        "size": "Medium",
+        "weight": "Bolder",
+        "spacing": "Medium"
+      },
+      {
+        "type": "ActionSet",
+        "actions": [
+          {
+            "type": "Action.Submit",
+            "title": "![ONT cable](https://example.com/ont-cable-icon.png) ONT cable",
+            "style": "default",
+            "data": {
+              "choice": "ONT cable"
+            }
+          }
+        ],
+        "spacing": "Small"
+      },
+      {
+        "type": "ActionSet",
+        "actions": [
+          {
+            "type": "Action.Submit",
+            "title": "![Fiber cable](https://example.com/fiber-cable-icon.png) Fiber cable",
+            "style": "default",
+            "data": {
+              "choice": "Fiber cable"
+            }
+          }
+        ],
+        "spacing": "Small"
+      },
+      {
+        "type": "ActionSet",
+        "actions": [
+          {
+            "type": "Action.Submit",
+            "title": "![Network power](https://example.com/network-power-icon.png) Network power",
+            "style": "default",
+            "data": {
+              "choice": "Network power"
+            }
+          }
+        ],
+        "spacing": "Small"
+      },
+      {
+        "type": "ActionSet",
+        "actions": [
+          {
+            "type": "Action.Submit",
+            "title": "![Power supply](https://example.com/power-supply-icon.png) Power supply",
+            "style": "default",
+            "data": {
+              "choice": "Power supply"
+            }
+          }
+        ],
+        "spacing": "Small"
+      },
+      {
+        "type": "ActionSet",
+        "actions": [
+          {
+            "type": "Action.Submit",
+            "title": "![Optional cables](https://example.com/optional-cables-icon.png) Optional cables",
+            "style": "default",
+            "data": {
+              "choice": "Optional cables"
+            }
+          }
+        ],
+        "spacing": "Small"
+      }
+    ],
+    "actions": [
+      {
+        "type": "Action.Submit",
+        "title": "Next",
+        "style": "positive"
+      }
+    ],
+    "$schema": "http://adaptivecards.io/schemas/adaptive-card.json"
+  }
