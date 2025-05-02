@@ -10,71 +10,95 @@
         "spacing": "Medium"
       },
       {
-        "type": "ActionSet",
-        "actions": [
+        "type": "Container",
+        "id": "cableOptionsContainer",
+        "items": [
           {
-            "type": "Action.Submit",
-            "title": "ONT cable",
-            "iconUrl": "https://example.com/ont-cable-icon.png",
-            "style": "default"
-          }
-        ],
-        "spacing": "Small"
-      },
-      {
-        "type": "ActionSet",
-        "actions": [
+            "type": "ActionSet",
+            "actions": [
+              {
+                "type": "Action.Submit",
+                "title": "ONT cable",
+                "iconUrl": "https://example.com/ont-cable-icon.png",
+                "style": "default",
+                "data": {
+                  "selectedOption": "ont_cable"
+                }
+              }
+            ],
+            "spacing": "Small"
+          },
           {
-            "type": "Action.Submit",
-            "title": "Fiber cable",
-            "iconUrl": "https://example.com/fiber-cable-icon.png",
-            "style": "default"
-          }
-        ],
-        "spacing": "Small"
-      },
-      {
-        "type": "ActionSet",
-        "actions": [
+            "type": "ActionSet",
+            "actions": [
+              {
+                "type": "Action.Submit",
+                "title": "Fiber cable",
+                "iconUrl": "https://example.com/fiber-cable-icon.png",
+                "style": "default",
+                "data": {
+                  "selectedOption": "fiber_cable"
+                }
+              }
+            ],
+            "spacing": "Small"
+          },
           {
-            "type": "Action.Submit",
-            "title": "Network power",
-            "iconUrl": "https://example.com/network-power-icon.png",
-            "style": "default"
-          }
-        ],
-        "spacing": "Small"
-      },
-      {
-        "type": "ActionSet",
-        "actions": [
+            "type": "ActionSet",
+            "actions": [
+              {
+                "type": "Action.Submit",
+                "title": "Network power",
+                "iconUrl": "https://example.com/network-power-icon.png",
+                "style": "default",
+                "data": {
+                  "selectedOption": "network_power"
+                }
+              }
+            ],
+            "spacing": "Small"
+          },
           {
-            "type": "Action.Submit",
-            "title": "Power supply",
-            "iconUrl": "https://example.com/power-supply-icon.png",
-            "style": "default"
-          }
-        ],
-        "spacing": "Small"
-      },
-      {
-        "type": "ActionSet",
-        "actions": [
+            "type": "ActionSet",
+            "actions": [
+              {
+                "type": "Action.Submit",
+                "title": "Power supply",
+                "iconUrl": "https://example.com/power-supply-icon.png",
+                "style": "default",
+                "data": {
+                  "selectedOption": "power_supply"
+                }
+              }
+            ],
+            "spacing": "Small"
+          },
           {
-            "type": "Action.Submit",
-            "title": "Optional cables",
-            "iconUrl": "https://example.com/optional-cables-icon.png",
-            "style": "default"
+            "type": "ActionSet",
+            "actions": [
+              {
+                "type": "Action.Submit",
+                "title": "Optional cables",
+                "iconUrl": "https://example.com/optional-cables-icon.png",
+                "style": "default",
+                "data": {
+                  "selectedOption": "optional_cables"
+                }
+              }
+            ],
+            "spacing": "Small"
           }
-        ],
-        "spacing": "Small"
+        ]
       }
     ],
     "actions": [
       {
         "type": "Action.Submit",
         "title": "Next",
-        "style": "positive"
+        "style": "positive",
+        "data": {
+          "action": "next"
+        }
       }
     ],
     "$schema": "http://adaptivecards.io/schemas/adaptive-card.json"
