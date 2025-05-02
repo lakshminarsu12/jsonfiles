@@ -14,11 +14,9 @@
         "actions": [
           {
             "type": "Action.Submit",
-            "title": "![ONT cable](https://example.com/ont-cable-icon.png) ONT cable",
-            "style": "default",
-            "data": {
-              "choice": "ONT cable"
-            }
+            "title": "ONT cable",
+            "iconUrl": "https://example.com/ont-cable-icon.png",
+            "style": "default"
           }
         ],
         "spacing": "Small"
@@ -28,11 +26,9 @@
         "actions": [
           {
             "type": "Action.Submit",
-            "title": "![Fiber cable](https://example.com/fiber-cable-icon.png) Fiber cable",
-            "style": "default",
-            "data": {
-              "choice": "Fiber cable"
-            }
+            "title": "Fiber cable",
+            "iconUrl": "https://example.com/fiber-cable-icon.png",
+            "style": "default"
           }
         ],
         "spacing": "Small"
@@ -42,11 +38,9 @@
         "actions": [
           {
             "type": "Action.Submit",
-            "title": "![Network power](https://example.com/network-power-icon.png) Network power",
-            "style": "default",
-            "data": {
-              "choice": "Network power"
-            }
+            "title": "Network power",
+            "iconUrl": "https://example.com/network-power-icon.png",
+            "style": "default"
           }
         ],
         "spacing": "Small"
@@ -56,11 +50,9 @@
         "actions": [
           {
             "type": "Action.Submit",
-            "title": "![Power supply](https://example.com/power-supply-icon.png) Power supply",
-            "style": "default",
-            "data": {
-              "choice": "Power supply"
-            }
+            "title": "Power supply",
+            "iconUrl": "https://example.com/power-supply-icon.png",
+            "style": "default"
           }
         ],
         "spacing": "Small"
@@ -70,11 +62,9 @@
         "actions": [
           {
             "type": "Action.Submit",
-            "title": "![Optional cables](https://example.com/optional-cables-icon.png) Optional cables",
-            "style": "default",
-            "data": {
-              "choice": "Optional cables"
-            }
+            "title": "Optional cables",
+            "iconUrl": "https://example.com/optional-cables-icon.png",
+            "style": "default"
           }
         ],
         "spacing": "Small"
