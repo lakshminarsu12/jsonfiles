@@ -1,0 +1,5 @@
+{
+  "type": "TextBlock",
+  "text": "If you're still having trouble, [we can help](https://example.com/help).",
+  "wrap": true
+}
