@@ -1,0 +1,72 @@
+@PostMapping("/eapi/adaptive-card/fragment/uploadFile")
+public @ResponseBody ResponseEntity<Object> uploadFile(@RequestParam("file") List<MultipartFile> files) throws IOException {
+    List<String> base64EncodedFiles = new ArrayList<>();
+
+    for (MultipartFile file : files) {
+        String originalFilename = file.getOriginalFilename();
+        if (originalFilename == null) continue;
+
+        // Check if it's a video based on extension
+        if (originalFilename.endsWith(".mp4") || originalFilename.endsWith(".avi") || originalFilename.endsWith(".mov")) {
+            // Save the video temporarily
+            File videoFile = File.createTempFile("uploaded_video_", "_" + originalFilename);
+            file.transferTo(videoFile);
+
+            // Extract frames from the video
+            List<String> framePaths = extractImagesFromVideo(videoFile.getAbsolutePath());
+
+            // Convert extracted frames to base64
+            for (String framePath : framePaths) {
+                byte[] frameBytes = Files.readAllBytes(Paths.get(framePath));
+                String base64Encoded = Base64.getEncoder().encodeToString(frameBytes);
+                base64EncodedFiles.add(base64Encoded);
+            }
+
+            // Clean up
+            videoFile.delete();
+        } else {
+            // It's an image
+            byte[] bytes = file.getBytes();
+            String base64Encoded = Base64.getEncoder().encodeToString(bytes);
+            base64EncodedFiles.add(base64Encoded);
+        }
+    }
+
+    // Generate the response (same as your existing logic)
+    String response = askATTService.generateResponse(base64EncodedFiles);
+
+    return ResponseEntity.ok().contentType(MediaType.APPLICATION_JSON).body(response);
+}
+
+
+
+private static List<String> extractImagesFromVideo(String videoFilePath) throws IOException {
+    String outputDir = System.getProperty("java.io.tmpdir") + "/video_frames/";
+    new File(outputDir).mkdirs();
+
+    List<String> imageFrames = new ArrayList<>();
+
+    FFmpegFrameGrabber frameGrabber = new FFmpegFrameGrabber(videoFilePath);
+    frameGrabber.start();
+
+    int frameNumber = 0;
+    double frameRate = frameGrabber.getFrameRate();
+    int totalFrames = frameGrabber.getLengthInFrames();
+
+    for (int i = 0; i < totalFrames; i++) {
+        Frame frame = frameGrabber.grabImage();
+        if (frame != null && i % ((int) frameRate) == 0) { // 1 frame per second
+            Java2DFrameConverter converter = new Java2DFrameConverter();
+            BufferedImage bufferedImage = converter.getBufferedImage(frame);
+
+            String frameName = outputDir + "frame_" + frameNumber + ".png";
+            File output = new File(frameName);
+            ImageIO.write(bufferedImage, "png", output);
+            imageFrames.add(frameName);
+            frameNumber++;
+        }
+    }
+
+    frameGrabber.stop();
+    return imageFrames;
+}
