@@ -198,3 +198,14 @@ I’m trying to verify if this hardware is compatible with AT&T CSI. Can you tel
             "I’m trying to verify if this hardware is compatible with AT&T CSI. Can you tell me if this is a valid device?"
         });
 
+
+basic_att_service_box_check
+att_box_and_power_connection_check
+att_box_type_identification
+att_box_partial_visibility_check
+att_fiber_jack_identification
+att_fiber_jack_minimal_label_check
+att_fiber_jack_faceplate_off_check
+att_residential_gateway_check
+att_rg_confirmation_with_explanation
+att_csi_compatibility_check
