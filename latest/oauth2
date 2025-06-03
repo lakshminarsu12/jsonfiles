@@ -1,0 +1,51 @@
+@Configuration
+public class OAuth2ClientConfig {
+
+    @Bean
+    public OAuth2AuthorizedClientManager authorizedClientManager(
+            ClientRegistrationRepository clientRegistrationRepository,
+            OAuth2AuthorizedClientRepository authorizedClientRepository) {
+
+        OAuth2AuthorizedClientProvider authorizedClientProvider =
+                OAuth2AuthorizedClientProviderBuilder.builder()
+                        .clientCredentials()
+                        .build();
+
+        DefaultOAuth2AuthorizedClientManager manager =
+                new DefaultOAuth2AuthorizedClientManager(
+                        clientRegistrationRepository, authorizedClientRepository);
+        manager.setAuthorizedClientProvider(authorizedClientProvider);
+
+        return manager;
+    }
+}
+
+
+
+@RequiredArgsConstructor
+@Service
+public class AskATTService implements IAskATTService {
+
+    private final OAuth2AuthorizedClientManager authorizedClientManager;
+
+    public String generateResponse(List<String> imageBase64List) throws IOException {
+        String token = getAccessToken(); // use token from OAuth2 manager
+        return callApi(imageBase64List, token);
+    }
+
+    private String getAccessToken() {
+        OAuth2AuthorizeRequest authorizeRequest = OAuth2AuthorizeRequest
+                .withClientRegistrationId("ask-att")
+                .principal("ask-att-client") // dummy principal
+                .build();
+
+        OAuth2AuthorizedClient authorizedClient =
+                authorizedClientManager.authorize(authorizeRequest);
+
+        if (authorizedClient == null) {
+            throw new IllegalStateException("Failed to authorize client");
+        }
+
+        return authorizedClient.getAccessToken().getTokenValue();
+    }
+}
