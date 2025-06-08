@@ -81,3 +81,14 @@
     <label>System Prompt:</label>
     <input type="text" id="systemPreview" readonly />
     <br/>
+
+
+    <script>
+    function updatePromptPreview() {
+        const select = document.getElementById('promptTypeSelect');
+        const selected = select.options[select.selectedIndex];
+
+        document.getElementById('userPreview').value = selected.getAttribute('data-user') || '';
+        document.getElementById('systemPreview').value = selected.getAttribute('data-system') || '';
+    }
+</script>
