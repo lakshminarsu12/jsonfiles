@@ -61,3 +61,23 @@
 
 </body>
 </html>
+
+
+<select name="promptType" id="promptTypeSelect" onchange="updatePromptPreview()" required>
+        <option value="" disabled selected>-- Select --</option>
+        <option th:each="p : ${prompts}" 
+                th:value="${p.promptType}" 
+                th:data-user="${p.userPrompt}" 
+                th:data-system="${p.systemPrompt}" 
+                th:text="${p.promptType}">
+        </option>
+    </select>
+    <br/>
+
+    <label>User Prompt:</label>
+    <input type="text" id="userPreview" readonly />
+    <br/>
+
+    <label>System Prompt:</label>
+    <input type="text" id="systemPreview" readonly />
+    <br/>
