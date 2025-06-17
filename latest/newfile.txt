@@ -1,0 +1,139 @@
+package com.att.nimbus.ai.web.service;
+
+import com.att.nimbus.ai.web.config.QuestionWebServiceProperties;
+import com.att.nimbus.ai.web.model.QuestionResponse;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.node.ObjectNode;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.mockito.*;
+import org.springframework.boot.web.client.RestTemplateBuilder;
+import org.springframework.http.*;
+import org.springframework.security.oauth2.client.OAuth2AuthorizedClient;
+import org.springframework.security.oauth2.client.OAuth2AuthorizedClientManager;
+import org.springframework.security.oauth2.client.OAuth2AuthorizeRequest;
+import org.springframework.web.client.RestTemplate;
+
+import java.io.IOException;
+
+import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.Mockito.*;
+
+class QuestionWebServiceTest {
+
+    @Mock
+    private RestTemplateBuilder templateBuilder;
+
+    @Mock
+    private QuestionWebServiceProperties serviceProperties;
+
+    @Mock
+    private ObjectMapper objectMapper;
+
+    @Mock
+    private OAuth2AuthorizedClientManager authorizedClientManager;
+
+    @Mock
+    private RestTemplate restTemplate;
+
+    @InjectMocks
+    private QuestionWebService questionWebService;
+
+    @Captor
+    private ArgumentCaptor<OAuth2AuthorizeRequest> authorizeRequestCaptor;
+
+    @BeforeEach
+    void setUp() {
+        MockitoAnnotations.openMocks(this);
+        when(serviceProperties.getWebClient()).thenReturn(null); // or valid props
+        questionWebService = new QuestionWebService(templateBuilder, serviceProperties, objectMapper, authorizedClientManager);
+        // You may need to set restTemplate manually if not injected automatically
+        // ReflectionTestUtils.setField(questionWebService, "restTemplate", restTemplate);
+    }
+
+    @Test
+    void testQuestion() throws IOException {
+        ObjectNode mockRequest = mock(ObjectNode.class);
+        String mockToken = "mock-token";
+        String mockApiResponse = "{\"question\":\"What is AI?\"}";
+        QuestionResponse mockResponse = new QuestionResponse();
+
+        QuestionWebService spyService = spy(questionWebService);
+
+        doReturn(mockToken).when(spyService).getOauthAccessToken();
+        doReturn(mockApiResponse).when(spyService).callApi(mockRequest, mockToken);
+        when(objectMapper.readValue(mockApiResponse, QuestionResponse.class)).thenReturn(mockResponse);
+
+        QuestionResponse response = spyService.question(mockRequest);
+
+        assertNotNull(response);
+        verify(spyService).getOauthAccessToken();
+        verify(spyService).callApi(mockRequest, mockToken);
+        verify(objectMapper).readValue(mockApiResponse, QuestionResponse.class);
+    }
+
+    @Test
+    void testGetOauthAccessToken_Success() {
+        OAuth2AuthorizedClient mockClient = mock(OAuth2AuthorizedClient.class);
+        when(mockClient.getAccessToken()).thenReturn(() -> "test-token");
+
+        when(authorizedClientManager.authorize(any(OAuth2AuthorizeRequest.class)))
+                .thenReturn(mockClient);
+
+        String token = questionWebService.getOauthAccessToken();
+        assertEquals("test-token", token);
+    }
+
+    @Test
+    void testGetOauthAccessToken_Failure() {
+        when(authorizedClientManager.authorize(any(OAuth2AuthorizeRequest.class)))
+                .thenReturn(null);
+
+        assertThrows(IllegalStateException.class, () -> questionWebService.getOauthAccessToken());
+    }
+
+    @Test
+    void testCallApi_Success() throws IOException {
+        ObjectNode requestBody = mock(ObjectNode.class);
+        String requestBodyStr = "{\"key\":\"value\"}";
+        String token = "mock-token";
+        String responseBody = "{\"response\":\"ok\"}";
+
+        HttpHeaders headers = new HttpHeaders();
+        headers.setBearerAuth(token);
+        headers.setContentType(MediaType.APPLICATION_JSON);
+
+        when(requestBody.toString()).thenReturn(requestBodyStr);
+        ResponseEntity<String> mockResponse = new ResponseEntity<>(responseBody, HttpStatus.OK);
+        when(restTemplate.exchange(
+                anyString(),
+                eq(HttpMethod.POST),
+                any(HttpEntity.class),
+                eq(String.class)
+        )).thenReturn(mockResponse);
+
+        // Set apiURL field manually for testing
+        questionWebService.apiURL = "http://mock-api.com";
+
+        String result = questionWebService.callApi(requestBody, token);
+        assertEquals(responseBody, result);
+    }
+
+    @Test
+    void testCallApi_Failure() {
+        ObjectNode requestBody = mock(ObjectNode.class);
+        when(requestBody.toString()).thenReturn("{}");
+
+        ResponseEntity<String> failedResponse = new ResponseEntity<>("error", HttpStatus.BAD_REQUEST);
+        when(restTemplate.exchange(
+                anyString(),
+                eq(HttpMethod.POST),
+                any(HttpEntity.class),
+                eq(String.class)
+        )).thenReturn(failedResponse);
+
+        questionWebService.apiURL = "http://mock-api.com";
+
+        assertThrows(IOException.class, () -> questionWebService.callApi(requestBody, "token"));
+    }
+}
