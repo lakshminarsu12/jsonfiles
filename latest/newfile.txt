@@ -1,139 +1,177 @@
-package com.att.nimbus.ai.web.service;
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>Manage Prompts</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f6f8;
+            margin: 0;
+            padding: 20px;
+            color: #333;
+        }
 
-import com.att.nimbus.ai.web.config.QuestionWebServiceProperties;
-import com.att.nimbus.ai.web.model.QuestionResponse;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.node.ObjectNode;
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Test;
-import org.mockito.*;
-import org.springframework.boot.web.client.RestTemplateBuilder;
-import org.springframework.http.*;
-import org.springframework.security.oauth2.client.OAuth2AuthorizedClient;
-import org.springframework.security.oauth2.client.OAuth2AuthorizedClientManager;
-import org.springframework.security.oauth2.client.OAuth2AuthorizeRequest;
-import org.springframework.web.client.RestTemplate;
+        h1, h2 {
+            text-align: center;
+            color: #2c3e50;
+        }
 
-import java.io.IOException;
+        form {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 10px;
+            margin-bottom: 20px;
+        }
 
-import static org.junit.jupiter.api.Assertions.*;
-import static org.mockito.Mockito.*;
+        input[type="text"], select, input[type="file"] {
+            padding: 8px;
+            border-radius: 5px;
+            border: 1px solid #ccc;
+            width: 200px;
+        }
 
-class QuestionWebServiceTest {
+        button {
+            padding: 8px 16px;
+            background-color: #3498db;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
 
-    @Mock
-    private RestTemplateBuilder templateBuilder;
+        button:hover {
+            background-color: #2980b9;
+        }
 
-    @Mock
-    private QuestionWebServiceProperties serviceProperties;
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 20px auto;
+            background-color: white;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
 
-    @Mock
-    private ObjectMapper objectMapper;
+        th, td {
+            padding: 12px 15px;
+            border: 1px solid #ddd;
+            text-align: center;
+        }
 
-    @Mock
-    private OAuth2AuthorizedClientManager authorizedClientManager;
+        th {
+            background-color: #2c3e50;
+            color: white;
+        }
 
-    @Mock
-    private RestTemplate restTemplate;
+        a {
+            color: #e74c3c;
+            text-decoration: none;
+        }
 
-    @InjectMocks
-    private QuestionWebService questionWebService;
+        a:hover {
+            text-decoration: underline;
+        }
 
-    @Captor
-    private ArgumentCaptor<OAuth2AuthorizeRequest> authorizeRequestCaptor;
+        #userPreview {
+            background-color: #eaeaea;
+        }
 
-    @BeforeEach
-    void setUp() {
-        MockitoAnnotations.openMocks(this);
-        when(serviceProperties.getWebClient()).thenReturn(null); // or valid props
-        questionWebService = new QuestionWebService(templateBuilder, serviceProperties, objectMapper, authorizedClientManager);
-        // You may need to set restTemplate manually if not injected automatically
-        // ReflectionTestUtils.setField(questionWebService, "restTemplate", restTemplate);
-    }
+        .form-section {
+            background: #fff;
+            padding: 20px;
+            border-radius: 8px;
+            max-width: 900px;
+            margin: 0 auto;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+        }
 
-    @Test
-    void testQuestion() throws IOException {
-        ObjectNode mockRequest = mock(ObjectNode.class);
-        String mockToken = "mock-token";
-        String mockApiResponse = "{\"question\":\"What is AI?\"}";
-        QuestionResponse mockResponse = new QuestionResponse();
+        label {
+            display: block;
+            margin: 10px 0 5px;
+            font-weight: bold;
+        }
 
-        QuestionWebService spyService = spy(questionWebService);
+        .response-box {
+            margin-top: 20px;
+            padding: 15px;
+            background: #dff0d8;
+            color: #3c763d;
+            border-left: 5px solid #3c763d;
+        }
+    </style>
+</head>
+<body>
 
-        doReturn(mockToken).when(spyService).getOauthAccessToken();
-        doReturn(mockApiResponse).when(spyService).callApi(mockRequest, mockToken);
-        when(objectMapper.readValue(mockApiResponse, QuestionResponse.class)).thenReturn(mockResponse);
+    <h1>Nimbus AI</h1>
 
-        QuestionResponse response = spyService.question(mockRequest);
+    <div class="form-section">
+        <!-- Add Prompt Form -->
+        <form th:action="@{/eapi/1/aiService/playground/add}" method="post">
+            <input type="text" name="userPrompt" placeholder="User Prompt" required />
+            <input type="text" name="promptName" placeholder="Prompt Type" required />
+            <button type="submit">Add Prompt</button>
+        </form>
 
-        assertNotNull(response);
-        verify(spyService).getOauthAccessToken();
-        verify(spyService).callApi(mockRequest, mockToken);
-        verify(objectMapper).readValue(mockApiResponse, QuestionResponse.class);
-    }
+        <!-- Prompt Table -->
+        <table>
+            <thead>
+                <tr>
+                    <th>User Prompt</th>
+                    <th>Prompt Type</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr th:each="prompt : ${prompts}">
+                    <form th:action="@{/eapi/1/aiService/playground/update}" method="post">
+                        <input type="hidden" name="uuid" th:value="${prompt.uuid}" />
+                        <td><input type="text" name="userPrompt" th:value="${prompt.userPrompt}" /></td>
+                        <td><input type="text" name="promptName" th:value="${prompt.promptName}" /></td>
+                        <td>
+                            <button type="submit">Update</button>
+                            <a th:href="@{'/eapi/1/aiService/playground/delete/' + ${prompt.uuid}}">Delete</a>
+                        </td>
+                    </form>
+                </tr>
+            </tbody>
+        </table>
+    </div>
 
-    @Test
-    void testGetOauthAccessToken_Success() {
-        OAuth2AuthorizedClient mockClient = mock(OAuth2AuthorizedClient.class);
-        when(mockClient.getAccessToken()).thenReturn(() -> "test-token");
+    <div class="form-section">
+        <h2>Ask Question by Image</h2>
+        <form th:action="@{/eapi/1/aiService/playground/questionByContent}" method="post" enctype="multipart/form-data">
+            <label>Select Prompt Type:</label>
+            <select name="promptNameSelect" id="promptNameSelect" onchange="updatePromptPreview()" required>
+                <option value="" disabled selected>-- Select --</option>
+                <option th:each="p : ${prompts}" 
+                        th:value="${p.promptName}" 
+                        th:data-user="${p.userPrompt}"
+                        th:text="${p.promptName}">
+                </option>
+            </select>
 
-        when(authorizedClientManager.authorize(any(OAuth2AuthorizeRequest.class)))
-                .thenReturn(mockClient);
+            <label>User Prompt:</label>
+            <input type="text" id="userPreview" readonly />
 
-        String token = questionWebService.getOauthAccessToken();
-        assertEquals("test-token", token);
-    }
+            <label>Select Image:</label>
+            <input type="file" name="file" accept="image/*" required />
 
-    @Test
-    void testGetOauthAccessToken_Failure() {
-        when(authorizedClientManager.authorize(any(OAuth2AuthorizeRequest.class)))
-                .thenReturn(null);
+            <button type="submit">Submit</button>
+        </form>
 
-        assertThrows(IllegalStateException.class, () -> questionWebService.getOauthAccessToken());
-    }
+        <div th:if="${content != null}" class="response-box">
+            <h3>API Response</h3>
+            <p><strong>Content:</strong> <span th:text="${content}"></span></p>
+        </div>
+    </div>
 
-    @Test
-    void testCallApi_Success() throws IOException {
-        ObjectNode requestBody = mock(ObjectNode.class);
-        String requestBodyStr = "{\"key\":\"value\"}";
-        String token = "mock-token";
-        String responseBody = "{\"response\":\"ok\"}";
+    <script>
+        function updatePromptPreview() {
+            const select = document.getElementById('promptNameSelect');
+            const selected = select.options[select.selectedIndex];
+            document.getElementById('userPreview').value = selected.getAttribute('data-user') || '';
+        }
+    </script>
 
-        HttpHeaders headers = new HttpHeaders();
-        headers.setBearerAuth(token);
-        headers.setContentType(MediaType.APPLICATION_JSON);
-
-        when(requestBody.toString()).thenReturn(requestBodyStr);
-        ResponseEntity<String> mockResponse = new ResponseEntity<>(responseBody, HttpStatus.OK);
-        when(restTemplate.exchange(
-                anyString(),
-                eq(HttpMethod.POST),
-                any(HttpEntity.class),
-                eq(String.class)
-        )).thenReturn(mockResponse);
-
-        // Set apiURL field manually for testing
-        questionWebService.apiURL = "http://mock-api.com";
-
-        String result = questionWebService.callApi(requestBody, token);
-        assertEquals(responseBody, result);
-    }
-
-    @Test
-    void testCallApi_Failure() {
-        ObjectNode requestBody = mock(ObjectNode.class);
-        when(requestBody.toString()).thenReturn("{}");
-
-        ResponseEntity<String> failedResponse = new ResponseEntity<>("error", HttpStatus.BAD_REQUEST);
-        when(restTemplate.exchange(
-                anyString(),
-                eq(HttpMethod.POST),
-                any(HttpEntity.class),
-                eq(String.class)
-        )).thenReturn(failedResponse);
-
-        questionWebService.apiURL = "http://mock-api.com";
-
-        assertThrows(IOException.class, () -> questionWebService.callApi(requestBody, "token"));
-    }
-}
+</body>
+</html>
