@@ -1,0 +1,117 @@
+public class FindDeviceResponse {
+
+    @JsonProperty("TypeOfHardware")
+    private String typeOfHardware;
+
+    // From "ServiceBoxType": "With Cover" / "Cover on" / "Cover off" / "Without Cover" / "null"
+    @JsonProperty("ServiceBoxType")
+    private String serviceBoxTypeRaw;
+
+    // Derived from serviceBoxTypeRaw
+    private Boolean coverPresent; // null if uncertain/unknown
+    private String  coverStatus;  // "on" / "off" / null
+
+    // From "BlackPowerCable": "connected" / "not connected" / "Uncertain"
+    @JsonProperty("BlackPowerCable")
+    private String blackPowerCableRaw;
+    private Boolean powerCableConnected; // null if "Uncertain"
+
+    // From "FiberPort": "yes" / "no" / "Uncertain"
+    @JsonProperty("FiberPort")
+    private String fiberPortRaw;
+    private Boolean fiberPortVisible;
+
+    // From "FiberCableConnected": "connected" / "not connected" / "Uncertain"
+    @JsonProperty("FiberCableConnected")
+    private String fiberCableConnectedRaw;
+    private Boolean fiberCableConnected;
+
+    // Call after mapping (e.g., right after mapper.convertValue(...))
+    public void normalize() {
+        // Service box cover derivation
+        if (serviceBoxTypeRaw == null) { coverPresent = null; coverStatus = null; }
+        else if (eq(serviceBoxTypeRaw, "With Cover") || eq(serviceBoxTypeRaw, "Cover on")) {
+            coverPresent = true; coverStatus = "on";
+        } else if (eq(serviceBoxTypeRaw, "Cover off") || eq(serviceBoxTypeRaw, "Without Cover")) {
+            coverPresent = true; coverStatus = "off";
+        } else { coverPresent = null; coverStatus = null; }
+
+        // Power cable
+        powerCableConnected = triYesNo(blackPowerCableRaw);
+
+        // Fiber
+        fiberPortVisible     = triYesNo(fiberPortRaw);
+        fiberCableConnected  = triYesNo(fiberCableConnectedRaw);
+    }
+
+    private static boolean eq(String a, String b) {
+        return a != null && a.equalsIgnoreCase(b);
+    }
+    private static Boolean triYesNo(String v) {
+        if (v == null) return null;
+        if (v.equalsIgnoreCase("yes") || v.equalsIgnoreCase("connected")) return Boolean.TRUE;
+        if (v.equalsIgnoreCase("no")  || v.equalsIgnoreCase("not connected")) return Boolean.FALSE;
+        if (v.equalsIgnoreCase("uncertain")) return null;
+        return null;
+    }
+}
+
+
+private static boolean isTrue(Boolean b)  { return Boolean.TRUE.equals(b); }
+private static boolean isFalse(Boolean b) { return Boolean.FALSE.equals(b); }
+private static boolean eq(String a, String b) { return a != null && a.equalsIgnoreCase(b); }
+
+private MachineEvent nextEventForServiceBox(FindDeviceResponse a) {
+    // 1) Power to box → if not connected OR unknown, go fix it
+    if (!isTrue(a.getPowerCableConnected())) {
+        return MachineEvent.ONT_TROUBLESHOOT_SERVICEBOX_POWER_TO_BOX;
+    }
+
+    // 2) Power to wall → always the next verification once the box side is OK
+    // (you can gate this with a new field later if you add one)
+    return MachineEvent.ONT_TROUBLESHOOT_SERVICEBOX_POWER_TO_WALL;
+}
+
+// Call from the handler after the "Power to wall" step completes
+private MachineEvent nextEventAfterWall(FindDeviceResponse a) {
+    // 3) Remove cover if it's present & on
+    if (isTrue(a.getCoverPresent()) && eq(a.getCoverStatus(), "on")) {
+        return MachineEvent.ONT_TROUBLESHOOT_SERVICEBOX_REMOVE_COVER;
+    }
+    // Otherwise proceed to power button
+    return MachineEvent.ONT_TROUBLESHOOT_SERVICEBOX_POWER_BUTTON_PRESS;
+}
+
+// Call from the handler after the "Power button press" step completes
+private MachineEvent nextEventAfterButton(FindDeviceResponse a) {
+    // 5) Scan is the final of the required five
+    return MachineEvent.ONT_TROUBLESHOOT_SERVICEBOX_SCAN;
+}
+
+
+FindDeviceResponse answer = mapper.convertValue(aiRsp, FindDeviceResponse.class);
+    answer.normalize(); // <-- IMPORTANT: derive booleans from raw strings
+
+    if (answer.getTypeOfHardware() != null
+            && answer.getTypeOfHardware().equalsIgnoreCase("AT&T Service Box")) {
+
+        // Start: choose the first unmet step among the five
+        MachineEvent evt1 = nextEventForServiceBox(answer);
+        MachineEvents.sendEvent(machine, evt1);
+
+        // Depending on your state-machine framework, the following two
+        // transitions are typically triggered by UI "Next" or state completion.
+        // If you want to auto-chain immediately (synchronous demo), you can:
+        if (evt1 == MachineEvent.ONT_TROUBLESHOOT_SERVICEBOX_POWER_TO_WALL) {
+            MachineEvent evt2 = nextEventAfterWall(answer);
+            MachineEvents.sendEvent(machine, evt2);
+
+            if (evt2 == MachineEvent.ONT_TROUBLESHOOT_SERVICEBOX_POWER_BUTTON_PRESS) {
+                MachineEvent evt3 = nextEventAfterButton(answer);
+                MachineEvents.sendEvent(machine, evt3);
+            }
+        }
+
+    } else {
+        MachineEvents.sendEvent(machine, MachineEvent.RG_NOT_IDENTIFIED);
+    }
