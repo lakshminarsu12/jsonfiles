@@ -1,50 +1,130 @@
-private MachineEvent firstServiceBoxEventSkippable(FindDeviceResponse a) {
-    if (!isTrue(a.getPowerCableConnected())) {
-        return MachineEvent.ONT_TROUBLESHOOT_SERVICEBOX_POWER_TO_BOX;
+package com.att.nimbus.gateway.activation.model;
+
+import com.fasterxml.jackson.annotation.JsonAlias;
+import com.fasterxml.jackson.annotation.JsonProperty;
+import lombok.Data;
+
+@Data
+public class FindDeviceResponse {
+
+    // ===== Raw fields from the AI JSON =====
+    @JsonProperty("TypeOfHardware")
+    private String typeOfHardware;
+
+    @JsonProperty("ServiceBoxType")
+    private String serviceBoxType; // "Service box with a white rectangular bottom cover" | "... without ..." | "Uncertain"/null
+
+    @JsonProperty("CoverPresent")
+    private String coverPresentRaw; // "yes" | "no" | "Uncertain"/null
+
+    @JsonProperty("CoverStatus")
+    private String coverStatusRaw;  // "on" | "off" | "Uncertain"/null
+
+    @Data
+    public static class LedReading {
+        @JsonProperty("status") private String status; // "on" | "off" | "Uncertain"
+        @JsonProperty("color")  private String color;  // "green" | "red" | "Uncertain"
+
+        public boolean isOn()        { return "on".equalsIgnoreCase(status); }
+        public boolean isOff()       { return "off".equalsIgnoreCase(status); }
+        public boolean isGreen()     { return "green".equalsIgnoreCase(color); }
+        public boolean isRed()       { return "red".equalsIgnoreCase(color); }
+        public boolean isUncertain() { return "uncertain".equalsIgnoreCase(status) || "uncertain".equalsIgnoreCase(color); }
     }
-    if (isTrue(a.getCoverPresent()) && eq(a.getCoverStatus(), "on")) {
-        return MachineEvent.ONT_TROUBLESHOOT_SERVICEBOX_REMOVE_COVER;
+
+    @JsonProperty("PowerLED")  private LedReading powerLED;
+    @JsonProperty("PONLED")    private LedReading ponLED;
+    @JsonProperty("ALARMLED")  private LedReading alarmLED;
+
+    // Prompt shows "DTAILED"; add aliases so we’re resilient to variations.
+    @JsonProperty("DTAILED")
+    @JsonAlias({"DATALED","DataLED","DATA_LED"})
+    private LedReading dataLED;
+
+    @JsonProperty("BlackPowerCable")
+    private String blackPowerCableRaw; // "connected" | "not connected" | "Uncertain"
+
+    @JsonProperty("FiberPort")
+    private String fiberPortRaw; // "yes" | "no" | "Uncertain"
+
+    @JsonProperty("FiberCableConnected")
+    private String fiberCableConnectedRaw; // "connected" | "not connected" | "Uncertain"
+
+
+    // ===== Derived, null-safe fields your handlers can use =====
+    private Boolean powerCableConnected;  // null = Uncertain
+    private Boolean fiberPortVisible;     // null = Uncertain
+    private Boolean fiberCableConnected;  // null = Uncertain
+    private Boolean coverPresent;         // null = Uncertain
+    private String  coverStatus;          // "on" | "off" | null (Uncertain/unknown)
+
+    /** Call this immediately after deserialization. */
+    public void normalize() {
+        powerCableConnected = triConnected(blackPowerCableRaw);
+        fiberPortVisible    = triYesNo(fiberPortRaw);
+        fiberCableConnected = triConnected(fiberCableConnectedRaw);
+
+        // Prefer explicit fields…
+        coverPresent = triYesNo(coverPresentRaw);
+        coverStatus  = normCoverStatus(coverStatusRaw);
+
+        // …but fall back to ServiceBoxType semantics if needed.
+        if (coverPresent == null || coverStatus == null) {
+            if (serviceBoxType != null) {
+                String sbt = serviceBoxType.toLowerCase();
+                if (sbt.contains("with a white rectangular bottom cover")) {
+                    if (coverPresent == null) coverPresent = Boolean.TRUE;
+                    if (coverStatus  == null) coverStatus  = "on";
+                } else if (sbt.contains("without a white rectangular bottom cover")) {
+                    if (coverPresent == null) coverPresent = Boolean.TRUE;
+                    if (coverStatus  == null) coverStatus  = "off";
+                }
+            }
+        }
     }
-    if (!isTrue(a.getCoverPresent()) || eq(a.getCoverStatus(), "off")) {
-        return MachineEvent.ONT_TROUBLESHOOT_SERVICEBOX_POWER_BUTTON_PRESS;
+
+    // --- helpers ---
+    private static Boolean triYesNo(String v) {
+        if (v == null) return null;
+        if ("yes".equalsIgnoreCase(v)) return Boolean.TRUE;
+        if ("no".equalsIgnoreCase(v))  return Boolean.FALSE;
+        if ("uncertain".equalsIgnoreCase(v)) return null;
+        return null;
     }
-    return MachineEvent.ONT_TROUBLESHOOT_SERVICEBOX_SCAN;
+    private static Boolean triConnected(String v) {
+        if (v == null) return null;
+        if ("connected".equalsIgnoreCase(v))      return Boolean.TRUE;
+        if ("not connected".equalsIgnoreCase(v))  return Boolean.FALSE;
+        if ("uncertain".equalsIgnoreCase(v))      return null;
+        return null;
+    }
+    private static String normCoverStatus(String v) {
+        if (v == null || "uncertain".equalsIgnoreCase(v)) return null;
+        if ("on".equalsIgnoreCase(v))  return "on";
+        if ("off".equalsIgnoreCase(v)) return "off";
+        return null;
+    }
 }
 
 
-transitions.withExternal().source(ONT_MISSING_CABLE)
-    .target(ONT_TROUBLESHOOT_SERVICEBOX_POWER_TO_BOX)
-    .event(ONT_TROUBLESHOOT_SERVICEBOX_POWER_TO_BOX);
+private MachineEvent nextServiceBoxEvent_FromResponseSmart(FindDeviceResponse a) {
+    a.normalize();
 
-transitions.withExternal().source(ONT_MISSING_CABLE)
-    .target(ONT_TROUBLESHOOT_SERVICEBOX_POWER_TO_WALL)
-    .event(ONT_TROUBLESHOOT_SERVICEBOX_POWER_TO_WALL);
+    if (!isTrue(a.getPowerCableConnected())) {
+        return MachineEvent.ONT_TROUBLESHOOT_SERVICEBOX_POWER_TO_BOX;
+    }
 
-transitions.withExternal().source(ONT_MISSING_CABLE)
-    .target(ONT_TROUBLESHOOT_SERVICEBOX_REMOVE_COVER)
-    .event(ONT_TROUBLESHOOT_SERVICEBOX_REMOVE_COVER);
+    // If cover is clearly ON, ask to remove it next
+    if (isTrue(a.getCoverPresent()) && eq(a.getCoverStatus(), "on")) {
+        return MachineEvent.ONT_TROUBLESHOOT_SERVICEBOX_REMOVE_COVER;
+    }
 
-transitions.withExternal().source(ONT_MISSING_CABLE)
-    .target(ONT_TROUBLESHOOT_SERVICEBOX_POWER_BUTTON_PRESS)
-    .event(ONT_TROUBLESHOOT_SERVICEBOX_POWER_BUTTON_PRESS);
+    // If cover is OFF or absent/uncertain, go to power button check
+    if (Boolean.FALSE.equals(a.getCoverPresent()) || eq(a.getCoverStatus(), "off")
+        || a.getCoverPresent() == null || a.getCoverStatus() == null) {
+        return MachineEvent.ONT_TROUBLESHOOT_SERVICEBOX_POWER_BUTTON_PRESS;
+    }
 
-transitions.withExternal().source(ONT_MISSING_CABLE)
-    .target(ONT_TROUBLESHOOT_SERVICEBOX_SCAN)
-    .event(ONT_TROUBLESHOOT_SERVICEBOX_SCAN);
-
-// Linear next-steps
-transitions.withExternal().source(ONT_TROUBLESHOOT_SERVICEBOX_POWER_TO_BOX)
-    .target(ONT_TROUBLESHOOT_SERVICEBOX_POWER_TO_WALL)
-    .event(ONT_TROUBLESHOOT_SERVICEBOX_POWER_TO_WALL);
-
-transitions.withExternal().source(ONT_TROUBLESHOOT_SERVICEBOX_POWER_TO_WALL)
-    .target(ONT_TROUBLESHOOT_SERVICEBOX_REMOVE_COVER)
-    .event(ONT_TROUBLESHOOT_SERVICEBOX_REMOVE_COVER);
-
-transitions.withExternal().source(ONT_TROUBLESHOOT_SERVICEBOX_REMOVE_COVER)
-    .target(ONT_TROUBLESHOOT_SERVICEBOX_POWER_BUTTON_PRESS)
-    .event(ONT_TROUBLESHOOT_SERVICEBOX_POWER_BUTTON_PRESS);
-
-transitions.withExternal().source(ONT_TROUBLESHOOT_SERVICEBOX_POWER_BUTTON_PRESS)
-    .target(ONT_TROUBLESHOOT_SERVICEBOX_SCAN)
-    .event(ONT_TROUBLESHOOT_SERVICEBOX_SCAN);
+    // Fallback (should rarely hit) → scan
+    return MachineEvent.ONT_TROUBLESHOOT_SERVICEBOX_SCAN;
+}
