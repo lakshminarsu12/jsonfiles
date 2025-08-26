@@ -128,3 +128,38 @@ private MachineEvent nextServiceBoxEvent_FromResponseSmart(FindDeviceResponse a)
     // Fallback (should rarely hit) → scan
     return MachineEvent.ONT_TROUBLESHOOT_SERVICEBOX_SCAN;
 }
+
+// --- LED helpers ---
+private static boolean isOnGreen(FindDeviceResponse.LedReading led) {
+    return led != null
+        && "on".equalsIgnoreCase(led.getStatus())
+        && "green".equalsIgnoreCase(led.getColor());
+}
+private static boolean isOff(FindDeviceResponse.LedReading led) {
+    return led != null && "off".equalsIgnoreCase(led.getStatus());
+}
+private static boolean isKnown(FindDeviceResponse.LedReading led) {
+    return led != null
+        && ! "uncertain".equalsIgnoreCase(led.getStatus())
+        && (led.getColor() == null || ! "uncertain".equalsIgnoreCase(led.getColor()));
+}
+
+// --- overall health check for SUCCESS ---
+private static boolean isServiceBoxHealthy(FindDeviceResponse a) {
+    a.normalize(); // ensure derived booleans are set
+
+    // Must have power cable connected
+    if (!Boolean.TRUE.equals(a.getPowerCableConnected())) return false;
+
+    // LEDs we rely on must be known and healthy
+    if (!isOnGreen(a.getPowerLED())) return false;
+    if (!isOnGreen(a.getPonLED()))   return false;
+    if (!isOff(a.getAlarmLED()))     return false;
+
+    // DATA LED: only enforce if the model gave a clear reading
+    if (isKnown(a.getDataLED())) {
+        if (!isOnGreen(a.getDataLED())) return false; // prefer green when known
+    }
+
+    return true;
+}
