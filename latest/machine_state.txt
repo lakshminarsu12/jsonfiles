@@ -295,3 +295,111 @@ private static MachineEvent nextServiceBoxEvent_FromResponse(FindDeviceResponse 
 }
 
 
+package com.att.nimbus.gateway.activation.model;
+
+import com.fasterxml.jackson.annotation.*;
+import lombok.Data;
+
+@Data
+@JsonIgnoreProperties(ignoreUnknown = true)
+public class FindDeviceResponse {
+
+    // ----- raw JSON fields -----
+    @JsonProperty("typeOfHardware")
+    private String typeOfHardware; // e.g. "ATT_Service_Box"
+
+    @JsonProperty("serviceBoxType")
+    private ServiceBoxType serviceBoxType; // WITHOUT_COVER | COVER_ON | COVER_OFF | NA
+
+    @JsonProperty("powerCableConnected")
+    private TriConnected powerCableConnectedRaw;   // CONNECTED | NOT_CONNECTED | UNCERTAIN
+
+    @JsonProperty("fiberPortVisible")
+    private TriYesNo fiberPortVisibleRaw;          // YES | NO | UNCERTAIN
+
+    @JsonProperty("fiberCableConnected")
+    private TriConnected fiberCableConnectedRaw;   // CONNECTED | NOT_CONNECTED | UNCERTAIN
+
+    @JsonProperty("leds")
+    private Leds leds;
+
+    // ----- derived helpers (NOT part of JSON) -----
+    @JsonIgnore
+    public Boolean isPowerCableConnectedBool() {   // null = UNCERTAIN
+        return tri(powerCableConnectedRaw);
+    }
+
+    @JsonIgnore
+    public Boolean isFiberPortVisibleBool() {      // null = UNCERTAIN
+        return tri(fiberPortVisibleRaw);
+    }
+
+    @JsonIgnore
+    public Boolean isFiberCableConnectedBool() {   // null = UNCERTAIN
+        return tri(fiberCableConnectedRaw);
+    }
+
+    /** null if NA/unknown; true if cover meaningfully known */
+    @JsonIgnore
+    public Boolean isCoverPresent() {
+        if (serviceBoxType == null || serviceBoxType == ServiceBoxType.NA) return null;
+        return Boolean.TRUE;
+    }
+
+    /** "on" | "off" | null */
+    @JsonIgnore
+    public String coverStatus() {
+        if (serviceBoxType == null) return null;
+        switch (serviceBoxType) {
+            case COVER_ON:      return "on";
+            case COVER_OFF:
+            case WITHOUT_COVER: return "off";
+            default:            return null;
+        }
+    }
+
+    // ----- enums & nested types -----
+    public enum ServiceBoxType { WITHOUT_COVER, COVER_ON, COVER_OFF, NA }
+
+    public enum TriConnected { CONNECTED, NOT_CONNECTED, UNCERTAIN }
+    public enum TriYesNo     { YES, NO, UNCERTAIN }
+
+    @Data
+    @JsonIgnoreProperties(ignoreUnknown = true)
+    public static class Leds {
+        @JsonProperty("POWERLED") private LedReading power;
+        @JsonProperty("PONLED")   private LedReading pon;
+        @JsonProperty("ALARMLED") private LedReading alarm;
+
+        @JsonProperty("DTAILED")
+        @JsonAlias({"DATALED"})
+        private LedReading data;
+    }
+
+    @Data
+    @JsonIgnoreProperties(ignoreUnknown = true)
+    public static class LedReading {
+        public enum LedStatus { ON, OFF, UNCERTAIN }
+        public enum LedColor  { GREEN, RED, OFF, UNCERTAIN }
+
+        private LedStatus status;
+        private LedColor  color;
+
+        @JsonIgnore public boolean isOnGreen() { return status == LedStatus.ON  && color == LedColor.GREEN; }
+        @JsonIgnore public boolean isOff()     { return status == LedStatus.OFF; }
+        @JsonIgnore public boolean isKnown()   { return status != LedStatus.UNCERTAIN && color != LedColor.UNCERTAIN; }
+    }
+
+    // map tri-states to Boolean
+    private static Boolean tri(TriConnected v) {
+        if (v == null) return null;
+        switch (v) { case CONNECTED: return true; case NOT_CONNECTED: return false; default: return null; }
+    }
+    private static Boolean tri(TriYesNo v) {
+        if (v == null) return null;
+        switch (v) { case YES: return true; case NO: return false; default: return null; }
+    }
+}
+
+
+
