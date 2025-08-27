@@ -1,165 +1,297 @@
 package com.att.nimbus.gateway.activation.model;
 
 import com.fasterxml.jackson.annotation.JsonAlias;
+import com.fasterxml.jackson.annotation.JsonEnumDefaultValue;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Data;
 
 @Data
 public class FindDeviceResponse {
 
-    // ===== Raw fields from the AI JSON =====
-    @JsonProperty("TypeOfHardware")
-    private String typeOfHardware;
+    // ===== top-level (lowerCamel) =====
+    @JsonProperty("typeOfHardware")
+    private String typeOfHardware;       // e.g. "ATT_SERVICE_BOX", "other_fiber_jack", etc.
 
-    @JsonProperty("ServiceBoxType")
-    private String serviceBoxType; // "Service box with a white rectangular bottom cover" | "... without ..." | "Uncertain"/null
+    @JsonProperty("serviceBoxType")
+    private ServiceBoxType serviceBoxType; // WITHOUT_COVER | COVER_ON | COVER_OFF | NA
 
-    @JsonProperty("CoverPresent")
-    private String coverPresentRaw; // "yes" | "no" | "Uncertain"/null
+    @JsonProperty("powerCableConnected")
+    private TriConnected powerCableConnectedRaw;  // CONNECTED | NOT_CONNECTED | UNCERTAIN
 
-    @JsonProperty("CoverStatus")
-    private String coverStatusRaw;  // "on" | "off" | "Uncertain"/null
+    @JsonProperty("fiberPortVisible")
+    private TriYesNo fiberPortVisibleRaw;         // YES | NO | UNCERTAIN
 
-    @Data
-    public static class LedReading {
-        @JsonProperty("status") private String status; // "on" | "off" | "Uncertain"
-        @JsonProperty("color")  private String color;  // "green" | "red" | "Uncertain"
+    @JsonProperty("fiberCableConnected")
+    private TriConnected fiberCableConnectedRaw;  // CONNECTED | NOT_CONNECTED | UNCERTAIN
 
-        public boolean isOn()        { return "on".equalsIgnoreCase(status); }
-        public boolean isOff()       { return "off".equalsIgnoreCase(status); }
-        public boolean isGreen()     { return "green".equalsIgnoreCase(color); }
-        public boolean isRed()       { return "red".equalsIgnoreCase(color); }
-        public boolean isUncertain() { return "uncertain".equalsIgnoreCase(status) || "uncertain".equalsIgnoreCase(color); }
+    @JsonProperty("leds")
+    private Leds leds;
+
+    // ===== convenience, null-safe derived views (keep your existing call sites simple) =====
+
+    /** null = UNCERTAIN */
+    public Boolean getPowerCableConnected() {
+        return tri(powerCableConnectedRaw);
     }
-
-    @JsonProperty("PowerLED")  private LedReading powerLED;
-    @JsonProperty("PONLED")    private LedReading ponLED;
-    @JsonProperty("ALARMLED")  private LedReading alarmLED;
-
-    // Prompt shows "DTAILED"; add aliases so we’re resilient to variations.
-    @JsonProperty("DTAILED")
-    @JsonAlias({"DATALED","DataLED","DATA_LED"})
-    private LedReading dataLED;
-
-    @JsonProperty("BlackPowerCable")
-    private String blackPowerCableRaw; // "connected" | "not connected" | "Uncertain"
-
-    @JsonProperty("FiberPort")
-    private String fiberPortRaw; // "yes" | "no" | "Uncertain"
-
-    @JsonProperty("FiberCableConnected")
-    private String fiberCableConnectedRaw; // "connected" | "not connected" | "Uncertain"
-
-
-    // ===== Derived, null-safe fields your handlers can use =====
-    private Boolean powerCableConnected;  // null = Uncertain
-    private Boolean fiberPortVisible;     // null = Uncertain
-    private Boolean fiberCableConnected;  // null = Uncertain
-    private Boolean coverPresent;         // null = Uncertain
-    private String  coverStatus;          // "on" | "off" | null (Uncertain/unknown)
-
-    /** Call this immediately after deserialization. */
-    public void normalize() {
-        powerCableConnected = triConnected(blackPowerCableRaw);
-        fiberPortVisible    = triYesNo(fiberPortRaw);
-        fiberCableConnected = triConnected(fiberCableConnectedRaw);
-
-        // Prefer explicit fields…
-        coverPresent = triYesNo(coverPresentRaw);
-        coverStatus  = normCoverStatus(coverStatusRaw);
-
-        // …but fall back to ServiceBoxType semantics if needed.
-        if (coverPresent == null || coverStatus == null) {
-            if (serviceBoxType != null) {
-                String sbt = serviceBoxType.toLowerCase();
-                if (sbt.contains("with a white rectangular bottom cover")) {
-                    if (coverPresent == null) coverPresent = Boolean.TRUE;
-                    if (coverStatus  == null) coverStatus  = "on";
-                } else if (sbt.contains("without a white rectangular bottom cover")) {
-                    if (coverPresent == null) coverPresent = Boolean.TRUE;
-                    if (coverStatus  == null) coverStatus  = "off";
-                }
-            }
+    /** null = UNCERTAIN */
+    public Boolean getFiberPortVisible() {
+        return tri(fiberPortVisibleRaw);
+    }
+    /** null = UNCERTAIN */
+    public Boolean getFiberCableConnected() {
+        return tri(fiberCableConnectedRaw);
+    }
+    /** null = not applicable/unknown; true if we can infer a cover state from serviceBoxType */
+    public Boolean getCoverPresent() {
+        if (serviceBoxType == null || serviceBoxType == ServiceBoxType.NA) return null;
+        return Boolean.TRUE; // all other values imply a defined cover condition
+    }
+    /** "on" | "off" | null */
+    public String getCoverStatus() {
+        if (serviceBoxType == null) return null;
+        switch (serviceBoxType) {
+            case COVER_ON:      return "on";
+            case COVER_OFF:     return "off";
+            case WITHOUT_COVER: return "off";
+            default:            return null;
         }
     }
 
-    // --- helpers ---
-    private static Boolean triYesNo(String v) {
+    private static Boolean tri(TriYesNo v) {
         if (v == null) return null;
-        if ("yes".equalsIgnoreCase(v)) return Boolean.TRUE;
-        if ("no".equalsIgnoreCase(v))  return Boolean.FALSE;
-        if ("uncertain".equalsIgnoreCase(v)) return null;
-        return null;
+        switch (v) {
+            case YES: return Boolean.TRUE;
+            case NO:  return Boolean.FALSE;
+            default:  return null;
+        }
     }
-    private static Boolean triConnected(String v) {
+    private static Boolean tri(TriConnected v) {
         if (v == null) return null;
-        if ("connected".equalsIgnoreCase(v))      return Boolean.TRUE;
-        if ("not connected".equalsIgnoreCase(v))  return Boolean.FALSE;
-        if ("uncertain".equalsIgnoreCase(v))      return null;
-        return null;
+        switch (v) {
+            case CONNECTED:     return Boolean.TRUE;
+            case NOT_CONNECTED: return Boolean.FALSE;
+            default:            return null;
+        }
     }
-    private static String normCoverStatus(String v) {
-        if (v == null || "uncertain".equalsIgnoreCase(v)) return null;
-        if ("on".equalsIgnoreCase(v))  return "on";
-        if ("off".equalsIgnoreCase(v)) return "off";
-        return null;
+
+    // ===== nested types =====
+
+    public enum ServiceBoxType {
+        WITHOUT_COVER, COVER_ON, COVER_OFF, NA,
+        @JsonEnumDefaultValue UNKNOWN
+    }
+
+    public enum TriConnected {
+        CONNECTED, NOT_CONNECTED, UNCERTAIN,
+        @JsonEnumDefaultValue UNKNOWN
+    }
+
+    public enum TriYesNo {
+        YES, NO, UNCERTAIN,
+        @JsonEnumDefaultValue UNKNOWN
+    }
+
+    @Data
+    public static class Leds {
+        @JsonProperty("POWERLED") private LedReading power;
+        @JsonProperty("PONLED")   private LedReading pon;
+        @JsonProperty("ALARMLED") private LedReading alarm;
+
+        // prompt sometimes uses DATALED/DTAILED – accept both
+        @JsonProperty("DTAILED")
+        @JsonAlias({"DATALED"})
+        private LedReading data;
+    }
+
+    @Data
+    public static class LedReading {
+        public enum LedStatus { ON, OFF, UNCERTAIN, @JsonEnumDefaultValue UNKNOWN }
+        public enum LedColor  { GREEN, RED, OFF, UNCERTAIN, @JsonEnumDefaultValue UNKNOWN }
+
+        @JsonProperty("status") private LedStatus status;
+        @JsonProperty("color")  private LedColor  color;
+
+        public boolean isOnGreen() { return status == LedStatus.ON && color == LedColor.GREEN; }
+        public boolean isOff()     { return status == LedStatus.OFF; }
+        public boolean isKnown()   { return status != LedStatus.UNCERTAIN && status != LedStatus.UNKNOWN
+                                           && color  != LedColor.UNCERTAIN  && color  != LedColor.UNKNOWN; }
     }
 }
 
+-----------------------------------------------------
+try {
+    Object aiRsp = aiClient.question(
+        Prompts.DETECT_DEVICE.getPromptName(),
+        attachment.getData(),
+        attachment.isEncoded()
+    );
+    FindDeviceResponse resp = mapper.convertValue(aiRsp, FindDeviceResponse.class);
 
-private MachineEvent nextServiceBoxEvent_FromResponseSmart(FindDeviceResponse a) {
-    a.normalize();
+    MachineEvent evt = decideOntEvent(resp, ontType, scanAttempts, false);
+    stateMachine.sendEvent(evt);
 
+} catch (Exception e) {
+    logger.error("ONT flow error", e);
+    stateMachine.sendEvent(MachineEvent.ONT_TROUBLESHOOT_ISSUE_OUR_END);
+}
+
+
+
+---------------------------------------------------
+private static boolean isHealthy(FindDeviceResponse r) {
+    if (!Boolean.TRUE.equals(r.getPowerCableConnected())) return false;
+
+    FindDeviceResponse.LedReading pwr = r.getLeds()!=null ? r.getLeds().getPower() : null;
+    FindDeviceResponse.LedReading pon = r.getLeds()!=null ? r.getLeds().getPon()   : null;
+    FindDeviceResponse.LedReading alm = r.getLeds()!=null ? r.getLeds().getAlarm() : null;
+    FindDeviceResponse.LedReading dat = r.getLeds()!=null ? r.getLeds().getData()  : null;
+
+    if (pwr == null || pon == null || alm == null) return false;
+    if (!pwr.isOnGreen()) return false;
+    if (!pon.isOnGreen()) return false;
+    if (!alm.isOff())     return false;
+
+    // Data LED: enforce only if known (your spec allows UNCERTAIN)
+    if (dat != null && dat.isKnown() && !dat.isOnGreen()) return false;
+
+    return true;
+}
+
+private static String norm(String s) {
+    return s == null ? null : s.trim().toUpperCase(Locale.ROOT).replace(' ', '_');
+}
+
+private static boolean isTrue(Boolean b) { return Boolean.TRUE.equals(b); }
+
+// Known AI labels (uppercased, underscores)
+private static final Set<String> KNOWN_HW = Set.of(
+    "ATT_SERVICE_BOX",
+    "ATT_FIBERJACK",
+    "DETACHED_010",
+    "ATT_FIBERJACK_NO_COVER",
+    "OTHER_FIBERJACK",
+    "ATT_ETHERNET_JACK",
+    "ATT_RESIDENTIAL_GATEWAY",
+    "NONE_ATT_RESIDENTIAL_GATEWAY",
+    "NONE_ATT_WALLPLATE",
+    "JUNK"
+);
+
+private static final Set<String> EXPECT_SERVICE_BOX = Set.of("ATT_SERVICE_BOX");
+
+private static final Set<String> EXPECT_FIBERJACK = Set.of(
+    "ATT_FIBERJACK", "DETACHED_010", "ATT_FIBERJACK_NO_COVER", "OTHER_FIBERJACK"
+);
+
+private static final Set<String> EXPECT_ETHERNET = Set.of("ATT_ETHERNET_JACK");
+
+private static Set<String> expectedForOnt(int ontType) {
+    switch (ontType) {
+        case ONT_TYPE_SERVICEBOX_INDOOR: return EXPECT_SERVICE_BOX;
+        case ONT_TYPE_FIBERJACK_INTERNAL: return EXPECT_FIBERJACK;
+        case ONT_TYPE_ETHERNET_OUTDOOR:  return EXPECT_ETHERNET;
+        default: return Collections.emptySet();
+    }
+}
+
+/**
+ * Decide exactly ONE event to send, based on the prompt’s conditions + ontType.
+ *
+ * @param resp         AI response (already deserialized)
+ * @param ontType      incoming request type (32=fiberjack, 61=ethernet, 65=service box)
+ * @param scanAttempts how many scans so far
+ * @param hadError     true if your handler caught an exception on this pass
+ */
+public static MachineEvent decideOntEvent(
+        FindDeviceResponse resp,
+        int ontType,
+        int scanAttempts,
+        boolean hadError
+) {
+    // 4) ISSUE OUR END — any try/catch failure routes here
+    if (hadError) {
+        return MachineEvent.ONT_TROUBLESHOOT_ISSUE_OUR_END;
+    }
+
+    // Normalize / access canonical values
+    final String hw = norm(resp.getTypeOfHardware());
+    final Set<String> expected = expectedForOnt(ontType);
+
+    // 1) DEVICE NOT IDENTIFIED — AI type is unknown / not one of our allowed labels
+    if (hw == null || !KNOWN_HW.contains(hw)) {
+        return MachineEvent.ONT_TROUBLESHOOT_DEVICE_NOT_IDENTIFIED;
+    }
+
+    // 2) SCANNED WRONG DEVICE — JUNK or type mismatches expected ONT family
+    if ("JUNK".equals(hw) || (!expected.isEmpty() && !expected.contains(hw))) {
+        return MachineEvent.ONT_TROUBLESHOOT_SCANNED_WRONG_DEVICE;
+    }
+
+    // 3) MAY HAVE ISSUE — after >2 attempts, escalate (only for SB per your note)
+    if (ontType == ONT_TYPE_SERVICEBOX_INDOOR && scanAttempts >= 2) {
+        return MachineEvent.ONT_TROUBLESHOOT_SERVICEBOX_MAY_HAVE_ISSUE;
+    }
+
+    // Otherwise: route into the specific troubleshooting flow
+    if (ontType == ONT_TYPE_SERVICEBOX_INDOOR) {
+        return nextServiceBoxEvent_FromResponse(resp); // one of the 5 SB events
+    }
+
+    // For non-SB ONTs you can add similar first-step pickers here (fiberjack/ethernet).
+    // Default: treat as device identified but no special flow → ask for help/next.
+    return MachineEvent.NEXT;
+}
+
+
+// helpers
+private static boolean isTrue(Boolean b)  { return Boolean.TRUE.equals(b); }
+private static boolean eq(String a, String b){ return a != null && a.equalsIgnoreCase(b); }
+
+private static boolean looksReadyToScan(FindDeviceResponse r) {
+    FindDeviceResponse.Leds L = r.getLeds();
+    if (L == null) return false;
+    FindDeviceResponse.LedReading pwr = L.getPower();
+    FindDeviceResponse.LedReading pon = L.getPon();
+    FindDeviceResponse.LedReading alm = L.getAlarm();
+    // Ready when POWER & PON are green and ALARM is off
+    return pwr != null && pwr.isOnGreen()
+        && pon != null && pon.isOnGreen()
+        && alm != null && alm.isOff();
+}
+
+/**
+ * Pick exactly ONE of the 5 SB events from the AI response.
+ * Order of checks (earliest unmet step first):
+ * 1) POWER_TO_BOX  – if black power cable not connected/uncertain
+ * 2) REMOVE_COVER  – if cover present and ON (ports hidden)
+ * 3) POWER_BUTTON_PRESS – if cover is OFF/absent/unknown and LEDs don't look ready
+ * 4) SCAN          – if LEDs already look healthy (ready to scan)
+ * 5) POWER_TO_WALL – final fallback when nothing else applies
+ */
+private static MachineEvent nextServiceBoxEvent_FromResponse(FindDeviceResponse a) {
+    // 1) Need to fix power to box?
     if (!isTrue(a.getPowerCableConnected())) {
         return MachineEvent.ONT_TROUBLESHOOT_SERVICEBOX_POWER_TO_BOX;
     }
 
-    // If cover is clearly ON, ask to remove it next
+    // 2) Cover ON → ask to remove cover
     if (isTrue(a.getCoverPresent()) && eq(a.getCoverStatus(), "on")) {
         return MachineEvent.ONT_TROUBLESHOOT_SERVICEBOX_REMOVE_COVER;
     }
 
-    // If cover is OFF or absent/uncertain, go to power button check
+    // 3) If LEDs already look healthy, go straight to scan
+    if (looksReadyToScan(a)) {
+        return MachineEvent.ONT_TROUBLESHOOT_SERVICEBOX_SCAN;
+    }
+
+    // 4) Otherwise, check/press the power button next
     if (Boolean.FALSE.equals(a.getCoverPresent()) || eq(a.getCoverStatus(), "off")
         || a.getCoverPresent() == null || a.getCoverStatus() == null) {
         return MachineEvent.ONT_TROUBLESHOOT_SERVICEBOX_POWER_BUTTON_PRESS;
     }
 
-    // Fallback (should rarely hit) → scan
-    return MachineEvent.ONT_TROUBLESHOOT_SERVICEBOX_SCAN;
+    // 5) Fallback: verify wall power (safe step when none of the above triggered)
+    return MachineEvent.ONT_TROUBLESHOOT_SERVICEBOX_POWER_TO_WALL;
 }
 
-// --- LED helpers ---
-private static boolean isOnGreen(FindDeviceResponse.LedReading led) {
-    return led != null
-        && "on".equalsIgnoreCase(led.getStatus())
-        && "green".equalsIgnoreCase(led.getColor());
-}
-private static boolean isOff(FindDeviceResponse.LedReading led) {
-    return led != null && "off".equalsIgnoreCase(led.getStatus());
-}
-private static boolean isKnown(FindDeviceResponse.LedReading led) {
-    return led != null
-        && ! "uncertain".equalsIgnoreCase(led.getStatus())
-        && (led.getColor() == null || ! "uncertain".equalsIgnoreCase(led.getColor()));
-}
 
-// --- overall health check for SUCCESS ---
-private static boolean isServiceBoxHealthy(FindDeviceResponse a) {
-    a.normalize(); // ensure derived booleans are set
-
-    // Must have power cable connected
-    if (!Boolean.TRUE.equals(a.getPowerCableConnected())) return false;
-
-    // LEDs we rely on must be known and healthy
-    if (!isOnGreen(a.getPowerLED())) return false;
-    if (!isOnGreen(a.getPonLED()))   return false;
-    if (!isOff(a.getAlarmLED()))     return false;
-
-    // DATA LED: only enforce if the model gave a clear reading
-    if (isKnown(a.getDataLED())) {
-        if (!isOnGreen(a.getDataLED())) return false; // prefer green when known
-    }
-
-    return true;
-}
