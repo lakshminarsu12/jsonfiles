@@ -1,0 +1,63 @@
+/* Container styling */
+.wrapper {
+  background-color: #f5f8ff; /* very light blue background */
+  padding: 20px;
+  border-radius: 10px;
+}
+
+/* Table base */
+.history-table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-top: 10px;
+  font-family: 'Arial', sans-serif;
+  font-size: 14px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  border: 1px solid #cdd7ee; /* subtle border around table */
+  background-color: #ffffff;
+}
+
+/* Table header */
+.history-table th {
+  background-color: #1e3a8a; /* deep navy blue */
+  color: #ffffff;
+  font-weight: bold;
+  text-align: left;
+  padding: 10px 12px;
+  border-bottom: 2px solid #153070;
+  position: sticky;
+  top: 0; /* Keeps header fixed when scrolling */
+  z-index: 2;
+}
+
+/* Table rows */
+.history-table td {
+  color: #1a1a1a;
+  padding: 10px 12px;
+  border-bottom: 1px solid #e0e6f5; /* subtle row border */
+}
+
+/* Alternate row colors for readability */
+.history-table tr:nth-child(even) {
+  background-color: #f0f4ff; /* soft blue-gray */
+}
+
+/* Hover effect */
+.history-table tr:hover {
+  background-color: #dbe6ff; /* gentle highlight on hover */
+  transition: background-color 0.2s ease;
+}
+
+/* Rounded corners only for top header and bottom edges */
+.history-table thead tr:first-child th:first-child {
+  border-top-left-radius: 8px;
+}
+.history-table thead tr:first-child th:last-child {
+  border-top-right-radius: 8px;
+}
+.history-table tr:last-child td:first-child {
+  border-bottom-left-radius: 8px;
+}
+.history-table tr:last-child td:last-child {
+  border-bottom-right-radius: 8px;
+}
