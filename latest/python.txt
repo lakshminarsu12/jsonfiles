@@ -1,0 +1,59 @@
+import cv2
+import numpy as np
+
+# --- CONFIGURATION ---
+video_path = "video.mp4"   # <-- Change to your video file or use 0 for webcam
+brightness_threshold = 200 # Pixel intensity threshold for "light on"
+blink_sensitivity = 30     # Number of frames to check for change
+min_area = 50              # Minimum contour area to consider as light
+
+# --- VIDEO CAPTURE ---
+cap = cv2.VideoCapture(video_path)
+if not cap.isOpened():
+    print("Error: Could not open video.")
+    exit()
+
+light_history = []
+frame_count = 0
+
+while True:
+    ret, frame = cap.read()
+    if not ret:
+        break
+
+    frame_gray = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
+
+    # Threshold bright areas (potential lights)
+    _, thresh = cv2.threshold(frame_gray, brightness_threshold, 255, cv2.THRESH_BINARY)
+
+    # Find contours of bright regions
+    contours, _ = cv2.findContours(thresh, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)
+
+    lights_on = 0
+    for c in contours:
+        if cv2.contourArea(c) > min_area:
+            lights_on += 1
+            x, y, w, h = cv2.boundingRect(c)
+            cv2.rectangle(frame, (x, y), (x+w, y+h), (0, 255, 255), 2)
+
+    # Store number of lights detected
+    light_history.append(lights_on)
+    frame_count += 1
+
+    # Display video
+    cv2.imshow("Lights Detection", frame)
+    cv2.imshow("Threshold", thresh)
+
+    # Detect blinking pattern every few frames
+    if len(light_history) > blink_sensitivity:
+        recent = light_history[-blink_sensitivity:]
+        if max(recent) - min(recent) > 0:
+            print(f"Frame {frame_count}: 🔆 Blinking Detected")
+        else:
+            print(f"Frame {frame_count}: 💡 Steady Light")
+
+    if cv2.waitKey(1) & 0xFF == ord('q'):
+        break
+
+cap.release()
+cv2.destroyAllWindows()
