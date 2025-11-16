@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8"/>
+    <title>Gallery by Ban</title>
+
+    <style>
+        .grid {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 12px;
+        }
+        .grid img {
+            max-width: 150px;
+            max-height: 150px;
+            object-fit: cover;
+        }
+        .message {
+            color: #555;
+            margin-top: 12px;
+        }
+    </style>
+</head>
+
+<body>
+
+<h2>View Images for a Ban</h2>
+
+<form th:action="@{/eapi/1/aiService/showgallary}" method="get">
+    <label>
+        Ban:
+        <input type="text"
+               name="ban"
+               th:value="${ban}"
+               placeholder="e.g. customer123"
+               required />
+    </label>
+
+    <button type="submit">Show</button>
+</form>
+
+<!-- No images found message -->
+<div th:if="${ban} != null and (${imageUrls} == null or #lists.isEmpty(imageUrls))"
+     class="message">
+    No images found for <span th:text="${ban}"></span>.
+</div>
+
+<!-- Image grid -->
+<div th:if="${imageUrls} != null and !#lists.isEmpty(imageUrls)" class="grid">
+    <div th:each="url : ${imageUrls}">
+        <img th:src="${url}" th:alt="'Image for ' + ${ban}" />
+    </div>
+</div>
+
+</body>
+</html>
