@@ -123,3 +123,115 @@
 </div>
 </body>
 </html>
+
+public static class ImageInfo {
+    private final String date;     // folder date, e.g. 2025-11-17
+    private final String url;      // presigned URL
+    private final String fileName; // last part of key
+
+    public ImageInfo(String date, String url, String fileName) {
+        this.date = date;
+        this.url = url;
+        this.fileName = fileName;
+    }
+
+    public String getDate() {
+        return date;
+    }
+
+    public String getUrl() {
+        return url;
+    }
+
+    public String getFileName() {
+        return fileName;
+    }
+}
+
+
+public List<ImageInfo> getImagesByBan(String ban) {
+    String prefix = ban.endsWith("/") ? ban : ban + "/";
+
+    ListObjectsV2Request listReq = ListObjectsV2Request.builder()
+            .bucket(s3Properties.getBucketName())
+            .prefix(prefix)
+            .build();
+
+    this.s3 = S3Client.builder()
+            .region(Region.of(s3Properties.getRegion()))
+            .credentialsProvider(ProfileCredentialsProvider.create(s3Properties.getProfileName()))
+            .build();
+
+    ListObjectsV2Response listRes = s3.listObjectsV2(listReq);
+
+    return listRes.contents().stream()
+            .map(S3Object::key)
+            .map(key -> {
+                String[] parts = key.split("/");   // [ban, date, fileName]
+                String date = parts.length > 1 ? parts[1] : "";
+                String fileName = parts[parts.length - 1];
+                String url = presignUrl(key);      // your existing private method
+                return new ImageInfo(date, url, fileName);
+            })
+            .collect(Collectors.toList());
+}
+
+
+import java.util.LinkedHashMap;
+import java.util.Map;
+import java.util.stream.Collectors;
+import static java.util.stream.Collectors.groupingBy;
+
+@GetMapping("/eapi/${spring.application.version}/${spring.application.name}/showgallary")
+public String showGallary(
+        @RequestParam(value = "ban", required = false) String ban,
+        Model model) {
+
+    model.addAttribute("ban", ban);
+
+    if (ban != null && !ban.trim().isEmpty()) {
+        List<ImageBytePayloadToS3Uploader.ImageInfo> images =
+                s3Uploader.getImagesByBan(ban.trim());
+
+        // group by date, newest date first
+        Map<String, List<ImageBytePayloadToS3Uploader.ImageInfo>> imagesByDate =
+                images.stream()
+                        .sorted(Comparator.comparing(ImageBytePayloadToS3Uploader.ImageInfo::getDate).reversed())
+                        .collect(groupingBy(
+                                ImageBytePayloadToS3Uploader.ImageInfo::getDate,
+                                LinkedHashMap::new,
+                                Collectors.toList()
+                        ));
+
+        model.addAttribute("imagesByDate", imagesByDate);
+    }
+
+    return "showcontents/index";
+}
+
+
+<!-- Date-grouped image grids -->
+<div th:if="${imagesByDate != null}">
+    <div th:each="entry : ${imagesByDate}">
+        <!-- entry.key = date, entry.value = List<ImageInfo> -->
+        <h3 th:text="${entry.key}">2025-11-17</h3>
+
+        <div class="grid">
+            <div class="grid-item" th:each="img : ${entry.value}">
+                <img th:src="${img.url}"
+                     th:alt="${img.fileName}" />
+                <div class="caption" th:text="${img.fileName}"></div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+.caption {
+    margin-top: 4px;
+    font-size: 12px;
+    color: #555;
+    text-align: center;
+    word-break: break-all;
+}
+
