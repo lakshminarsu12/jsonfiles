@@ -227,11 +227,62 @@ public String showGallary(
 </div>
 
 
-.caption {
-    margin-top: 4px;
-    font-size: 12px;
-    color: #555;
-    text-align: center;
-    word-break: break-all;
-}
+<style>
+    .grid {
+        margin-top: 24px;
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
+        gap: 16px;
+    }
+
+    .grid-item {
+        background: #fafafa;
+        border-radius: 6px;
+        box-shadow: 0 1px 4px rgba(0, 0, 0, 0.08);
+        padding: 8px;
+        display: flex;
+        flex-direction: column;      /* image on top, text below */
+        align-items: center;
+    }
+
+    .grid-item img {
+        max-width: 100%;
+        max-height: 180px;
+        object-fit: cover;
+        border-radius: 4px;
+    }
+
+    .caption {
+        margin-top: 6px;
+        font-size: 12px;
+        color: #555;
+        text-align: center;
+        max-width: 150px;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;     /* show "d160f69a-a82c-45…" */
+    }
+</style>
+
+
+<div th:if="${imagesByDate != null}">
+    <div th:each="entry : ${imagesByDate}">
+        <h3 th:text="${entry.key}">2025-11-17</h3>
+
+        <div class="grid">
+            <div class="grid-item" th:each="img : ${entry.value}">
+                <img th:src="${img.url}" th:alt="${img.fileName}" />
+                <!-- show current name nicely under the image -->
+                <div class="caption"
+                     th:title="${img.fileName}"
+                     th:text="${#strings.substringBefore(img.fileName, '.')}">
+                    file-name-here
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+
 
