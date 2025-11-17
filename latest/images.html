@@ -1,56 +1,125 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
 <head>
-    <meta charset="UTF-8"/>
+    <meta charset="UTF-8" />
     <title>Gallery by Ban</title>
 
     <style>
-        .grid {
+        body {
+            font-family: Arial, sans-serif;
+            background: #f5f5f5;
+            margin: 0;
+            padding: 40px 0;
+        }
+
+        .page {
+            max-width: 960px;
+            margin: 0 auto;
+            background: #ffffff;
+            border-radius: 8px;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+            padding: 24px 32px 32px;
+        }
+
+        h2 {
+            margin-top: 0;
+            margin-bottom: 20px;
+        }
+
+        .form-row {
             display: flex;
-            flex-wrap: wrap;
+            align-items: center;
             gap: 12px;
+            margin-bottom: 20px;
         }
-        .grid img {
-            max-width: 150px;
-            max-height: 150px;
-            object-fit: cover;
+
+        .form-row label {
+            font-weight: bold;
         }
+
+        .form-row input[type="text"] {
+            padding: 6px 10px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            min-width: 220px;
+        }
+
+        .form-row button {
+            padding: 6px 14px;
+            border: none;
+            border-radius: 4px;
+            background: #0077cc;
+            color: #fff;
+            cursor: pointer;
+        }
+
+        .form-row button:hover {
+            background: #005fa3;
+        }
+
         .message {
             color: #555;
-            margin-top: 12px;
+            margin-top: 8px;
+        }
+
+        /* image grid */
+        .grid {
+            margin-top: 24px;
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
+            gap: 16px;
+        }
+
+        .grid-item {
+            background: #fafafa;
+            border-radius: 6px;
+            box-shadow: 0 1px 4px rgba(0, 0, 0, 0.08);
+            padding: 8px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .grid-item img {
+            max-width: 100%;
+            max-height: 180px;
+            object-fit: cover;
+            border-radius: 4px;
         }
     </style>
 </head>
 
 <body>
+<div class="page">
 
-<h2>View Images for a Ban</h2>
+    <h2>View Images for a Ban</h2>
 
-<form th:action="@{/eapi/1/aiService/showgallary}" method="get">
-    <label>
-        Ban:
-        <input type="text"
-               name="ban"
-               th:value="${ban}"
-               placeholder="e.g. customer123"
-               required />
-    </label>
+    <form th:action="@{/eapi/1/aiService/showgallary}" method="get">
+        <div class="form-row">
+            <label for="banInput">Ban:</label>
+            <input id="banInput"
+                   type="text"
+                   name="ban"
+                   th:value="${ban}"
+                   placeholder="e.g. customer123"
+                   required />
+            <button type="submit">Show</button>
+        </div>
+    </form>
 
-    <button type="submit">Show</button>
-</form>
-
-<!-- No images found message -->
-<div th:if="${ban} != null and (${imageUrls} == null or #lists.isEmpty(imageUrls))"
-     class="message">
-    No images found for <span th:text="${ban}"></span>.
-</div>
-
-<!-- Image grid -->
-<div th:if="${imageUrls != null and !#lists.isEmpty(imageUrls)}" class="grid">
-    <div th:each="url : ${imageUrls}">
-        <img th:src="${url}" th:alt="'Image for ' + ${ban}" />
+    <!-- Optional message when no images -->
+    <div th:if="${ban != null and (imageUrls == null or #lists.isEmpty(imageUrls))}"
+         class="message">
+        No images found for <span th:text="${ban}">BAN</span>.
     </div>
-</div>
 
+    <!-- Image grid -->
+    <div th:if="${imageUrls != null and !#lists.isEmpty(imageUrls)}" class="grid">
+        <div class="grid-item" th:each="url : ${imageUrls}">
+            <img th:src="${url}" th:alt="'Image for ' + ${ban}" />
+        </div>
+    </div>
+
+</div>
 </body>
 </html>
