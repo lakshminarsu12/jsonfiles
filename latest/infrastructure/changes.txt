@@ -1,0 +1,161 @@
+
+
+
+// ---- AUTO RECORDING INITIALIZATION ----
+mediaRecorder = new MediaRecorder(stream, { mimeType: "video/webm; codecs=vp9" });
+
+// Receive sliced chunks
+mediaRecorder.ondataavailable = (e) => {
+    if (e.data.size > 0) {
+        recordedChunks.push(e.data);
+        // limit buffer to last N seconds
+        if (recordedChunks.length > MAX_CHUNKS) {
+            recordedChunks.shift();  // remove oldest chunk
+        }
+    }
+};
+
+// Start recording with 1-second slices
+mediaRecorder.start(SLICE_INTERVAL);
+console.log("Auto-recording started (5-second ring buffer)");
+
+Put it inside:
+navigator.mediaDevices.getUserMedia({...}).then(stream => {
+    ...
+});
+
+
+Insert somewhere near your other helper functions:
+
+// ---- SAVE LAST 5 SECONDS ----
+function saveLastNSeconds() {
+    console.log("Saving last 5 seconds...");
+
+    const blob = new Blob(recordedChunks, { type: "video/webm" });
+    const url = URL.createObjectURL(blob);
+
+    const a = document.createElement("a");
+    a.href = url;
+    a.download = "clip_last_5_seconds.webm";
+    a.click();
+    URL.revokeObjectURL(url);
+}
+
+
+Find this part:
+if (rgDetector.lastMatchTime - rgDetector.firstMatchTime > 2000){
+    console.log("RG Confirmed!, Notifing App");
+
+Add this directly after the console.log:
+saveLastNSeconds();   // <<< AUTO SAVE LAST 5 SECONDS
+
+So the block becomes:
+if (rgDetector.lastMatchTime - rgDetector.firstMatchTime > 2000){
+    console.log("RG Confirmed!, Notifing App");
+    
+    saveLastNSeconds();   // <<< NEW LINE
+
+
+Add a flag at the top (global scope)
+
+In your <script>, near the other globals (after let loopError = false; or wherever you prefer), add:
+let hasSavedClipForCurrentRG = false;
+
+So that block looks like:
+// Main processing loop
+let loopError = false;
+let hasSavedClipForCurrentRG = false;   // <<< NEW FLAG
+function processFrame() {
+  document.getElementById("cameraDimensions").textContent = `${tfTester.rgConfidence} || ${rgDetector.lastMean.toFixed(1)}`;
+  // ...
+
+
+Reset the flag when RG is NOT found
+
+Inside processFrame(), you already have:
+let frame = cv.imread(hiddenCanvas);
+const results = ledDetector.detectLEDColor(frame);
+const rgFound = rgDetector.checkIfRg(frame);
+
+
+Right after this, add:
+
+// If RG is not currently found, allow a future save again
+if (!rgFound) {
+  hasSavedClipForCurrentRG = false;
+}
+
+
+So that section becomes:
+
+let frame = cv.imread(hiddenCanvas);
+const results = ledDetector.detectLEDColor(frame);
+const rgFound = rgDetector.checkIfRg(frame);
+
+// If RG is not currently found, reset so a future valid detection can save again
+if (!rgFound) {
+  hasSavedClipForCurrentRG = false;
+}
+
+Change the “RG Confirmed” block to only save once
+
+Find the block you currently have (in the processFrame() function):
+
+if (rgDetector.lastMatchTime - rgDetector.firstMatchTime > 2000){
+  console.log("RG Confirmed!, Notifing App");
+
+  // ---- AUTO-SAVE LAST 5 SECONDS WHEN RG CONFIRMED ----
+  saveLastNSeconds();
+
+  let ledStatus = ledDetector.getStatus();
+  // ...
+
+Replace it with this:
+if (rgFound && (rgDetector.lastMatchTime - rgDetector.firstMatchTime > 2000)) {
+  console.log("RG Confirmed!, Notifing App");
+
+  // ---- AUTO-SAVE LAST 5 SECONDS WHEN RG CONFIRMED (ONLY ONCE PER MATCH) ----
+  if (!hasSavedClipForCurrentRG) {
+    saveLastNSeconds();
+    hasSavedClipForCurrentRG = true;
+  }
+
+  let ledStatus = ledDetector.getStatus();
+  if (ledStatus){
+    choosenColor = ledDetector.lastDetectedColor;
+    choosenSpeed = ledStatus.solid ? "solid" : (ledStatus.hz > .66 ? "fast" : "slow");
+  } else {
+    choosenColor = "off";
+    choosenSpeed = "uncertain";
+  }
+
+  let msg = JSON.stringify(
+    {
+      "rgIdentified": true,
+      "rgModel": "BGW320",
+      "leds": {
+        "serviceLed": {
+          "color": choosenColor,
+          "speed": choosenSpeed
+        },
+        "wpsLed": {
+          "color": "off",
+          "speed": "uncertain"
+        }
+      }
+    }
+  );
+  try{
+    window.ReactNativeWebView.postMessage(msg);
+  }catch(e){
+  }
+  try{
+    window.ThinNative.postMessage(msg);
+  }catch(e){
+  }
+  try{
+    window.webkit.messageHandlers.nativeCallBack.postMessage(msg);
+  }catch(e){
+  }
+}
+
