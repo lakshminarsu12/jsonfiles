@@ -1,130 +1,132 @@
+1️⃣ Ensure these globals exist near the top of <script>
+
+Add these (or keep them if you already added similar ones):
+
+// ---- Video ring-buffer for last N seconds ----
+const BUFFER_SECONDS = 5;          // last 5 seconds
+let mediaRecorder = null;
+let recordedChunks = [];
+let recordedTimes = [];
+
+2️⃣ After getUserMedia succeeds, hook up MediaRecorder
+
+Inside your existing:
+
+navigator.mediaDevices.getUserMedia({
+  video: {
+    facingMode: { ideal: "environment" },
+    zoom: 1.5
+  },
+  audio: false
+}).then(stream => {
+  preview.srcObject = stream;
+  videoTrack = stream.getVideoTracks()[0];
+  videoTrack.applyConstraints({
+    advanced: [{ "exposureCompensation": -1 }]
+  }); // Adjust exposure for better visibility
 
 
+Add this block just after that:
 
-// ---- AUTO RECORDING INITIALIZATION ----
-mediaRecorder = new MediaRecorder(stream, { mimeType: "video/webm; codecs=vp9" });
-
-// Receive sliced chunks
-mediaRecorder.ondataavailable = (e) => {
-    if (e.data.size > 0) {
-        recordedChunks.push(e.data);
-        // limit buffer to last N seconds
-        if (recordedChunks.length > MAX_CHUNKS) {
-            recordedChunks.shift();  // remove oldest chunk
-        }
-    }
-};
-
-// Start recording with 1-second slices
-mediaRecorder.start(SLICE_INTERVAL);
-console.log("Auto-recording started (5-second ring buffer)");
-
-Put it inside:
-navigator.mediaDevices.getUserMedia({...}).then(stream => {
-    ...
-});
-
-
-Insert somewhere near your other helper functions:
-
-// ---- SAVE LAST 5 SECONDS ----
-function saveLastNSeconds() {
-    console.log("Saving last 5 seconds...");
-
-    const blob = new Blob(recordedChunks, { type: "video/webm" });
-    const url = URL.createObjectURL(blob);
-
-    const a = document.createElement("a");
-    a.href = url;
-    a.download = "clip_last_5_seconds.webm";
-    a.click();
-    URL.revokeObjectURL(url);
-}
-
-
-Find this part:
-if (rgDetector.lastMatchTime - rgDetector.firstMatchTime > 2000){
-    console.log("RG Confirmed!, Notifing App");
-
-Add this directly after the console.log:
-saveLastNSeconds();   // <<< AUTO SAVE LAST 5 SECONDS
-
-So the block becomes:
-if (rgDetector.lastMatchTime - rgDetector.firstMatchTime > 2000){
-    console.log("RG Confirmed!, Notifing App");
-    
-    saveLastNSeconds();   // <<< NEW LINE
-
-
-Add a flag at the top (global scope)
-
-In your <script>, near the other globals (after let loopError = false; or wherever you prefer), add:
-let hasSavedClipForCurrentRG = false;
-
-So that block looks like:
-// Main processing loop
-let loopError = false;
-let hasSavedClipForCurrentRG = false;   // <<< NEW FLAG
-function processFrame() {
-  document.getElementById("cameraDimensions").textContent = `${tfTester.rgConfidence} || ${rgDetector.lastMean.toFixed(1)}`;
-  // ...
-
-
-Reset the flag when RG is NOT found
-
-Inside processFrame(), you already have:
-let frame = cv.imread(hiddenCanvas);
-const results = ledDetector.detectLEDColor(frame);
-const rgFound = rgDetector.checkIfRg(frame);
-
-
-Right after this, add:
-
-// If RG is not currently found, allow a future save again
-if (!rgFound) {
-  hasSavedClipForCurrentRG = false;
-}
-
-
-So that section becomes:
-
-let frame = cv.imread(hiddenCanvas);
-const results = ledDetector.detectLEDColor(frame);
-const rgFound = rgDetector.checkIfRg(frame);
-
-// If RG is not currently found, reset so a future valid detection can save again
-if (!rgFound) {
-  hasSavedClipForCurrentRG = false;
-}
-
-Change the “RG Confirmed” block to only save once
-
-Find the block you currently have (in the processFrame() function):
-
-if (rgDetector.lastMatchTime - rgDetector.firstMatchTime > 2000){
-  console.log("RG Confirmed!, Notifing App");
-
-  // ---- AUTO-SAVE LAST 5 SECONDS WHEN RG CONFIRMED ----
-  saveLastNSeconds();
-
-  let ledStatus = ledDetector.getStatus();
-  // ...
-
-Replace it with this:
-if (rgFound && (rgDetector.lastMatchTime - rgDetector.firstMatchTime > 2000)) {
-  console.log("RG Confirmed!, Notifing App");
-
-  // ---- AUTO-SAVE LAST 5 SECONDS WHEN RG CONFIRMED (ONLY ONCE PER MATCH) ----
-  if (!hasSavedClipForCurrentRG) {
-    saveLastNSeconds();
-    hasSavedClipForCurrentRG = true;
+  // --- Start MediaRecorder to keep a rolling buffer of video ---
+  try {
+    mediaRecorder = new MediaRecorder(stream, { mimeType: 'video/webm;codecs=vp9' });
+  } catch (e) {
+    console.warn('Falling back to default MediaRecorder options', e);
+    mediaRecorder = new MediaRecorder(stream);
   }
+
+  mediaRecorder.ondataavailable = (event) => {
+    if (event.data && event.data.size > 0) {
+      recordedChunks.push(event.data);
+      recordedTimes.push(performance.now());
+
+      // keep only last BUFFER_SECONDS of chunks
+      const cutoff = performance.now() - BUFFER_SECONDS * 1000;
+      while (recordedTimes.length && recordedTimes[0] < cutoff) {
+        recordedTimes.shift();
+        recordedChunks.shift();
+      }
+    }
+  };
+
+  // collect data every 500 ms
+  mediaRecorder.start(500);
+
+
+Leave the rest of the then block and the .catch as they are.
+
+3️⃣ Add a helper to send LAST 5 SECONDS to your question API
+
+Place this anywhere in the script (e.g. under the class definitions, before const ledDetector = ...):
+
+// ---- Send last N seconds of video to question API as Base64 ----
+function sendLastNSecondsToQuestionApi(nSeconds) {
+  if (!recordedChunks.length) {
+    console.warn('No recorded chunks yet, nothing to send');
+    return;
+  }
+
+  const now = performance.now();
+  const cutoff = now - nSeconds * 1000;
+
+  const chunksToSend = [];
+  for (let i = 0; i < recordedChunks.length; i++) {
+    if (recordedTimes[i] >= cutoff) {
+      chunksToSend.push(recordedChunks[i]);
+    }
+  }
+
+  if (!chunksToSend.length) {
+    console.warn('No chunks within the last ' + nSeconds + ' seconds');
+    return;
+  }
+
+  const blob = new Blob(chunksToSend, { type: 'video/webm' });
+  const reader = new FileReader();
+
+  reader.onloadend = function () {
+    const dataUrl = reader.result;                 // data:video/webm;base64,AAAA...
+    const base64Video = dataUrl.split(',')[1];     // strip the prefix
+
+    fetch('http://localhost:9990/iapi/v1/aiService/question?promptName=locateHWAny&ban=1234&encodedFlag=true', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'text/plain'              // raw base64 in body
+      },
+      body: base64Video
+    })
+    .then(res => res.json())
+    .then(response => {
+      console.log('Question API response:', response);
+      // You can also show it in the UI if you want:
+      // document.getElementById('detectionResult').textContent = JSON.stringify(response);
+    })
+    .catch(err => {
+      console.error('Error sending video to question API:', err);
+      const el = document.getElementById('error-message');
+      el.textContent = 'Error sending video: ' + (err.message || err);
+    });
+  };
+
+  reader.readAsDataURL(blob);
+}
+
+
+If your backend doesn’t return JSON, replace res.json() with res.text().
+
+4️⃣ Call this helper when RG is confirmed (instead of download)
+
+Find this block in your existing processFrame() (you already have it):
+
+if (rgDetector.lastMatchTime - rgDetector.firstMatchTime > 2000){
+  console.log("RG Confirmed!, Notifing App");
 
   let ledStatus = ledDetector.getStatus();
   if (ledStatus){
     choosenColor = ledDetector.lastDetectedColor;
     choosenSpeed = ledStatus.solid ? "solid" : (ledStatus.hz > .66 ? "fast" : "slow");
-  } else {
+  }else{
     choosenColor = "off";
     choosenSpeed = "uncertain";
   }
@@ -157,5 +159,21 @@ if (rgFound && (rgDetector.lastMatchTime - rgDetector.firstMatchTime > 2000)) {
     window.webkit.messageHandlers.nativeCallBack.postMessage(msg);
   }catch(e){
   }
+
+  // ⭐ OLD: code that downloaded clip_last_5_seconds.webm — REMOVE that.
 }
 
+// Send last 5 seconds of video to question API as Base64
+  sendLastNSecondsToQuestionApi(BUFFER_SECONDS);
+So the tail of the if (rgDetector.lastMatchTime - rgDetector.firstMatchTime > 2000) block becomes:
+
+js
+Copy code
+  try{
+    window.webkit.messageHandlers.nativeCallBack.postMessage(msg);
+  }catch(e){
+  }
+
+  // Send last 5 seconds of video to question API as Base64
+  sendLastNSecondsToQuestionApi(BUFFER_SECONDS);
+}
