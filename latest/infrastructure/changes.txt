@@ -18,28 +18,58 @@ async function extractLastSeconds(fullBlob, lastSeconds = 5) {
     const url = URL.createObjectURL(fullBlob);
     video.src = url;
 
-    video.onloadedmetadata = async () => {
-      try {
-        let dur = video.duration;
+    // helper to get a reliable duration
+    async function getRealDuration() {
+      return new Promise((resolveDur, rejectDur) => {
+        let tries = 0;
 
-        // Some browsers report Infinity / NaN at first
-        if (!isFinite(dur) || dur <= 0) {
-          if (video.seekable && video.seekable.length > 0) {
-            dur = video.seekable.end(video.seekable.length - 1);
+        function tryResolveDuration() {
+          let d = video.duration;
+          if (isFinite(d) && d > 0) {
+            resolveDur(d);
+            return;
           }
+
+          if (tries > 0) {
+            // after a seek, use currentTime as a fallback
+            if (video.currentTime > 0 && isFinite(video.currentTime)) {
+              resolveDur(video.currentTime);
+              return;
+            }
+          }
+
+          // Seek far into the future to force clamp at end
+          tries++;
+          video.currentTime = 1e9;  // big number
         }
 
+        video.addEventListener('seeked', () => {
+          let d = video.duration;
+          if (isFinite(d) && d > 0) {
+            resolveDur(d);
+          } else if (video.currentTime > 0 && isFinite(video.currentTime)) {
+            resolveDur(video.currentTime);
+          } else if (tries < 3) {
+            tryResolveDuration();
+          } else {
+            rejectDur(new Error('Unable to determine duration'));
+          }
+        }, { once: true });
+
+        tryResolveDuration();
+      });
+    }
+
+    video.onloadedmetadata = async () => {
+      try {
+        let dur = await getRealDuration();
         if (!isFinite(dur) || dur <= 0) {
-          console.warn("Duration still invalid, using full video instead of last seconds");
-          // As a fallback, just return the full video
-          URL.revokeObjectURL(url);
-          document.body.removeChild(video);
-          resolve(fullBlob);
-          return;
+          throw new Error('Duration still invalid after seeking');
         }
 
         const clipLen = Math.min(lastSeconds, dur);
         const startTime = Math.max(0, dur - clipLen);
+
         video.currentTime = startTime;
 
         video.onseeked = async () => {
@@ -71,13 +101,20 @@ async function extractLastSeconds(fullBlob, lastSeconds = 5) {
           }
         };
       } catch (err) {
+        URL.revokeObjectURL(url);
+        document.body.removeChild(video);
         reject(err);
       }
     };
 
-    video.onerror = () => reject(new Error('Error loading video for trimming'));
+    video.onerror = () => {
+      URL.revokeObjectURL(url);
+      document.body.removeChild(video);
+      reject(new Error('Error loading video for trimming'));
+    };
   });
 }
+
 
 
 
@@ -102,7 +139,6 @@ async function handleRgConfirmedAndUpload() {
   }
 
   try {
-    // 2) Now safe to trim
     const last5Blob = await extractLastSeconds(fullBlob, BUFFER_SECONDS);
 
     // Optional: debug download
@@ -113,11 +149,11 @@ async function handleRgConfirmedAndUpload() {
     a.click();
     URL.revokeObjectURL(debugUrl);
 
-    // 3) Upload as Base64
+    // Upload as Base64
     const reader = new FileReader();
     reader.onloadend = function () {
-      const dataUrl = reader.result;
-      const base64Video = dataUrl.split(',')[1];
+      const dataUrl = reader.result;              // data:video/webm;base64,...
+      const base64Video = dataUrl.split(',')[1];  // strip prefix
 
       fetch('http://localhost:9990/iapi/v1/aiService/uploadVideo?ban=1234', {
         method: 'POST',
