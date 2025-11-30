@@ -292,3 +292,43 @@ if (rgDetector.lastMatchTime - rgDetector.firstMatchTime > 2000){
 }
 
 
+
+
+    // -------------------------------
+    // START SEGMENT RECORDER (last 5s)
+    // -------------------------------
+    function startSegmentRecorder() {
+        segmentChunks = [];
+
+        segmentRecorder = new MediaRecorder(stream, { mimeType: 'video/webm;codecs=vp9' });
+
+        segmentRecorder.ondataavailable = (event) => {
+            if (event.data && event.data.size > 0) {
+                segmentChunks.push(event.data);
+            }
+        };
+
+        segmentRecorder.onstop = () => {
+            if (segmentChunks.length > 0) {
+                // Now we have a valid 5-second standalone WebM!
+                lastClipBlob = new Blob(segmentChunks, { type: 'video/webm' });
+            }
+
+            // Immediately start next 5-second segment
+            startSegmentRecorder();
+        };
+
+        // Start segment and stop after BUFFER_SECONDS
+        segmentRecorder.start();
+        setTimeout(() => {
+            if (segmentRecorder.state === "recording") {
+                segmentRecorder.stop();
+            }
+        }, BUFFER_SECONDS * 1000);
+    }
+
+    // IMPORTANT: call it RIGHT HERE
+    startSegmentRecorder();
+    // -------------------------------
+
+
