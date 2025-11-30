@@ -1,334 +1,120 @@
-1️⃣ Ensure these globals exist near the top of <script>
+1. inside getUserMedia
 
-Add these (or keep them if you already added similar ones):
-
-// ---- Video ring-buffer for last N seconds ----
-const BUFFER_SECONDS = 5;          // last 5 seconds
-let mediaRecorder = null;
-let recordedChunks = [];
-let recordedTimes = [];
-
-2️⃣ After getUserMedia succeeds, hook up MediaRecorder
-
-Inside your existing:
-
-navigator.mediaDevices.getUserMedia({
-  video: {
-    facingMode: { ideal: "environment" },
-    zoom: 1.5
-  },
-  audio: false
-}).then(stream => {
-  preview.srcObject = stream;
-  videoTrack = stream.getVideoTracks()[0];
-  videoTrack.applyConstraints({
-    advanced: [{ "exposureCompensation": -1 }]
-  }); // Adjust exposure for better visibility
-
-
-Add this block just after that:
-
-  // --- Start MediaRecorder to keep a rolling buffer of video ---
-  try {
-    mediaRecorder = new MediaRecorder(stream, { mimeType: 'video/webm;codecs=vp9' });
-  } catch (e) {
-    console.warn('Falling back to default MediaRecorder options', e);
-    mediaRecorder = new MediaRecorder(stream);
-  }
-
-  mediaRecorder.ondataavailable = (event) => {
-    if (event.data && event.data.size > 0) {
-      recordedChunks.push(event.data);
-      recordedTimes.push(performance.now());
-
-      // keep only last BUFFER_SECONDS of chunks
-      const cutoff = performance.now() - BUFFER_SECONDS * 1000;
-      while (recordedTimes.length && recordedTimes[0] < cutoff) {
-        recordedTimes.shift();
-        recordedChunks.shift();
-      }
-    }
-  };
-
-  // collect data every 500 ms
-  mediaRecorder.start(500);
-
-
-Leave the rest of the then block and the .catch as they are.
-
-3️⃣ Add a helper to send LAST 5 SECONDS to your question API
-
-Place this anywhere in the script (e.g. under the class definitions, before const ledDetector = ...):
-
-// ---- Send last N seconds of video to question API as Base64 ----
-function sendLastNSecondsToQuestionApi(nSeconds) {
-  if (!recordedChunks.length) {
-    console.warn('No recorded chunks yet, nothing to send');
-    return;
-  }
-
-  const now = performance.now();
-  const cutoff = now - nSeconds * 1000;
-
-  const chunksToSend = [];
-  for (let i = 0; i < recordedChunks.length; i++) {
-    if (recordedTimes[i] >= cutoff) {
-      chunksToSend.push(recordedChunks[i]);
-    }
-  }
-
-  if (!chunksToSend.length) {
-    console.warn('No chunks within the last ' + nSeconds + ' seconds');
-    return;
-  }
-
-  const blob = new Blob(chunksToSend, { type: 'video/webm' });
-  const reader = new FileReader();
-
-  reader.onloadend = function () {
-    const dataUrl = reader.result;                 // data:video/webm;base64,AAAA...
-    const base64Video = dataUrl.split(',')[1];     // strip the prefix
-
-    fetch('http://localhost:9990/iapi/v1/aiService/question?promptName=locateHWAny&ban=1234&encodedFlag=true', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'text/plain'              // raw base64 in body
-      },
-      body: base64Video
-    })
-    .then(res => res.json())
-    .then(response => {
-      console.log('Question API response:', response);
-      // You can also show it in the UI if you want:
-      // document.getElementById('detectionResult').textContent = JSON.stringify(response);
-    })
-    .catch(err => {
-      console.error('Error sending video to question API:', err);
-      const el = document.getElementById('error-message');
-      el.textContent = 'Error sending video: ' + (err.message || err);
-    });
-  };
-
-  reader.readAsDataURL(blob);
+function getFullVideoBlob() {
+  if (!fullChunks.length) return null;
+  return new Blob(fullChunks, { type: 'video/webm' });
 }
 
 
-If your backend doesn’t return JSON, replace res.json() with res.text().
+async function extractLastSeconds(fullBlob, lastSeconds = 5) {
+  return new Promise((resolve, reject) => {
+    const video = document.createElement('video');
+    video.style.display = 'none';
+    video.muted = true;
+    video.playsInline = true;
 
-4️⃣ Call this helper when RG is confirmed (instead of download)
+    document.body.appendChild(video);
 
-Find this block in your existing processFrame() (you already have it):
+    const url = URL.createObjectURL(fullBlob);
+    video.src = url;
 
-if (rgDetector.lastMatchTime - rgDetector.firstMatchTime > 2000){
-  console.log("RG Confirmed!, Notifing App");
-
-  let ledStatus = ledDetector.getStatus();
-  if (ledStatus){
-    choosenColor = ledDetector.lastDetectedColor;
-    choosenSpeed = ledStatus.solid ? "solid" : (ledStatus.hz > .66 ? "fast" : "slow");
-  }else{
-    choosenColor = "off";
-    choosenSpeed = "uncertain";
-  }
-
-  let msg = JSON.stringify(
-    {
-      "rgIdentified": true,
-      "rgModel": "BGW320",
-      "leds": {
-        "serviceLed": {
-          "color": choosenColor,
-          "speed": choosenSpeed
-        },
-        "wpsLed": {
-          "color": "off",
-          "speed": "uncertain"
+    video.onloadedmetadata = () => {
+      try {
+        const dur = video.duration;
+        if (!isFinite(dur) || dur <= 0) {
+          throw new Error('Invalid video duration');
         }
+
+        const clipLen = Math.min(lastSeconds, dur);
+        const startTime = Math.max(0, dur - clipLen);
+        video.currentTime = startTime;
+
+        video.onseeked = async () => {
+          try {
+            const stream = video.captureStream();
+            const rec = new MediaRecorder(stream, { mimeType: 'video/webm;codecs=vp9' });
+            const chunks = [];
+
+            rec.ondataavailable = e => {
+              if (e.data && e.data.size > 0) chunks.push(e.data);
+            };
+
+            rec.onstop = () => {
+              const outBlob = new Blob(chunks, { type: 'video/webm' });
+              URL.revokeObjectURL(url);
+              document.body.removeChild(video);
+              resolve(outBlob);
+            };
+
+            rec.start();
+            await video.play();
+
+            setTimeout(() => {
+              if (rec.state === 'recording') rec.stop();
+              video.pause();
+            }, clipLen * 1000);
+          } catch (err) {
+            reject(err);
+          }
+        };
+      } catch (err) {
+        reject(err);
       }
-    }
-  );
-  try{
-    window.ReactNativeWebView.postMessage(msg);
-  }catch(e){
-  }
-  try{
-    window.ThinNative.postMessage(msg);
-  }catch(e){
-  }
-  try{
-    window.webkit.messageHandlers.nativeCallBack.postMessage(msg);
-  }catch(e){
-  }
+    };
 
-  // ⭐ OLD: code that downloaded clip_last_5_seconds.webm — REMOVE that.
-}
-
-// Send last 5 seconds of video to question API as Base64
-  sendLastNSecondsToQuestionApi(BUFFER_SECONDS);
-So the tail of the if (rgDetector.lastMatchTime - rgDetector.firstMatchTime > 2000) block becomes:
-
-js
-Copy code
-  try{
-    window.webkit.messageHandlers.nativeCallBack.postMessage(msg);
-  }catch(e){
-  }
-
-  // Send last 5 seconds of video to question API as Base64
-  sendLastNSecondsToQuestionApi(BUFFER_SECONDS);
+    video.onerror = () => reject(new Error('Error loading video for trimming'));
+  });
 }
 
 
-  // -----------------------------
-  // DEBUG: Download the video file
-  // -----------------------------
-  const debugUrl = URL.createObjectURL(blob);
-  const a = document.createElement('a');
-  a.href = debugUrl;
-  a.download = 'clip_last_5_seconds.webm';   // File saved to your Downloads folder
-  a.click();
-  URL.revokeObjectURL(debugUrl);
-  // -----------------------------
-  // END DEBUG BLOCK
-  // -----------------------------
 
-
-  1. Add an array for the full recording
-==========================================
-Near the top of your script where you have:
-
-const BUFFER_SECONDS = 5;          // last 5 seconds
-let mediaRecorder = null;
-let recordedChunks = [];
-let recordedTimes = [];
-
-change to:
-
-const BUFFER_SECONDS = 5;          // last 5 seconds
-let mediaRecorder = null;
-let recordedChunks = [];           // rolling 5-second buffer
-let recordedTimes = [];
-let fullChunks = [];               // 👈 all chunks from start (full video)
-
-2. Store every chunk in fullChunks
-====================================
-In your navigator.mediaDevices.getUserMedia(...).then(stream => { ... })
-you already have:
-
-mediaRecorder.ondataavailable = (event) => {
-  if (event.data && event.data.size > 0) {
-    recordedChunks.push(event.data);
-    recordedTimes.push(performance.now());
-
-    const cutoff = performance.now() - BUFFER_SECONDS * 1000;
-    while (recordedTimes.length && recordedTimes[0] < cutoff) {
-      recordedTimes.shift();
-      recordedChunks.shift();
-    }
-  }
-};
-Update it to also push into fullChunks:
-
-mediaRecorder.ondataavailable = (event) => {
-  if (event.data && event.data.size > 0) {
-    // 🔁 5-second buffer
-    recordedChunks.push(event.data);
-    recordedTimes.push(performance.now());
-
-    const cutoff = performance.now() - BUFFER_SECONDS * 1000;
-    while (recordedTimes.length && recordedTimes[0] < cutoff) {
-      recordedTimes.shift();
-      recordedChunks.shift();
-    }
-
-    // 🧾 full recording
-    fullChunks.push(event.data);
-  }
-};
-
-3. Function to download the full video
-===========================================
-Add this function somewhere in your <script> (e.g. near sendLastNSecondsToQuestionApi):
-
-function downloadFullVideo() {
-  if (!fullChunks.length) {
-    console.warn('No full recording yet');
-    return;
-  }
-
-  const blob = new Blob(fullChunks, { type: 'video/webm' });
-  const url = URL.createObjectURL(blob);
-
-  const a = document.createElement('a');
-  a.href = url;
-  a.download = 'rg_full_recording.webm';
-  document.body.appendChild(a);
-  a.click();
-  document.body.removeChild(a);
-
-  URL.revokeObjectURL(url);
-
-  // Optional: stop recording once we have the file
-  // mediaRecorder.stop();
-}
-
-4. Call it when RG is confirmed
-==================================
-Find your RG-confirmed block (you already have):
-
-Add the download call right after sendLastNSecondsToQuestionApi(...):
-
-if (rgDetector.lastMatchTime - rgDetector.firstMatchTime > 2000){
+if (rgDetector.lastMatchTime - rgDetector.firstMatchTime > 2000) {
   console.log("RG Confirmed!, Notifing App");
 
-  // 1) Upload last 5 seconds to backend
-  sendLastNSecondsToQuestionApi(BUFFER_SECONDS);
+  // 1) Stop the full recording
+  if (mediaRecorder && mediaRecorder.state === "recording") {
+    mediaRecorder.stop();
+  }
 
-  // 2) Download full recording so far
-  downloadFullVideo();
+  const fullBlob = getFullVideoBlob();
+  if (fullBlob) {
+    (async () => {
+      try {
+        // 2) Re-record last 5 seconds from the full video
+        const last5Blob = await extractLastSeconds(fullBlob, BUFFER_SECONDS);
 
-  let ledStatus = ledDetector.getStatus();
-  ...
+        // Optional: download for debugging
+        const debugUrl = URL.createObjectURL(last5Blob);
+        const a = document.createElement('a');
+        a.href = debugUrl;
+        a.download = 'last_5_seconds.webm';
+        a.click();
+        URL.revokeObjectURL(debugUrl);
+
+        // 3) Send last 5 seconds to your Java API as Base64
+        const reader = new FileReader();
+        reader.onloadend = function () {
+          const dataUrl = reader.result;              // data:video/webm;base64,...
+          const base64Video = dataUrl.split(',')[1];  // strip prefix
+
+          fetch('http://localhost:9990/iapi/v1/aiService/uploadVideo?ban=1234', {
+            method: 'POST',
+            headers: { 'Content-Type': 'text/plain' },
+            body: base64Video
+          })
+          .then(res => res.text())
+          .then(t => console.log('Upload last 5s response:', t))
+          .catch(err => console.error('Upload last 5s error:', err));
+        };
+        reader.readAsDataURL(last5Blob);
+      } catch (err) {
+        console.error('Error extracting last 5 seconds:', err);
+      }
+    })();
+  }
+
+  // ...your existing LED status + postMessage logic...
 }
 
-
-
-
-    // -------------------------------
-    // START SEGMENT RECORDER (last 5s)
-    // -------------------------------
-    function startSegmentRecorder() {
-        segmentChunks = [];
-
-        segmentRecorder = new MediaRecorder(stream, { mimeType: 'video/webm;codecs=vp9' });
-
-        segmentRecorder.ondataavailable = (event) => {
-            if (event.data && event.data.size > 0) {
-                segmentChunks.push(event.data);
-            }
-        };
-
-        segmentRecorder.onstop = () => {
-            if (segmentChunks.length > 0) {
-                // Now we have a valid 5-second standalone WebM!
-                lastClipBlob = new Blob(segmentChunks, { type: 'video/webm' });
-            }
-
-            // Immediately start next 5-second segment
-            startSegmentRecorder();
-        };
-
-        // Start segment and stop after BUFFER_SECONDS
-        segmentRecorder.start();
-        setTimeout(() => {
-            if (segmentRecorder.state === "recording") {
-                segmentRecorder.stop();
-            }
-        }, BUFFER_SECONDS * 1000);
-    }
-
-    // IMPORTANT: call it RIGHT HERE
-    startSegmentRecorder();
-    // -------------------------------
 
 
