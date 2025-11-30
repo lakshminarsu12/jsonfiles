@@ -68,8 +68,11 @@ async function extractLastSeconds(fullBlob, lastSeconds = 5) {
 
 
 
-if (rgDetector.lastMatchTime - rgDetector.firstMatchTime > 2000) {
-  console.log("RG Confirmed!, Notifing App");
+async function handleRgConfirmedAndUpload() {
+  if (rgHandled) return;   // safety guard
+  rgHandled = true;
+
+  console.log("RG confirmed: stopping recorder and extracting last 5 seconds");
 
   // 1) Stop the full recording
   if (mediaRecorder && mediaRecorder.state === "recording") {
@@ -77,44 +80,40 @@ if (rgDetector.lastMatchTime - rgDetector.firstMatchTime > 2000) {
   }
 
   const fullBlob = getFullVideoBlob();
-  if (fullBlob) {
-    (async () => {
-      try {
-        // 2) Re-record last 5 seconds from the full video
-        const last5Blob = await extractLastSeconds(fullBlob, BUFFER_SECONDS);
-
-        // Optional: download for debugging
-        const debugUrl = URL.createObjectURL(last5Blob);
-        const a = document.createElement('a');
-        a.href = debugUrl;
-        a.download = 'last_5_seconds.webm';
-        a.click();
-        URL.revokeObjectURL(debugUrl);
-
-        // 3) Send last 5 seconds to your Java API as Base64
-        const reader = new FileReader();
-        reader.onloadend = function () {
-          const dataUrl = reader.result;              // data:video/webm;base64,...
-          const base64Video = dataUrl.split(',')[1];  // strip prefix
-
-          fetch('http://localhost:9990/iapi/v1/aiService/uploadVideo?ban=1234', {
-            method: 'POST',
-            headers: { 'Content-Type': 'text/plain' },
-            body: base64Video
-          })
-          .then(res => res.text())
-          .then(t => console.log('Upload last 5s response:', t))
-          .catch(err => console.error('Upload last 5s error:', err));
-        };
-        reader.readAsDataURL(last5Blob);
-      } catch (err) {
-        console.error('Error extracting last 5 seconds:', err);
-      }
-    })();
+  if (!fullBlob) {
+    console.warn("No full video data recorded");
+    return;
   }
 
-  // ...your existing LED status + postMessage logic...
+  try {
+    // 2) Re-record last BUFFER_SECONDS from full video
+    const last5Blob = await extractLastSeconds(fullBlob, BUFFER_SECONDS);
+
+    // Optional: download locally for debugging
+     const debugUrl = URL.createObjectURL(last5Blob);
+     const a = document.createElement('a');
+     a.href = debugUrl;
+     a.download = 'last_5_seconds.webm';
+     a.click();
+     URL.revokeObjectURL(debugUrl);
+
+    // 3) Convert to Base64 and upload to your Java API
+    const reader = new FileReader();
+    reader.onloadend = function () {
+      const dataUrl = reader.result;              // data:video/webm;base64,...
+      const base64Video = dataUrl.split(',')[1];  // strip prefix
+
+      fetch('http://localhost:9990/iapi/v1/aiService/uploadVideo?ban=1234', {
+        method: 'POST',
+        headers: { 'Content-Type': 'text/plain' },
+        body: base64Video
+      })
+      .then(res => res.text())
+      .then(t => console.log('Upload last 5s response:', t))
+      .catch(err => console.error('Upload last 5s error:', err));
+    };
+    reader.readAsDataURL(last5Blob);
+  } catch (err) {
+    console.error('Error extracting last 5 seconds:', err);
+  }
 }
-
-
-
