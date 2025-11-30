@@ -177,3 +177,17 @@ Copy code
   // Send last 5 seconds of video to question API as Base64
   sendLastNSecondsToQuestionApi(BUFFER_SECONDS);
 }
+
+
+  // -----------------------------
+  // DEBUG: Download the video file
+  // -----------------------------
+  const debugUrl = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = debugUrl;
+  a.download = 'clip_last_5_seconds.webm';   // File saved to your Downloads folder
+  a.click();
+  URL.revokeObjectURL(debugUrl);
+  // -----------------------------
+  // END DEBUG BLOCK
+  // -----------------------------
