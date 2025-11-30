@@ -18,11 +18,24 @@ async function extractLastSeconds(fullBlob, lastSeconds = 5) {
     const url = URL.createObjectURL(fullBlob);
     video.src = url;
 
-    video.onloadedmetadata = () => {
+    video.onloadedmetadata = async () => {
       try {
-        const dur = video.duration;
+        let dur = video.duration;
+
+        // Some browsers report Infinity / NaN at first
         if (!isFinite(dur) || dur <= 0) {
-          throw new Error('Invalid video duration');
+          if (video.seekable && video.seekable.length > 0) {
+            dur = video.seekable.end(video.seekable.length - 1);
+          }
+        }
+
+        if (!isFinite(dur) || dur <= 0) {
+          console.warn("Duration still invalid, using full video instead of last seconds");
+          // As a fallback, just return the full video
+          URL.revokeObjectURL(url);
+          document.body.removeChild(video);
+          resolve(fullBlob);
+          return;
         }
 
         const clipLen = Math.min(lastSeconds, dur);
@@ -69,14 +82,17 @@ async function extractLastSeconds(fullBlob, lastSeconds = 5) {
 
 
 async function handleRgConfirmedAndUpload() {
-  if (rgHandled) return;   // safety guard
+  if (rgHandled) return;
   rgHandled = true;
 
   console.log("RG confirmed: stopping recorder and extracting last 5 seconds");
 
-  // 1) Stop the full recording
+  // 1) Wait for recorder to fully stop and flush last chunk
   if (mediaRecorder && mediaRecorder.state === "recording") {
-    mediaRecorder.stop();
+    await new Promise(resolve => {
+      mediaRecorder.addEventListener('stop', () => resolve(), { once: true });
+      mediaRecorder.stop();
+    });
   }
 
   const fullBlob = getFullVideoBlob();
@@ -86,22 +102,22 @@ async function handleRgConfirmedAndUpload() {
   }
 
   try {
-    // 2) Re-record last BUFFER_SECONDS from full video
+    // 2) Now safe to trim
     const last5Blob = await extractLastSeconds(fullBlob, BUFFER_SECONDS);
 
-    // Optional: download locally for debugging
-     const debugUrl = URL.createObjectURL(last5Blob);
-     const a = document.createElement('a');
-     a.href = debugUrl;
-     a.download = 'last_5_seconds.webm';
-     a.click();
-     URL.revokeObjectURL(debugUrl);
+    // Optional: debug download
+    const debugUrl = URL.createObjectURL(last5Blob);
+    const a = document.createElement('a');
+    a.href = debugUrl;
+    a.download = 'last_5_seconds.webm';
+    a.click();
+    URL.revokeObjectURL(debugUrl);
 
-    // 3) Convert to Base64 and upload to your Java API
+    // 3) Upload as Base64
     const reader = new FileReader();
     reader.onloadend = function () {
-      const dataUrl = reader.result;              // data:video/webm;base64,...
-      const base64Video = dataUrl.split(',')[1];  // strip prefix
+      const dataUrl = reader.result;
+      const base64Video = dataUrl.split(',')[1];
 
       fetch('http://localhost:9990/iapi/v1/aiService/uploadVideo?ban=1234', {
         method: 'POST',
@@ -117,3 +133,4 @@ async function handleRgConfirmedAndUpload() {
     console.error('Error extracting last 5 seconds:', err);
   }
 }
+
