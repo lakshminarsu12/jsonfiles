@@ -191,3 +191,104 @@ Copy code
   // -----------------------------
   // END DEBUG BLOCK
   // -----------------------------
+
+
+  1. Add an array for the full recording
+==========================================
+Near the top of your script where you have:
+
+const BUFFER_SECONDS = 5;          // last 5 seconds
+let mediaRecorder = null;
+let recordedChunks = [];
+let recordedTimes = [];
+
+change to:
+
+const BUFFER_SECONDS = 5;          // last 5 seconds
+let mediaRecorder = null;
+let recordedChunks = [];           // rolling 5-second buffer
+let recordedTimes = [];
+let fullChunks = [];               // 👈 all chunks from start (full video)
+
+2. Store every chunk in fullChunks
+====================================
+In your navigator.mediaDevices.getUserMedia(...).then(stream => { ... })
+you already have:
+
+mediaRecorder.ondataavailable = (event) => {
+  if (event.data && event.data.size > 0) {
+    recordedChunks.push(event.data);
+    recordedTimes.push(performance.now());
+
+    const cutoff = performance.now() - BUFFER_SECONDS * 1000;
+    while (recordedTimes.length && recordedTimes[0] < cutoff) {
+      recordedTimes.shift();
+      recordedChunks.shift();
+    }
+  }
+};
+Update it to also push into fullChunks:
+
+mediaRecorder.ondataavailable = (event) => {
+  if (event.data && event.data.size > 0) {
+    // 🔁 5-second buffer
+    recordedChunks.push(event.data);
+    recordedTimes.push(performance.now());
+
+    const cutoff = performance.now() - BUFFER_SECONDS * 1000;
+    while (recordedTimes.length && recordedTimes[0] < cutoff) {
+      recordedTimes.shift();
+      recordedChunks.shift();
+    }
+
+    // 🧾 full recording
+    fullChunks.push(event.data);
+  }
+};
+
+3. Function to download the full video
+===========================================
+Add this function somewhere in your <script> (e.g. near sendLastNSecondsToQuestionApi):
+
+function downloadFullVideo() {
+  if (!fullChunks.length) {
+    console.warn('No full recording yet');
+    return;
+  }
+
+  const blob = new Blob(fullChunks, { type: 'video/webm' });
+  const url = URL.createObjectURL(blob);
+
+  const a = document.createElement('a');
+  a.href = url;
+  a.download = 'rg_full_recording.webm';
+  document.body.appendChild(a);
+  a.click();
+  document.body.removeChild(a);
+
+  URL.revokeObjectURL(url);
+
+  // Optional: stop recording once we have the file
+  // mediaRecorder.stop();
+}
+
+4. Call it when RG is confirmed
+==================================
+Find your RG-confirmed block (you already have):
+
+Add the download call right after sendLastNSecondsToQuestionApi(...):
+
+if (rgDetector.lastMatchTime - rgDetector.firstMatchTime > 2000){
+  console.log("RG Confirmed!, Notifing App");
+
+  // 1) Upload last 5 seconds to backend
+  sendLastNSecondsToQuestionApi(BUFFER_SECONDS);
+
+  // 2) Download full recording so far
+  downloadFullVideo();
+
+  let ledStatus = ledDetector.getStatus();
+  ...
+}
+
+
