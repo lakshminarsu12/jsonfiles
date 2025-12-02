@@ -1,172 +1,99 @@
-1. inside getUserMedia
+2. Update the uploader to support metadata
+------------------------------------------------
+In your ImageBytePayloadToS3Uploader (or similar), add a method that accepts metadata:
 
-function getFullVideoBlob() {
-  if (!fullChunks.length) return null;
-  return new Blob(fullChunks, { type: 'video/webm' });
-}
+public String uploadVideoWithMetadata(byte[] fileBytes,
+                                      String mimeType,
+                                      String ban,
+                                      Map<String, String> metadata) {
 
-
-async function extractLastSeconds(fullBlob, lastSeconds = 5) {
-  return new Promise((resolve, reject) => {
-    const video = document.createElement('video');
-    video.style.display = 'none';
-    video.muted = true;
-    video.playsInline = true;
-
-    document.body.appendChild(video);
-
-    const url = URL.createObjectURL(fullBlob);
-    video.src = url;
-
-    // helper to get a reliable duration
-    async function getRealDuration() {
-      return new Promise((resolveDur, rejectDur) => {
-        let tries = 0;
-
-        function tryResolveDuration() {
-          let d = video.duration;
-          if (isFinite(d) && d > 0) {
-            resolveDur(d);
-            return;
-          }
-
-          if (tries > 0) {
-            // after a seek, use currentTime as a fallback
-            if (video.currentTime > 0 && isFinite(video.currentTime)) {
-              resolveDur(video.currentTime);
-              return;
-            }
-          }
-
-          // Seek far into the future to force clamp at end
-          tries++;
-          video.currentTime = 1e9;  // big number
-        }
-
-        video.addEventListener('seeked', () => {
-          let d = video.duration;
-          if (isFinite(d) && d > 0) {
-            resolveDur(d);
-          } else if (video.currentTime > 0 && isFinite(video.currentTime)) {
-            resolveDur(video.currentTime);
-          } else if (tries < 3) {
-            tryResolveDuration();
-          } else {
-            rejectDur(new Error('Unable to determine duration'));
-          }
-        }, { once: true });
-
-        tryResolveDuration();
-      });
+    if (fileBytes == null || fileBytes.length == 0) {
+        throw new IllegalArgumentException("Empty payload");
     }
 
-    video.onloadedmetadata = async () => {
-      try {
-        let dur = await getRealDuration();
-        if (!isFinite(dur) || dur <= 0) {
-          throw new Error('Duration still invalid after seeking');
-        }
+    String lowerMime = mimeType == null ? "" : mimeType.toLowerCase();
+    if (!lowerMime.startsWith("video/")) {
+        throw new IllegalArgumentException("Unsupported MIME type: only videos allowed");
+    }
 
-        const clipLen = Math.min(lastSeconds, dur);
-        const startTime = Math.max(0, dur - clipLen);
+    String ext = mimeType.substring(mimeType.indexOf('/') + 1);
+    if (ext.equals("jpeg")) ext = "jpg";
 
-        video.currentTime = startTime;
+    String folder = LocalDate.now().format(dateFmt) + "/";
+    String key = ban + "/" + folder + UUID.randomUUID() + "." + ext;
 
-        video.onseeked = async () => {
-          try {
-            const stream = video.captureStream();
-            const rec = new MediaRecorder(stream, { mimeType: 'video/webm;codecs=vp9' });
-            const chunks = [];
+    if (metadata == null) {
+        metadata = new HashMap<>();
+    }
 
-            rec.ondataavailable = e => {
-              if (e.data && e.data.size > 0) chunks.push(e.data);
-            };
+    PutObjectRequest req = PutObjectRequest.builder()
+            .bucket(s3Properties.getBucketName())
+            .key(key)
+            .contentType(mimeType)
+            .metadata(metadata)               // 👈 store blink info here
+            .build();
 
-            rec.onstop = () => {
-              const outBlob = new Blob(chunks, { type: 'video/webm' });
-              URL.revokeObjectURL(url);
-              document.body.removeChild(video);
-              resolve(outBlob);
-            };
+    this.s3 = S3Client.builder()
+            .region(Region.of(s3Properties.getRegion()))
+            .credentialsProvider(
+                    ProfileCredentialsProvider.create(s3Properties.getProfileName()))
+            .build();
 
-            rec.start();
-            await video.play();
+    s3.putObject(req, RequestBody.fromBytes(fileBytes));
+    System.out.println("Uploaded video to S3: " + key + " with metadata " + metadata);
 
-            setTimeout(() => {
-              if (rec.state === 'recording') rec.stop();
-              video.pause();
-            }, clipLen * 1000);
-          } catch (err) {
-            reject(err);
-          }
-        };
-      } catch (err) {
-        URL.revokeObjectURL(url);
-        document.body.removeChild(video);
-        reject(err);
-      }
-    };
+    return key;
+}
 
-    video.onerror = () => {
-      URL.revokeObjectURL(url);
-      document.body.removeChild(video);
-      reject(new Error('Error loading video for trimming'));
-    };
-  });
+3. Update the controller to accept blink info
+--------------------------------------------------
+Modify your /uploadVideo endpoint to accept blink speed/color as query params (or headers/body – query is simplest):
+
+@PostMapping("/uploadVideo")
+public Map<String, String> uploadVideo(@RequestBody byte[] payload,
+                                       @RequestParam("ban") String ban,
+                                       @RequestParam(value = "blinkSpeed", required = false) String blinkSpeed,
+                                       @RequestParam(value = "blinkColor", required = false) String blinkColor
+) throws IOException {
+
+    String base64 = new String(payload, StandardCharsets.UTF_8).trim();
+    byte[] videoBytes = Base64.getDecoder().decode(base64);
+
+    Map<String, String> metadata = new HashMap<>();
+    if (blinkSpeed != null) {
+        metadata.put("blink-speed", blinkSpeed);   // keys must be lowercase, no spaces
+    }
+    if (blinkColor != null) {
+        metadata.put("led-color", blinkColor);
+    }
+
+    String s3Key = imageUploader.uploadVideoWithMetadata(videoBytes, "video/webm", ban, metadata);
+    imageUploader.close();
+
+    Map<String, String> resp = new HashMap<>();
+    resp.put("status", "ok");
+    resp.put("s3Key", s3Key);
+    return resp;
 }
 
 
+4. Send blink info from JavaScript
+------------------------------------------
+const blinkSpeed = choosenSpeed;   // "fast" / "slow" / "solid" / "uncertain"
+const blinkColor = choosenColor;   // "Red" / "Green" / ...
 
+const url =
+  'http://localhost:9990/iapi/v1/aiService/uploadVideo'
+  + '?ban=1234'
+  + '&blinkSpeed=' + encodeURIComponent(blinkSpeed)
+  + '&blinkColor=' + encodeURIComponent(blinkColor);
 
-async function handleRgConfirmedAndUpload() {
-  if (rgHandled) return;
-  rgHandled = true;
-
-  console.log("RG confirmed: stopping recorder and extracting last 5 seconds");
-
-  // 1) Wait for recorder to fully stop and flush last chunk
-  if (mediaRecorder && mediaRecorder.state === "recording") {
-    await new Promise(resolve => {
-      mediaRecorder.addEventListener('stop', () => resolve(), { once: true });
-      mediaRecorder.stop();
-    });
-  }
-
-  const fullBlob = getFullVideoBlob();
-  if (!fullBlob) {
-    console.warn("No full video data recorded");
-    return;
-  }
-
-  try {
-    const last5Blob = await extractLastSeconds(fullBlob, BUFFER_SECONDS);
-
-    // Optional: debug download
-    const debugUrl = URL.createObjectURL(last5Blob);
-    const a = document.createElement('a');
-    a.href = debugUrl;
-    a.download = 'last_5_seconds.webm';
-    a.click();
-    URL.revokeObjectURL(debugUrl);
-
-    // Upload as Base64
-    const reader = new FileReader();
-    reader.onloadend = function () {
-      const dataUrl = reader.result;              // data:video/webm;base64,...
-      const base64Video = dataUrl.split(',')[1];  // strip prefix
-
-      fetch('http://localhost:9990/iapi/v1/aiService/uploadVideo?ban=1234', {
-        method: 'POST',
-        headers: { 'Content-Type': 'text/plain' },
-        body: base64Video
-      })
-      .then(res => res.text())
-      .then(t => console.log('Upload last 5s response:', t))
-      .catch(err => console.error('Upload last 5s error:', err));
-    };
-    reader.readAsDataURL(last5Blob);
-  } catch (err) {
-    console.error('Error extracting last 5 seconds:', err);
-  }
-}
+fetch(url, {
+  method: 'POST',
+  headers: { 'Content-Type': 'text/plain' },
+  body: base64Video   // your last 5s base64 string
+})
+  .then(res => res.json())
+  .then(resp => console.log('Uploaded with metadata', resp))
+  .catch(err => console.error('Upload error:', err));
 
