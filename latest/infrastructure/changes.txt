@@ -30,7 +30,7 @@ public String uploadVideoWithMetadata(byte[] fileBytes,
             .bucket(s3Properties.getBucketName())
             .key(key)
             .contentType(mimeType)
-            .metadata(metadata)               // 👈 store blink info here
+            .metadata(metadata)
             .build();
 
     this.s3 = S3Client.builder()
@@ -97,3 +97,33 @@ fetch(url, {
   .then(resp => console.log('Uploaded with metadata', resp))
   .catch(err => console.error('Upload error:', err));
 
+
+
+<!-- Blink metadata (show only if present) -->
+<div class="blink-meta"
+     th:if="${(img.blinkColor != null and !#strings.isEmpty(img.blinkColor)) or (img.blinkSpeed != null and !#strings.isEmpty(img.blinkSpeed))}">
+  <span class="blink-color"
+        th:if="${img.blinkColor != null and !#strings.isEmpty(img.blinkColor)}"
+        th:text="${img.blinkColor}">Green</span>
+
+  <span class="blink-speed"
+        th:if="${img.blinkSpeed != null and !#strings.isEmpty(img.blinkSpeed)}"
+        th:text="${img.blinkSpeed}">fast</span>
+</div>
+
+
+<style>
+  .blink-meta{
+    margin-top: 6px;
+    display: inline-flex;
+    gap: 8px;
+    align-items: center;
+    font-size: 12px;
+    font-weight: 600;
+  }
+  .blink-color, .blink-speed{
+    padding: 2px 8px;
+    border-radius: 10px;
+    background: rgba(0,0,0,0.07);
+  }
+</style>
