@@ -100,16 +100,20 @@ fetch(url, {
 
 
 <!-- Blink metadata (show only if present) -->
-<div class="blink-meta"
-     th:if="${(img.blinkColor != null and !#strings.isEmpty(img.blinkColor)) or (img.blinkSpeed != null and !#strings.isEmpty(img.blinkSpeed))}">
-  <span class="blink-color"
-        th:if="${img.blinkColor != null and !#strings.isEmpty(img.blinkColor)}"
-        th:text="${img.blinkColor}">Green</span>
+          <div class="blink-meta"
+               th:if="${img.blinkColor != '' or img.blinkSpeed != ''}">
+            <span class="blink-color"
+                  th:if="${img.blinkColor != ''}"
+                  th:text="'Color: ' + ${img.blinkColor}">
+              Color
+            </span>
 
-  <span class="blink-speed"
-        th:if="${img.blinkSpeed != null and !#strings.isEmpty(img.blinkSpeed)}"
-        th:text="${img.blinkSpeed}">fast</span>
-</div>
+            <span class="blink-speed"
+                  th:if="${img.blinkSpeed != ''}"
+                  th:text="'Speed: ' + ${img.blinkSpeed}">
+              Speed
+            </span>
+          </div>
 
 
 <style>
