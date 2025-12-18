@@ -131,3 +131,87 @@ fetch(url, {
     background: rgba(0,0,0,0.07);
   }
 </style>
+
+
+private AmazonS3 buildS3Client(boolean withProfileName) {
+
+    AmazonS3ClientBuilder builder = AmazonS3ClientBuilder.standard()
+            .withRegion(Regions.fromName(s3Properties.getRegion()));
+
+    if (withProfileName) {
+        builder.withCredentials(
+                new ProfileCredentialsProvider(s3Properties.getProfileName())
+        );
+    } else {
+        builder.withCredentials(DefaultAWSCredentialsProviderChain.getInstance());
+    }
+
+    return builder.build();
+}
+
+
+public List<ImageInfo> getImagesByBan(String ban, boolean withProfileName) {
+
+    String prefix = ban.endsWith("/") ? ban : ban + "/";
+    logger.info("Listing images under prefix: {} withProfileName {}", prefix, withProfileName);
+
+    AmazonS3 s3 = buildS3Client(withProfileName);
+
+    ListObjectsV2Request listReq = new ListObjectsV2Request()
+            .withBucketName(s3Properties.getBucketName())
+            .withPrefix(prefix);
+
+    logger.info("Listing objects in S3 bucket: {} with prefix: {}",
+            s3Properties.getBucketName(), prefix);
+
+    ListObjectsV2Result listRes = s3.listObjectsV2(listReq);
+
+    logger.info("Found {} objects under prefix: {}",
+            listRes.getKeyCount(), prefix);
+
+    List<ImageInfo> imageInfoList = listRes.getObjectSummaries()
+            .stream()
+            .map(S3ObjectSummary::getKey)
+            .map(key -> {
+
+                String[] parts = key.split("/");
+                String date = parts.length > 1 ? parts[1] : "";
+                String fileName = parts[parts.length - 1];
+
+                String url = presignUrl(key);   // existing method
+
+                String mimeType = "";
+                String blinkSpeed = "";
+                String blinkColor = "";
+
+                try {
+                    mimeType = Files.probeContentType(Paths.get(fileName));
+                    if (fileName.toLowerCase().endsWith(".webm")) {
+                        mimeType = "video/webm";
+                    }
+
+                    ObjectMetadata metadata =
+                            s3.getObjectMetadata(s3Properties.getBucketName(), key);
+
+                    if (metadata.getUserMetadata() != null) {
+                        blinkSpeed = metadata.getUserMetadata()
+                                .getOrDefault("blink-speed", "");
+                        blinkColor = metadata.getUserMetadata()
+                                .getOrDefault("led-color", "");
+                    }
+
+                } catch (IOException e) {
+                    logger.error("Error determining MIME type for file: {}", fileName, e);
+                    throw new RuntimeException(e);
+                }
+
+                return new ImageInfo(date, url, fileName, blinkSpeed, blinkColor, mimeType);
+            })
+            .collect(Collectors.toList());
+
+    logger.info("Prepared {} ImageInfo objects for prefix: {}",
+            imageInfoList.size(), prefix);
+
+    return imageInfoList;
+}
+
