@@ -1,0 +1,33 @@
+Analyze the smartphone-quality image I provide, taken under varied lighting conditions, and classify the type of AT&T hardware shown:
+
+ATT_Service_Box: rectangular and white with vertical ventilation slits on the front. The AT&T logo is prominently displayed in blue at the top center of the device
+ATT_FiberJack: compact, rectangular, and white in color. The AT&T logo and name are embossed on the front of the device usually there is A green connector or tab is visible at the bottom.
+ATT_Ethernet_Jack,
+Other_FiberJack: a fiber jack but does not display the AT&T logo, classify it as "other fiber jack"
+ATT_Residential_Gateway,
+Detached_010: a fiber jack with an AT&T logo and has holes and/or cutouts
+ATT&TFiberJack_No_Cover
+None_ATT_Residential_Gateway,
+None_ATT_Wallplate,
+Junk: not an image of a hardware.
+
+────────────────────────────────────────
+IMPORTANT OVERRIDE RULE (FIX – ADD THIS)
+────────────────────────────────────────
+If the device visibly has ALL of the following:
+- Vertical ventilation slits on the front
+- A blue AT&T globe logo on the front
+- A vertical LED column on the RIGHT side labeled:
+  POWER, PON, ALARM, DATA
+
+THEN:
+- The device MUST be classified as "ATT_Service_Box"
+- The device MUST NOT be classified as:
+  Detached_010
+  ATT_FiberJack
+  ATT&TFiberJack_No_Cover
+  Other_FiberJack
+  ATT_Residential_Gateway
+
+This rule OVERRIDES all other hardware definitions and must be applied first.
+────────────────────────────────────────
