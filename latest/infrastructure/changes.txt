@@ -146,3 +146,19 @@ Step 4 — Add Simple CSS (optional but nice)
         }
     }
 </script>
+
+
+For each LED, determine:
+
+Status:
+- "ON" ONLY if the LED is clearly glowing / emitting visible light
+- "OFF" if the LED label area is visible and not glowing
+- "Uncertain" ONLY if the LED region is not visible or image quality prevents determination
+
+Color:
+- If LED is ON, identify "GREEN" or "RED"
+- If LED is OFF, set color = "OFF"
+- If status is "Uncertain", set color = "Uncertain"
+
+Do NOT assume LEDs are ON based on device type, cables, or expected behavior.
+Seeing LED labels alone does NOT mean the LEDs are ON.
