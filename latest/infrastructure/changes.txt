@@ -95,3 +95,54 @@ Step 4 — Add Simple CSS (optional but nice)
 .qr-button:hover {
   background:#006f94;
 }
+
+
+<!-- Button to show questionResponse JSON -->
+<button type="button"
+        class="btn btn-sm btn-outline-secondary mt-1"
+        th:if="${img.questionResponse != null and img.questionResponse != ''}"
+        th:attr="data-question=${img.questionResponse}"
+        onclick="showQuestionResponse(this)">
+    Show AI Details
+</button>
+
+<!-- Where the JSON will be displayed for this image -->
+<div class="question-response mt-2"
+     style="display:none; white-space:pre-wrap; font-family:monospace; font-size:12px; background:#f5f5f5; padding:8px; border-radius:4px;"></div>
+
+
+<script th:inline="javascript">
+    function showQuestionResponse(button) {
+        const rawJson = button.getAttribute('data-question');
+        if (!rawJson) {
+            alert('No details available.');
+            return;
+        }
+
+        let pretty = rawJson;
+        try {
+            // Try to pretty-print if it’s valid JSON
+            pretty = JSON.stringify(JSON.parse(rawJson), null, 2);
+        } catch (e) {
+            // If it’s not strictly valid JSON, just show the raw string
+            console.warn('Could not parse questionResponse as JSON', e);
+        }
+
+        // Find the sibling <div> for this card
+        const container = button.parentElement.querySelector('.question-response');
+        if (!container) {
+            alert(pretty);
+            return;
+        }
+
+        // Toggle display
+        if (container.style.display === 'none' || container.style.display === '') {
+            container.textContent = pretty;
+            container.style.display = 'block';
+            button.textContent = 'Hide AI Details';
+        } else {
+            container.style.display = 'none';
+            button.textContent = 'Show AI Details';
+        }
+    }
+</script>
