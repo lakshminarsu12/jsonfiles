@@ -1,217 +1,97 @@
-2. Update the uploader to support metadata
-------------------------------------------------
-In your ImageBytePayloadToS3Uploader (or similar), add a method that accepts metadata:
+Step 1 — Add Button in index.html (inside each grid-item)
 
-public String uploadVideoWithMetadata(byte[] fileBytes,
-                                      String mimeType,
-                                      String ban,
-                                      Map<String, String> metadata) {
+<!-- Show Question Response Button only if JSON exists -->
+<div class="question-data"
+     th:if="${img.questionResponse != null and img.questionResponse != ''}">
+    
+    <button type="button"
+            class="qr-button"
+            th:onclick="|showQuestionResponse('${img.questionResponse}')|">
+        View AI Result
+    </button>
 
-    if (fileBytes == null || fileBytes.length == 0) {
-        throw new IllegalArgumentException("Empty payload");
+</div>
+
+
+Step 2 — Add Modal Popup (once in the page, near bottom of body)
+
+<!-- Modal -->
+<div id="qrModal" class="modal">
+    <div class="modal-content">
+        <span class="close" onclick="closeModal()">×</span>
+        <pre id="qrJsonDisplay"></pre>
+    </div>
+</div>
+
+
+Step 3 — Add JavaScript (bottom of page before </body>)
+
+<script>
+    function showQuestionResponse(jsonString) {
+        try {
+            const parsed = JSON.parse(jsonString);
+            document.getElementById("qrJsonDisplay").textContent =
+                JSON.stringify(parsed, null, 4);
+        } catch(e) {
+            document.getElementById("qrJsonDisplay").textContent =
+                "Invalid JSON:\n\n" + jsonString;
+        }
+
+        document.getElementById("qrModal").style.display = "block";
     }
 
-    String lowerMime = mimeType == null ? "" : mimeType.toLowerCase();
-    if (!lowerMime.startsWith("video/")) {
-        throw new IllegalArgumentException("Unsupported MIME type: only videos allowed");
+    function closeModal() {
+        document.getElementById("qrModal").style.display = "none";
     }
 
-    String ext = mimeType.substring(mimeType.indexOf('/') + 1);
-    if (ext.equals("jpeg")) ext = "jpg";
+    window.onclick = function(event) {
+        const modal = document.getElementById("qrModal");
+        if (event.target === modal) {
+            closeModal();
+        }
+    };
+</script>
 
-    String folder = LocalDate.now().format(dateFmt) + "/";
-    String key = ban + "/" + folder + UUID.randomUUID() + "." + ext;
 
-    if (metadata == null) {
-        metadata = new HashMap<>();
-    }
+Step 4 — Add Simple CSS (optional but nice)
 
-    PutObjectRequest req = PutObjectRequest.builder()
-            .bucket(s3Properties.getBucketName())
-            .key(key)
-            .contentType(mimeType)
-            .metadata(metadata)
-            .build();
-
-    this.s3 = S3Client.builder()
-            .region(Region.of(s3Properties.getRegion()))
-            .credentialsProvider(
-                    ProfileCredentialsProvider.create(s3Properties.getProfileName()))
-            .build();
-
-    s3.putObject(req, RequestBody.fromBytes(fileBytes));
-    System.out.println("Uploaded video to S3: " + key + " with metadata " + metadata);
-
-    return key;
+.modal {
+  display:none;
+  position:fixed;
+  z-index:1000;
+  left:0;
+  top:0;
+  width:100%;
+  height:100%;
+  background:rgba(0,0,0,0.7);
 }
 
-3. Update the controller to accept blink info
---------------------------------------------------
-Modify your /uploadVideo endpoint to accept blink speed/color as query params (or headers/body – query is simplest):
-
-@PostMapping("/uploadVideo")
-public Map<String, String> uploadVideo(@RequestBody byte[] payload,
-                                       @RequestParam("ban") String ban,
-                                       @RequestParam(value = "blinkSpeed", required = false) String blinkSpeed,
-                                       @RequestParam(value = "blinkColor", required = false) String blinkColor
-) throws IOException {
-
-    String base64 = new String(payload, StandardCharsets.UTF_8).trim();
-    byte[] videoBytes = Base64.getDecoder().decode(base64);
-
-    Map<String, String> metadata = new HashMap<>();
-    if (blinkSpeed != null) {
-        metadata.put("blink-speed", blinkSpeed);   // keys must be lowercase, no spaces
-    }
-    if (blinkColor != null) {
-        metadata.put("led-color", blinkColor);
-    }
-
-    String s3Key = imageUploader.uploadVideoWithMetadata(videoBytes, "video/webm", ban, metadata);
-    imageUploader.close();
-
-    Map<String, String> resp = new HashMap<>();
-    resp.put("status", "ok");
-    resp.put("s3Key", s3Key);
-    return resp;
+.modal-content {
+  background:#fff;
+  margin:10% auto;
+  padding:20px;
+  width:60%;
+  max-height:70%;
+  overflow:auto;
+  border-radius:8px;
 }
 
-
-4. Send blink info from JavaScript
-------------------------------------------
-const blinkSpeed = choosenSpeed;   // "fast" / "slow" / "solid" / "uncertain"
-const blinkColor = choosenColor;   // "Red" / "Green" / ...
-
-const url =
-  'http://localhost:9990/iapi/v1/aiService/uploadVideo'
-  + '?ban=1234'
-  + '&blinkSpeed=' + encodeURIComponent(blinkSpeed)
-  + '&blinkColor=' + encodeURIComponent(blinkColor);
-
-fetch(url, {
-  method: 'POST',
-  headers: { 'Content-Type': 'text/plain' },
-  body: base64Video   // your last 5s base64 string
-})
-  .then(res => res.json())
-  .then(resp => console.log('Uploaded with metadata', resp))
-  .catch(err => console.error('Upload error:', err));
-
-
-
-<!-- Blink metadata (show only if present) -->
-          <div class="blink-meta"
-               th:if="${img.blinkColor != '' or img.blinkSpeed != ''}">
-            <span class="blink-color"
-                  th:if="${img.blinkColor != ''}"
-                  th:text="'Color: ' + ${img.blinkColor}">
-              Color
-            </span>
-
-            <span class="blink-speed"
-                  th:if="${img.blinkSpeed != ''}"
-                  th:text="'Speed: ' + ${img.blinkSpeed}">
-              Speed
-            </span>
-          </div>
-
-
-<style>
-  .blink-meta{
-    margin-top: 6px;
-    display: inline-flex;
-    gap: 8px;
-    align-items: center;
-    font-size: 12px;
-    font-weight: 600;
-  }
-  .blink-color, .blink-speed{
-    padding: 2px 8px;
-    border-radius: 10px;
-    background: rgba(0,0,0,0.07);
-  }
-</style>
-
-
-private AmazonS3 buildS3Client(boolean withProfileName) {
-
-    AmazonS3ClientBuilder builder = AmazonS3ClientBuilder.standard()
-            .withRegion(Regions.fromName(s3Properties.getRegion()));
-
-    if (withProfileName) {
-        builder.withCredentials(
-                new ProfileCredentialsProvider(s3Properties.getProfileName())
-        );
-    } else {
-        builder.withCredentials(DefaultAWSCredentialsProviderChain.getInstance());
-    }
-
-    return builder.build();
+.close {
+  float:right;
+  font-size:28px;
+  cursor:pointer;
 }
 
-
-public List<ImageInfo> getImagesByBan(String ban, boolean withProfileName) {
-
-    String prefix = ban.endsWith("/") ? ban : ban + "/";
-    logger.info("Listing images under prefix: {} withProfileName {}", prefix, withProfileName);
-
-    AmazonS3 s3 = buildS3Client(withProfileName);
-
-    ListObjectsV2Request listReq = new ListObjectsV2Request()
-            .withBucketName(s3Properties.getBucketName())
-            .withPrefix(prefix);
-
-    logger.info("Listing objects in S3 bucket: {} with prefix: {}",
-            s3Properties.getBucketName(), prefix);
-
-    ListObjectsV2Result listRes = s3.listObjectsV2(listReq);
-
-    logger.info("Found {} objects under prefix: {}",
-            listRes.getKeyCount(), prefix);
-
-    List<ImageInfo> imageInfoList = listRes.getObjectSummaries()
-            .stream()
-            .map(S3ObjectSummary::getKey)
-            .map(key -> {
-
-                String[] parts = key.split("/");
-                String date = parts.length > 1 ? parts[1] : "";
-                String fileName = parts[parts.length - 1];
-
-                String url = presignUrl(key);   // existing method
-
-                String mimeType = "";
-                String blinkSpeed = "";
-                String blinkColor = "";
-
-                try {
-                    mimeType = Files.probeContentType(Paths.get(fileName));
-                    if (fileName.toLowerCase().endsWith(".webm")) {
-                        mimeType = "video/webm";
-                    }
-
-                    ObjectMetadata metadata =
-                            s3.getObjectMetadata(s3Properties.getBucketName(), key);
-
-                    if (metadata.getUserMetadata() != null) {
-                        blinkSpeed = metadata.getUserMetadata()
-                                .getOrDefault("blink-speed", "");
-                        blinkColor = metadata.getUserMetadata()
-                                .getOrDefault("led-color", "");
-                    }
-
-                } catch (IOException e) {
-                    logger.error("Error determining MIME type for file: {}", fileName, e);
-                    throw new RuntimeException(e);
-                }
-
-                return new ImageInfo(date, url, fileName, blinkSpeed, blinkColor, mimeType);
-            })
-            .collect(Collectors.toList());
-
-    logger.info("Prepared {} ImageInfo objects for prefix: {}",
-            imageInfoList.size(), prefix);
-
-    return imageInfoList;
+.qr-button {
+  margin-top:6px;
+  padding:6px 10px;
+  border-radius:6px;
+  background:#008CBA;
+  color:white;
+  border:none;
+  cursor:pointer;
 }
 
+.qr-button:hover {
+  background:#006f94;
+}
