@@ -1,21 +1,35 @@
-LED STRICT VALIDATION RULE (DO NOT SKIP):
+ALARM LED DETERMINATION RULE (DO NOT SKIP)
+When evaluating "ALARMLED", you MUST follow these steps exactly and in order:
+LABEL-BASED POSITION ANCHOR
+Identify the vertical LED column on the RIGHT side of the device (if present).
+Locate printed LED labels next to the column.
+If the "ALARM" label is readable, the LED aligned with that label MUST be used for "ALARMLED".
+Do NOT infer ALARMLED from other LEDs.
+ORDER FALLBACK (ONLY IF LABELS ARE NOT READABLE)
 
-For each LED (POWER, PON, ALARM, DATA), apply the following checks in order:
+If the LED column is visible but label text is unclear or unreadable, assume the LED order from TOP to BOTTOM is:
+POWER
+PON
+ALARM
+DATA
 
-1) VISIBILITY CHECK
-- If the LED area is not clearly visible due to blur, glare, low light, screen artifacts, angle, or obstruction:
-  → set "status": "OFF" and "color": "UNCERTAIN"
-  (Do NOT mark the LED as ON without clear visual illumination.)
-
-2) ILLUMINATION CHECK
-- Set "status": "ON" ONLY if a clear illuminated glow or bright dot is visible at the LED position.
-- If no illumination is clearly visible, set "status": "OFF" and "color": "OFF".
-
-3) COLOR CONSISTENCY
-- If "status" is "ON", "color" MUST be either "GREEN" or "RED".
-- If "status" is "OFF", "color" MUST be either "OFF" or "UNCERTAIN".
-- Never assign "GREEN" or "RED" when "status" is "OFF".
-
-4) INFERENCE PROHIBITION
-- Do NOT infer LED state from power cables, fiber cables, or expected device behavior.
-- Use only direct visible light evidence.
+In this case, "ALARMLED" MUST be evaluated as the third LED from the top.
+ILLUMINATION REQUIREMENT
+Set "status": "ON" ONLY if a clearly visible illuminated glow or bright dot is present at the ALARM LED position.
+If no illumination is visible, set "status": "OFF".
+COLOR REQUIREMENT
+If "status" is "ON", "color" MUST be "RED" or "GREEN" based only on visible light.
+If "status" is "OFF", "color" MUST be "OFF" or "UNCERTAIN".
+Never assign "RED" or "GREEN" when "status" is "OFF".
+GLARE / REFLECTION SAFETY
+Reflections, glare, white shine, or camera bloom do NOT count as illumination.
+If glare or overexposure prevents confident determination, set:
+"status": "OFF"
+"color": "UNCERTAIN"
+NO INFERENCE RULE
+Do NOT infer ALARMLED state from device behavior, cable presence, expected operation, or other LEDs.
+Use ONLY direct visible evidence at the ALARM LED position.
+UNCERTAINTY RULE
+If the ALARM LED position cannot be confidently identified or observed, report:
+"status": "OFF"
+"color": "UNCERTAIN"
