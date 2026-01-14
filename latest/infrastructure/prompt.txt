@@ -1,35 +1,128 @@
-ALARM LED DETERMINATION RULE (DO NOT SKIP)
-When evaluating "ALARMLED", you MUST follow these steps exactly and in order:
-LABEL-BASED POSITION ANCHOR
-Identify the vertical LED column on the RIGHT side of the device (if present).
-Locate printed LED labels next to the column.
-If the "ALARM" label is readable, the LED aligned with that label MUST be used for "ALARMLED".
-Do NOT infer ALARMLED from other LEDs.
-ORDER FALLBACK (ONLY IF LABELS ARE NOT READABLE)
+Analyze the smartphone-quality image I provide, taken under varied lighting conditions, and classify the type of AT&T hardware shown:
+ATT_Service_Box: rectangular and white with vertical ventilation slits on the front. The AT&T logo is prominently displayed in blue at the top center of the device
+ATT_FiberJack: compact, rectangular, and white in color. The AT&T logo and name are embossed on the front of the device usually there is A green connector or tab is visible at the bottom.
+ATT_Ethernet_Jack,
+Other_FiberJack: a fiber jack but does not display the AT&T logo, classify it as "other fiber jack"
+ATT_Residential_Gateway,
+Detached_010: a fiber jack with an AT&T logo and has holes and/or cutouts
+ATT&TFiberJack_No_Cover
+None_ATT_Residential_Gateway,
+None_ATT_Wallplate,
+Junk: not an image of a hardware.
 
-If the LED column is visible but label text is unclear or unreadable, assume the LED order from TOP to BOTTOM is:
+Task:
+Classify the AT&T Service Box device and identify its key attributes based on the visual evidence provided.
+
+Service Box Type Classification:
+
+Without Cover: rectangular and white with vertical ventilation slits on the front. Single sectioned without a white rectangular bottom cover
+Cover On: White rectangular bottom cover is securely attached, ports are not visible.
+Cover Off: White rectangular bottom portion with exposed rectangular frame (white backplate) with pathways and slots designed to organize and protect cables.
+
+LED Indicators on the Right Side:
+
+The device has four LEDs labeled from top to bottom as:
+
 POWER
 PON
 ALARM
 DATA
 
-In this case, "ALARMLED" MUST be evaluated as the third LED from the top.
-ILLUMINATION REQUIREMENT
-Set "status": "ON" ONLY if a clearly visible illuminated glow or bright dot is present at the ALARM LED position.
-If no illumination is visible, set "status": "OFF".
-COLOR REQUIREMENT
-If "status" is "ON", "color" MUST be "RED" or "GREEN" based only on visible light.
-If "status" is "OFF", "color" MUST be "OFF" or "UNCERTAIN".
-Never assign "RED" or "GREEN" when "status" is "OFF".
-GLARE / REFLECTION SAFETY
-Reflections, glare, white shine, or camera bloom do NOT count as illumination.
-If glare or overexposure prevents confident determination, set:
-"status": "OFF"
-"color": "UNCERTAIN"
-NO INFERENCE RULE
-Do NOT infer ALARMLED state from device behavior, cable presence, expected operation, or other LEDs.
-Use ONLY direct visible evidence at the ALARM LED position.
-UNCERTAINTY RULE
-If the ALARM LED position cannot be confidently identified or observed, report:
-"status": "OFF"
-"color": "UNCERTAIN"
+For each LED, determine:
+
+Status: If lit, specify color as Green or Red, if off, state "off"
+
+Report "uncertain" if LED status or color cannot be clearly determined due to image quality or obstruction.
+
+Power Cable Connection:
+
+Determine if a black power cable is connected to the device.
+If unable to confirm due to image quality or obscuration, report "uncertain."
+
+General Guidance:
+
+Only classify or report attributes with clear and unambiguous visual evidence.
+When in doubt or if the image quality hinders clear determination, explicitly state “uncertain” rather than assuming status.
+Use precise, consistent language for all observations.
+
+For an AT&T fiber jack, strictly apply the following criteria when determining fiber jumper cable connection:
+
+Confirm the green fiber port is visible at the bottom of the jack.
+If the green fiber port is not visible, report "FiberPort": "no".
+Confirm the fiber jumper cable is visibly plugged into this green fiber port. To report "FiberCableConnected": "connected", all these conditions must be clearly met:
+The cable end shows a visible red dot indicating the connector tip.
+The cable end is fully inserted into the green fiber port with no visible gaps between the cable end and the port.
+The cable is properly aligned with the port, showing no looseness, misalignment, or partial disconnection.
+If any of the above conditions are not clearly and unambiguously met (e.g., cable is visible but not inserted, is yellow instead of expected fiber cable colors, or the connector tip is not visible), report "FiberCableConnected": "not connected".
+Do not report "connected" if the cable is merely visible near the port but not inserted.
+
+Important: For every field in the output JSON, include a brief explanation of the reasoning behind the conclusion you made for that field, based strictly on the visible evidence in the image.
+
+Output strictly in this fixed JSON format:
+(Include all keys for every image, use "Uncertain" if inconclusive or null if not applicable)
+
+{
+"typeOfHardware": "",
+"serviceBoxType": "",
+"powerCableConnected": "",
+"fiberPortVisible": "",
+"fiberCableConnected": "",
+"leds": {
+"POWERLED": {
+"status": "",
+"color": ""
+},
+"PONLED": {
+"status": "",
+"color": ""
+},
+"ALARMLED": {
+"status": "",
+"color": ""
+},
+"DATALED": {
+"status": "",
+"color": ""
+}
+}
+}
+
+Key/value options:
+
+"typeOfHardware": One of the hardware types listed above.
+"serviceBoxType": "WITHOUT_COVER", "COVER_ON", "COVER_OFF", "NA"
+"blackPowerCableConnected": "CONNECTED", "NOT_CONNECTED", or "UNCERTAIN"
+"fiberPortVisible": "YES", "NO", or "UNCERTAIN"
+"fiberCableConnected": "CONNECTED", "NOT_CONNECTED"
+Each LED "status": "ON", "OFF"
+Each LED "color": "GREEN", "RED", "OFF", or "UNCERTAIN"
+
+If a field does not apply to the identified hardware, set it to "Uncertain" or null.
+
+Example output (do not send the json tag in your response):
+
+{
+"typeOfHardware": "ATT_SERVICE_BOX",
+"serviceBoxType": "COVER_ON",
+"powerCableConnected": "UNCERTAIN",
+"fiberPortVisible": "UNCERTAIN",
+"fiberCableConnected": "UNCERTAIN",
+"leds": {
+"POWERLED": {
+"status": "ON",
+"color": "GREEN"
+},
+"PONLED": {
+"status": "ON",
+"color": "GREEN"
+},
+"ALARMLED": {
+"status": "OFF",
+"color": "OFF"
+},
+"DATALED": {
+"status": "OFF",
+"color": "OFF"
+}
+}
+}
