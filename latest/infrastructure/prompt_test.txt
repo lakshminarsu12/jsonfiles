@@ -1,0 +1,103 @@
+========================
+OLD PROMPT
+========================
+
+LED STRICT VALIDATION RULE (DO NOT SKIP):
+
+For each LED (POWER, PON, ALARM, DATA), apply the following checks in order:
+
+1) VISIBILITY CHECK
+- If the LED area is not clearly visible due to blur, glare, low light, screen artifacts, angle, or obstruction
+  → set "status": "OFF" and "color": "UNCERTAIN"
+- Do NOT mark the LED as ON without clear visual illumination.
+
+2) ILLUMINATION CHECK
+- Set "status": "ON" ONLY if a clear illuminated glow or bright dot is visible at the LED position.
+- If no illumination is clearly visible, set "status": "OFF" and "color": "OFF".
+
+3) COLOR CONSISTENCY
+- If "status" is "ON", "color" MUST be "GREEN" or "RED".
+- If "status" is "OFF", "color" MUST be either "OFF" or "UNCERTAIN".
+- Never assign "GREEN" or "RED" when "status" is "OFF".
+
+4) INFERENCE PROHIBITION
+- Do NOT infer LED state from power cables, fiber cables, or expected device behavior.
+- Use only direct visible light evidence.
+
+Report "uncertain" if LED status or color cannot be clearly determined due to image quality or obstruction.
+
+
+
+========================
+NEW PROMPT (FALSE-ON FIXED VERSION)
+========================
+
+LED STRICT VALIDATION RULE (DO NOT SKIP):
+
+For each LED (POWER, PON, ALARM, DATA), apply the checks in EXACT ORDER.
+
+1) VISIBILITY CHECK (HARD GATE)
+If the LED lens area:
+- Is blurred
+- Has glare or reflection
+- Has washed-out brightness
+- Is affected by camera flash
+- Is partially obstructed
+- Is too dark to clearly inspect
+
+→ Set:
+  "status": "OFF"
+  "color": "UNCERTAIN"
+
+Do NOT proceed to illumination check if visibility is compromised.
+Reflection or white glare does NOT count as illumination.
+
+2) TRUE ILLUMINATION CHECK (STRICT)
+Set:
+  "status": "ON"
+ONLY IF ALL conditions are true:
+- A clearly defined, concentrated glowing light source is visible
+- The light is confined within the LED lens boundary
+- The glow has a distinct GREEN or RED hue
+- The glow is self-emitting (not reflection or ambient light)
+
+If ANY of the following are true:
+- Light is diffused or spread across plastic surface
+- Brightness matches room lighting
+- Lens appears shiny but not glowing
+- No clear red or green hue
+- Illumination source is ambiguous
+
+→ Set:
+  "status": "OFF"
+  "color": "OFF"
+
+Never mark ON unless a distinct luminous LED point is visible.
+
+3) COLOR CONSISTENCY (STRICT)
+If "status" = "ON"
+  → "color" MUST be "GREEN" or "RED"
+
+If "status" = "OFF"
+  → "color" MUST be "OFF" or "UNCERTAIN"
+
+Never assign GREEN or RED when status is OFF.
+
+4) ZERO INFERENCE RULE (CRITICAL)
+Do NOT infer LED state from:
+- Device brand
+- Power cable presence
+- Fiber cable presence
+- Expected device behavior
+- Assumed powered state
+
+Use ONLY direct visual light emission evidence.
+
+5) DEFAULT SAFE FALLBACK
+If no clearly defined LED glow is visible:
+  "status": "OFF"
+  "color": "OFF"
+
+If visibility is compromised:
+  "status": "OFF"
+  "color": "UNCERTAIN"
