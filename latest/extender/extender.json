@@ -1,0 +1,155 @@
+{
+  "type": "AdaptiveCard",
+  "$schema": "https://adaptivecards.io/schemas/1.6.0/adaptive-card.json",
+  "version": "1.6",
+  "id": "EXTENDER_SIGNAL_TEST",
+  "body": [
+    {
+      "type": "TextBlock",
+      "text": "${EXTENDER_SIGNAL_TEST.title}",
+      "weight": "Bolder",
+      "size": "Medium",
+      "style": "title"
+    },
+    {
+      "type": "TextBlock",
+      "text": "${EXTENDER_SIGNAL_TEST.description}",
+      "size": "Small",
+      "style": "description"
+    },
+
+    {
+      "type": "ColumnSet",
+      "separator": true,
+      "columns": [
+        {
+          "type": "Column",
+          "width": "auto",
+          "verticalContentAlignment": "Center",
+          "items": [
+            {
+              "type": "Image",
+              "url": "${global.strongSignalIcon}",
+              "size": "Small"
+            }
+          ]
+        },
+        {
+          "type": "Column",
+          "width": "stretch",
+          "items": [
+            {
+              "type": "TextBlock",
+              "text": "${EXTENDER_SIGNAL_TEST.strong}",
+              "weight": "Bolder",
+              "style": "subtitle"
+            },
+            {
+              "type": "TextBlock",
+              "text": "${EXTENDER_SIGNAL_TEST.strongDescription}",
+              "size": "Small",
+              "style": "description"
+            }
+          ]
+        }
+      ]
+    },
+
+    {
+      "type": "ColumnSet",
+      "columns": [
+        {
+          "type": "Column",
+          "width": "auto",
+          "verticalContentAlignment": "Center",
+          "items": [
+            {
+              "type": "Image",
+              "url": "${global.fairSignalIcon}",
+              "size": "Small"
+            }
+          ]
+        },
+        {
+          "type": "Column",
+          "width": "stretch",
+          "items": [
+            {
+              "type": "TextBlock",
+              "text": "${EXTENDER_SIGNAL_TEST.fair}",
+              "weight": "Bolder",
+              "style": "subtitle"
+            },
+            {
+              "type": "TextBlock",
+              "text": "${EXTENDER_SIGNAL_TEST.fairDescription}",
+              "size": "Small",
+              "style": "description"
+            }
+          ]
+        }
+      ]
+    },
+
+    {
+      "type": "ColumnSet",
+      "columns": [
+        {
+          "type": "Column",
+          "width": "auto",
+          "verticalContentAlignment": "Center",
+          "items": [
+            {
+              "type": "Image",
+              "url": "${global.weakSignalIcon}",
+              "size": "Small"
+            }
+          ]
+        },
+        {
+          "type": "Column",
+          "width": "stretch",
+          "items": [
+            {
+              "type": "TextBlock",
+              "text": "${EXTENDER_SIGNAL_TEST.weak}",
+              "weight": "Bolder",
+              "style": "subtitle"
+            },
+            {
+              "type": "TextBlock",
+              "text": "${EXTENDER_SIGNAL_TEST.weakDescription}",
+              "size": "Small",
+              "style": "description"
+            }
+          ]
+        }
+      ]
+    },
+
+    {
+      "type": "TextBlock",
+      "separator": true,
+      "text": "${EXTENDER_SIGNAL_TEST.tip}",
+      "size": "Small",
+      "style": "description"
+    },
+
+    {
+      "type": "ActionSet",
+      "actions": [
+        {
+          "type": "Action.Submit",
+          "title": "${EXTENDER_SIGNAL_TEST.startTest}",
+          "style": "positive",
+          "data": {
+            "event": "${event.startSignalTest}",
+            "uiData": {
+              "analyticsId": "startSignalTest"
+            }
+          }
+        }
+      ]
+    }
+  ]
+}
