@@ -175,3 +175,34 @@
 
 </body>
 </html>
+
+
+  const url = `https://your-host/installHistory?ban=${encodeURIComponent(ban)}`;
+
+  try {
+    const response = await fetch(url, {
+      method: 'GET',
+      headers: {
+        'Accept': 'application/json'
+      }
+    });
+
+    if (!response.ok) {
+      throw new Error(`HTTP error: ${response.status}`);
+    }
+
+    const data = await response.json();
+    console.log('API response:', data);
+
+    if (Array.isArray(data) && data.length > 0) {
+      const rgModel = data[0].RgModel;
+      console.log('RgModel:', rgModel);
+      return rgModel;
+    } else {
+      console.log('No data found for BAN:', ban);
+      return null;
+    }
+  } catch (error) {
+    console.error('Error fetching RGModel:', error);
+    return null;
+  }
