@@ -177,15 +177,18 @@
 </html>
 
 
-fetch(url)
-  .then(res => res.json())
-  .then(data => {
-    rgModel = (Array.isArray(data) && data.length > 0 && data[0].RgModel)
-      ? data[0].RgModel
-      : "";
-    console.log("RgModel:", rgModel);
-  })
-  .catch(() => {
-    rgModel = "";
-    console.log("RgModel:", rgModel);
-  });
+async function getRgModel(ban) {
+    let rgModel = "";
+
+    try {
+        const res = await fetch(`https://nimbus-shm-dev.aws.3pc.att.com/eapi/1/installHistory?ban=${ban}`);
+        const data = await res.json();
+        rgModel = data?.[0]?.RgModel || "";
+    } catch {
+        rgModel = "";
+    }
+
+    return rgModel;
+}
+
+const rgModel = await getRgModel(ban);
