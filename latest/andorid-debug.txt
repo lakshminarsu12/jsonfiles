@@ -1,0 +1,29 @@
+Step 1: Enable Developer Options on Android
+Go to Settings → About phone
+Tap Build Number 7 times (until developer mode is enabled)
+
+Step 2: Enable USB Debugging
+Go to Settings → Developer Options
+Turn ON USB Debugging
+
+Step 3: Connect phone to laptop
+Use USB cable
+Allow “USB Debugging” permission on phone popup
+
+Step 4: Open DevTools on your laptop
+Open Google Chrome
+In address bar type:
+chrome://inspect
+
+Step 5: Open your app URL on phone
+Open your application URL in Chrome on Android
+
+Step 6: Inspect the device
+In laptop Chrome → under Remote Target
+You’ll see your mobile device + open tabs
+Click Inspect
+
+This opens full DevTools (like desktop)
+
+Step 7: View Console Logs
+Go to Console tab
