@@ -27,3 +27,49 @@ This opens full DevTools (like desktop)
 
 Step 7: View Console Logs
 Go to Console tab
+
+
+
+
+
+🔹 Step 1: Completely reset ADB + authorization
+
+Run in CMD:
+
+adb kill-server
+adb start-server
+adb devices
+
+👉 Keep this CMD open
+
+🔹 Step 2: Force reset on phone (IMPORTANT)
+
+On phone:
+
+Go to Settings → Developer options
+Tap:
+👉 Revoke USB debugging authorizations
+Turn USB debugging OFF
+Wait 5 seconds
+Turn USB debugging ON
+🔹 Step 3: Remove cable + reconnect (critical)
+Unplug USB
+Lock phone → unlock again
+Plug USB back
+Keep screen ON
+🔹 Step 4: Change USB control (from your screenshot)
+
+👉 Change this:
+
+❌ This device
+✅ Connected device
+🔹 Step 5: Trigger popup manually
+
+After reconnect:
+
+Run again:
+
+adb devices
+
+👉 Immediately look at phone screen
+👉 Popup should appear now
