@@ -1,2 +1,19 @@
-path: /eapi/[0-9]+/aiService(/|$)(.*)
-pathType: ImplementationSpecific
+const url = '/eapi/1/aiService/uploadVideo';
+
+const formData = new FormData();
+formData.append('video', last5Blob, 'last5seconds.webm');
+formData.append('ban', ban);
+formData.append('scanTime', scanDuration);
+formData.append('blinkSpeed', blinkSpeed || '');
+formData.append('blinkColor', blinkColor || '');
+
+fetch(url, {
+    method: 'POST',
+    body: formData
+})
+.then(res => res.text())
+.then(t => console.log('Upload last 5s response:', t))
+.catch(err => {
+    alert('Error calling uploadVideo Api: ' + (err.message || JSON.stringify(err)));
+    console.error('Upload last 5s error:', err);
+});
