@@ -60,3 +60,29 @@ fetch(url, {
 
     callNativeBridges(msg);
 });
+
+
+
+    // Spring Boot log API
+    try {
+
+        const logFormData = new FormData();
+        logFormData.append('data', msg);
+
+        fetch('/eapi/1/aiService/logInfo', {
+            method: 'POST',
+            body: logFormData
+        })
+        .then(function(res) {
+            return res.text();
+        })
+        .then(function(responseText) {
+            console.log('logInfo success:', responseText);
+        })
+        .catch(function(err) {
+            console.error('logInfo error:', err);
+        });
+
+    } catch (e) {
+        console.error('Error calling logInfo api:', e);
+    }
