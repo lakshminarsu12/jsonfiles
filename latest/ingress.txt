@@ -1,19 +1,62 @@
-const url = '/eapi/1/aiService/uploadVideo';
+function callNativeBridges(msg) {
+    try {
+        window.ReactNativeWebView.postMessage(msg);
+    } catch (e) { /* silent */ }
 
-const formData = new FormData();
-formData.append('video', last5Blob, 'last5seconds.webm');
-formData.append('ban', ban);
-formData.append('scanTime', scanDuration);
-formData.append('blinkSpeed', blinkSpeed || '');
-formData.append('blinkColor', blinkColor || '');
+    try {
+        window.ThinNative.postMessage(msg);
+    } catch (e) { /* silent */ }
+
+    try {
+        window.webkit.messageHandlers.nativeCallback.postMessage(msg);
+    } catch (e) { /* silent */ }
+}
+
+
 
 fetch(url, {
     method: 'POST',
     body: formData
 })
 .then(res => res.text())
-.then(t => console.log('Upload last 5s response:', t))
+.then(responseText => {
+    console.log('Upload last 5s response:', responseText);
+
+    const msg = JSON.stringify({
+        rgIdentified: true,
+        rgModel: "BGW320",
+        leds: {
+            serviceLed: { color: chosenColor, speed: chosenSpeed },
+            wpsLed: { color: "off", speed: "uncertain" }
+        },
+        debug: {
+            ban: ban,
+            scanTime: scanDuration,
+            blinkSpeed: blinkSpeed || '',
+            blinkColor: blinkColor || ''
+        }
+    });
+
+    callNativeBridges(msg);
+})
 .catch(err => {
-    alert('Error calling uploadVideo Api: ' + (err.message || JSON.stringify(err)));
     console.error('Upload last 5s error:', err);
+
+    const msg = JSON.stringify({
+        rgIdentified: true,
+        uploadFailed: true,
+        errorMessage: err.message || JSON.stringify(err),
+        leds: {
+            serviceLed: { color: chosenColor, speed: chosenSpeed },
+            wpsLed: { color: "off", speed: "uncertain" }
+        },
+        debug: {
+            ban: ban,
+            scanTime: scanDuration,
+            blinkSpeed: blinkSpeed || '',
+            blinkColor: blinkColor || ''
+        }
+    });
+
+    callNativeBridges(msg);
 });
