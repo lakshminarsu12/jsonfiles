@@ -86,3 +86,97 @@ fetch(url, {
     } catch (e) {
         console.error('Error calling logInfo api:', e);
     }
+
+
+
+
+
+    async function handleRgConfirmedAndUpload() {
+
+    // log API
+    try {
+        const logFormData = new FormData();
+        logFormData.append('data', 'calling upload api');
+
+        fetch('/eapi/1/aiService/logInfo', {
+            method: 'POST',
+            body: logFormData
+        })
+        .then(res => res.text())
+        .then(responseText => {
+            console.log('logInfo success:', responseText);
+        })
+        .catch(err => {
+            console.error('logInfo error:', err);
+        });
+
+    } catch (e) {
+        console.error('Error calling logInfo api:', e);
+    }
+
+    rgHandled = true;
+
+    console.log("RG confirmed: stopping recorder and extracting last video");
+
+    // 1) Stop recorder and flush last chunk
+    if (mediaRecorder && mediaRecorder.state === "recording") {
+        await new Promise(resolve => {
+            mediaRecorder.addEventListener('stop', () => resolve(), { once: true });
+            mediaRecorder.stop();
+        });
+    }
+
+    const fullBlob = getFullVideoBlob();
+
+    if (!fullBlob) {
+        console.warn("No full video data recorded");
+        return;
+    }
+
+    try {
+        // 2) Extract last seconds
+        const last5Blob = await extractLastSeconds(fullBlob, BUFFER_SECONDS);
+
+        const blinkSpeed = chossenSpeed;   // fast / slow / solid / uncertain
+        const blinkColor = choosenColor;   // Red / Green / off
+        const ban = getQueryParam("ban") || "";
+
+        console.log('debugging ban number', ban);
+        console.log('debugging scan duration', scanDuration);
+        console.log('debugging blinkSpeed', blinkSpeed);
+        console.log('debugging blinkColor', blinkColor);
+
+        const url = '/eapi/1/aiService/uploadVideo';
+
+        const formData = new FormData();
+        formData.append('video', last5Blob, 'last2seconds.webm');
+        formData.append('ban', ban);
+        formData.append('scanTime', scanDuration);
+        formData.append('blinkSpeed', blinkSpeed || '');
+        formData.append('blinkColor', blinkColor || '');
+
+        // IMPORTANT:
+        // No FileReader.
+        // No Base64.
+        // Direct multipart upload only.
+        fetch(url, {
+            method: 'POST',
+            body: formData
+        })
+        .then(res => res.text())
+        .then(t => {
+            console.log('Upload last 5s response:', t);
+        })
+        .catch(err => {
+            console.error('Upload last 5s error:', err);
+        })
+        .finally(() => {
+            console.log('Resetting RG handled state');
+            rgHandled = false;
+        });
+
+    } catch (err) {
+        console.error('Error extracting/uploading last video:', err);
+        rgHandled = false;
+    }
+}
