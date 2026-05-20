@@ -258,3 +258,25 @@ const msgObj = {
 
     sendNativeMessage(msgObj);
 });
+
+
+
+
+
+
+let last5Blob;
+
+try {
+    last5Blob = await withTimeout(
+        extractLastSeconds(fullBlob, BUFFER_SECONDS),
+        5000,
+        'extractLastSeconds timed out'
+    );
+} catch (e) {
+    callLogInfo('extractLastSeconds failed: ' + (e.message || e));
+
+    // fallback: upload full blob directly
+    last5Blob = fullBlob;
+
+    callLogInfo('Using fullBlob fallback. size=' + fullBlob.size);
+}
