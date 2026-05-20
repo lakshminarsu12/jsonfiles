@@ -200,3 +200,61 @@ function callLogInfo(message) {
         console.error('callLogInfo exception:', e);
     }
 }
+
+
+function sendNativeMessage(msgObj) {
+    const msg = JSON.stringify(msgObj);
+
+    try {
+        window.ReactNativeWebView.postMessage(msg);
+    } catch (e) {
+        console.error("ReactNativeWebView postMessage failed", e);
+    }
+
+    try {
+        window.ThinNative.postMessage(msg);
+    } catch (e) {
+        console.error("ThinNative postMessage failed", e);
+    }
+
+    try {
+        window.webkit.messageHandlers.nativeCallBack.postMessage(msg);
+    } catch (e) {
+        console.error("webkit nativeCallBack postMessage failed", e);
+    }
+}
+
+
+
+const msgObj = {
+    rgIdentified: true,
+    rgModel: "BGW320",
+    leds: {
+        serviceLed: {
+            color: choosenColor,
+            speed: chossenSpeed
+        },
+        wpsLed: {
+            color: "off",
+            speed: "uncertain"
+        }
+    },
+    debug: {
+        uploadVideoCalled: false,
+        uploadVideoSuccess: false,
+        uploadVideoError: "",
+        uploadVideoStatus: "",
+        ban: getQueryParam("ban") || "",
+        scanDuration: scanDuration
+    }
+};
+
+
+
+
+.catch(err => {
+    msgObj.debug.uploadVideoSuccess = false;
+    msgObj.debug.uploadVideoError = err && err.message ? err.message : String(err);
+
+    sendNativeMessage(msgObj);
+});
