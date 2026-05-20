@@ -180,3 +180,23 @@ fetch(url, {
         rgHandled = false;
     }
 }
+
+
+
+function callLogInfo(message) {
+    try {
+        const logFormData = new FormData();
+        logFormData.append('data', message);
+
+        fetch('/eapi/1/aiService/logInfo', {
+            method: 'POST',
+            body: logFormData
+        })
+        .then(res => res.text())
+        .then(t => console.log('logInfo success:', t))
+        .catch(e => console.error('logInfo failed:', e));
+
+    } catch (e) {
+        console.error('callLogInfo exception:', e);
+    }
+}
