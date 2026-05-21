@@ -290,3 +290,24 @@ function withTimeout(promise, ms, errorMessage) {
         )
     ]);
 }
+
+
+
+const MAX_SCAN_TIME_MS = 30000; // 30 seconds
+let failureUploadHandled = false;
+
+
+
+if (
+    !rgHandled &&
+    !failureUploadHandled &&
+    scanStartTime &&
+    (Date.now() - scanStartTime > MAX_SCAN_TIME_MS)
+) {
+    failureUploadHandled = true;
+
+    scanEndTime = Date.now();
+    scanDuration = scanEndTime - scanStartTime;
+
+    handleRgConfirmedAndUpload();
+}
