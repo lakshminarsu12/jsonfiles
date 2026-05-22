@@ -1,313 +1,339 @@
-function callNativeBridges(msg) {
-    try {
-        window.ReactNativeWebView.postMessage(msg);
-    } catch (e) { /* silent */ }
+const MAX_VIDEO_CHUNKS = 5;              // keep only latest ~5 seconds
+const RECORDER_TIMESLICE_MS = 1000;      // 1 chunk per second
+const MAX_SCAN_TIME_MS = 30000;  
 
-    try {
-        window.ThinNative.postMessage(msg);
-    } catch (e) { /* silent */ }
 
+
+Replace your mediaRecorder.ondataavailable and mediaRecorder.start(...) with this:
+----------------------------------------------------------------------------------
+
+mediaRecorder.ondataavailable = function (event) {
+    if (event.data && event.data.size > 0) {
+        fullChunks.push(event.data);
+
+        while (fullChunks.length > MAX_VIDEO_CHUNKS) {
+            fullChunks.shift();
+        }
+
+        callLogInfo(
+            'chunk added. chunks=' +
+            fullChunks.length +
+            ', chunkSize=' +
+            event.data.size
+        );
+    }
+};
+
+mediaRecorder.start(RECORDER_TIMESLICE_MS);
+
+Replace getFullVideoBlob() with this:
+-------------------------------------
+function getFullVideoBlob() {
+    if (!fullChunks.length) {
+        callLogInfo('No video chunks available');
+        return null;
+    }
+
+    const blob = new Blob(fullChunks, {
+        type: 'video/webm'
+    });
+
+    callLogInfo(
+        'Created latest video blob. chunks=' +
+        fullChunks.length +
+        ', size=' +
+        blob.size
+    );
+
+    return blob;
+}
+
+
+Add/replace uploadCurrentVideo():
+---------------------------------
+function uploadCurrentVideo(reason, rgIdentifiedFlag) {
     try {
-        window.webkit.messageHandlers.nativeCallback.postMessage(msg);
-    } catch (e) { /* silent */ }
+        if (uploadInProgress || processingStopped) {
+            callLogInfo(
+                'Upload skipped. uploadInProgress=' +
+                uploadInProgress +
+                ', processingStopped=' +
+                processingStopped
+            );
+            return;
+        }
+
+        uploadInProgress = true;
+
+        callLogInfo('uploadCurrentVideo started. reason=' + reason);
+
+        const videoBlob = getFullVideoBlob();
+
+        if (!videoBlob) {
+            callLogInfo('uploadCurrentVideo stopped. No video blob.');
+            uploadInProgress = false;
+            return;
+        }
+
+        const ban = getQueryParam("ban") || "";
+
+        const formData = new FormData();
+        formData.append('video', videoBlob, 'last5seconds.webm');
+        formData.append('ban', ban);
+        formData.append('scanTime', scanDuration || (Date.now() - scanStartTime));
+        formData.append('blinkSpeed', chossenSpeed || 'uncertain');
+        formData.append('blinkColor', choosenColor || 'off');
+        formData.append('rgIdentified', rgIdentifiedFlag ? 'true' : 'false');
+        formData.append('failureReason', reason || '');
+
+        callLogInfo(
+            'calling uploadVideo. size=' +
+            videoBlob.size +
+            ', rgIdentified=' +
+            rgIdentifiedFlag
+        );
+
+        fetch('/eapi/1/aiService/uploadVideo', {
+            method: 'POST',
+            body: formData
+        })
+        .then(res => {
+            callLogInfo('uploadVideo response status=' + res.status);
+            return res.text();
+        })
+        .then(t => {
+            callLogInfo('uploadVideo success=' + t);
+        })
+        .catch(err => {
+            callLogInfo('uploadVideo error=' + (err.message || err));
+        })
+        .finally(() => {
+            uploadInProgress = false;
+            processingStopped = true;
+            callLogInfo('upload finished. processingStopped=true');
+        });
+
+    } catch (e) {
+        uploadInProgress = false;
+        callLogInfo('uploadCurrentVideo exception=' + (e.message || e));
+    }
 }
 
 
 
-fetch(url, {
-    method: 'POST',
-    body: formData
-})
-.then(res => res.text())
-.then(responseText => {
-    console.log('Upload last 5s response:', responseText);
-
-    const msg = JSON.stringify({
-        rgIdentified: true,
-        rgModel: "BGW320",
-        leds: {
-            serviceLed: { color: chosenColor, speed: chosenSpeed },
-            wpsLed: { color: "off", speed: "uncertain" }
-        },
-        debug: {
-            ban: ban,
-            scanTime: scanDuration,
-            blinkSpeed: blinkSpeed || '',
-            blinkColor: blinkColor || ''
-        }
-    });
-
-    callNativeBridges(msg);
-})
-.catch(err => {
-    console.error('Upload last 5s error:', err);
-
-    const msg = JSON.stringify({
-        rgIdentified: true,
-        uploadFailed: true,
-        errorMessage: err.message || JSON.stringify(err),
-        leds: {
-            serviceLed: { color: chosenColor, speed: chosenSpeed },
-            wpsLed: { color: "off", speed: "uncertain" }
-        },
-        debug: {
-            ban: ban,
-            scanTime: scanDuration,
-            blinkSpeed: blinkSpeed || '',
-            blinkColor: blinkColor || ''
-        }
-    });
-
-    callNativeBridges(msg);
-});
-
-
-
-    // Spring Boot log API
-    try {
-
-        const logFormData = new FormData();
-        logFormData.append('data', msg);
-
-        fetch('/eapi/1/aiService/logInfo', {
-            method: 'POST',
-            body: logFormData
-        })
-        .then(function(res) {
-            return res.text();
-        })
-        .then(function(responseText) {
-            console.log('logInfo success:', responseText);
-        })
-        .catch(function(err) {
-            console.error('logInfo error:', err);
-        });
-
-    } catch (e) {
-        console.error('Error calling logInfo api:', e);
-    }
-
-
-
-
-
-    async function handleRgConfirmedAndUpload() {
-
-    // log API
-    try {
-        const logFormData = new FormData();
-        logFormData.append('data', 'calling upload api');
-
-        fetch('/eapi/1/aiService/logInfo', {
-            method: 'POST',
-            body: logFormData
-        })
-        .then(res => res.text())
-        .then(responseText => {
-            console.log('logInfo success:', responseText);
-        })
-        .catch(err => {
-            console.error('logInfo error:', err);
-        });
-
-    } catch (e) {
-        console.error('Error calling logInfo api:', e);
-    }
-
-    rgHandled = true;
-
-    console.log("RG confirmed: stopping recorder and extracting last video");
-
-    // 1) Stop recorder and flush last chunk
-    if (mediaRecorder && mediaRecorder.state === "recording") {
-        await new Promise(resolve => {
-            mediaRecorder.addEventListener('stop', () => resolve(), { once: true });
-            mediaRecorder.stop();
-        });
-    }
-
-    const fullBlob = getFullVideoBlob();
-
-    if (!fullBlob) {
-        console.warn("No full video data recorded");
+Replace your full processFrame() with this:
+-------------------------------------------
+function processFrame() {
+    if (processingStopped) {
         return;
     }
 
     try {
-        // 2) Extract last seconds
-        const last5Blob = await extractLastSeconds(fullBlob, BUFFER_SECONDS);
+        if (!scanStartTime) {
+            scanStartTime = Date.now();
+        }
 
-        const blinkSpeed = chossenSpeed;   // fast / slow / solid / uncertain
-        const blinkColor = choosenColor;   // Red / Green / off
-        const ban = getQueryParam("ban") || "";
+        if (
+            !rgHandled &&
+            !failureUploadHandled &&
+            scanStartTime &&
+            (Date.now() - scanStartTime > MAX_SCAN_TIME_MS)
+        ) {
+            failureUploadHandled = true;
+            processingStopped = true;
 
-        console.log('debugging ban number', ban);
-        console.log('debugging scan duration', scanDuration);
-        console.log('debugging blinkSpeed', blinkSpeed);
-        console.log('debugging blinkColor', blinkColor);
+            scanEndTime = Date.now();
+            scanDuration = scanEndTime - scanStartTime;
 
-        const url = '/eapi/1/aiService/uploadVideo';
+            callLogInfo('RG not confirmed within timeout. Uploading failed scan video.');
 
-        const formData = new FormData();
-        formData.append('video', last5Blob, 'last2seconds.webm');
-        formData.append('ban', ban);
-        formData.append('scanTime', scanDuration);
-        formData.append('blinkSpeed', blinkSpeed || '');
-        formData.append('blinkColor', blinkColor || '');
+            uploadCurrentVideo('RG_NOT_CONFIRMED_TIMEOUT', false);
 
-        // IMPORTANT:
-        // No FileReader.
-        // No Base64.
-        // Direct multipart upload only.
-        fetch(url, {
-            method: 'POST',
-            body: formData
-        })
-        .then(res => res.text())
-        .then(t => {
-            console.log('Upload last 5s response:', t);
-        })
-        .catch(err => {
-            console.error('Upload last 5s error:', err);
-        })
-        .finally(() => {
-            console.log('Resetting RG handled state');
-            rgHandled = false;
-        });
+            const msgObj = {
+                rgIdentified: false,
+                rgModel: "UNKNOWN",
+                leds: {
+                    serviceLed: {
+                        color: choosenColor || "off",
+                        speed: chossenSpeed || "uncertain"
+                    },
+                    wpsLed: {
+                        color: "off",
+                        speed: "uncertain"
+                    }
+                },
+                debug: {
+                    failureReason: "RG_NOT_CONFIRMED_TIMEOUT",
+                    scanDuration: scanDuration
+                }
+            };
+
+            setTimeout(() => {
+                sendNativeMessage(msgObj);
+            }, 300);
+
+            return;
+        }
+
+        document.getElementById("cameraDimensions").textContent =
+            `${tfTester.rgConfidence} || ${rgDetector.lastMean.toFixed(1)}`;
+
+        if (preview.readyState !== 4) {
+            setTimeout(processFrame, 50);
+            return;
+        }
+
+        hiddenContext.drawImage(
+            preview,
+            0,
+            0,
+            hiddenCanvas.width,
+            hiddenCanvas.height
+        );
+
+        (async () => {
+            await tfTester.predict(hiddenCanvas);
+        })();
+
+        if (!tfTester.rgFound) {
+            rgDetector.overlayImg.src = "ghost2.png";
+
+            if (
+                tfTester.lastSeen !== 0 &&
+                (Date.now() - tfTester.lastSeen) > 1000
+            ) {
+                blinkingStatusDiv.textContent = "---";
+                detectionResultDiv.textContent = "";
+            }
+
+            setTimeout(processFrame, 50);
+            return;
+        }
+
+        let frame = cv.imread(hiddenCanvas);
+
+        const results = ledDetector.detectLEDColor(frame);
+        rgDetector.checkIfRg(frame);
+
+        if (results.length > 0) {
+            const r0 = results[0];
+
+            choosenColor = r0.color;
+
+            if (r0.isSolid) {
+                chossenSpeed = "solid";
+            } else if (r0.blinkHz && r0.blinkHz > 0) {
+                chossenSpeed = r0.blinkHz > .66 ? "fast" : "slow";
+            } else {
+                chossenSpeed = "uncertain";
+            }
+
+            detectionResultDiv.textContent =
+                `Detected: ${r0.color} (Hue: ${Math.round(r0.hue)})`;
+
+            detectionResultDiv.style.color =
+                r0.color.toLowerCase();
+
+            blinkingStatusDiv.textContent =
+                r0.isSolid
+                    ? `${r0.color}: steady`
+                    : `${r0.color}: blinking ${r0.blinkHz || 0} Hz`;
+
+        } else if (Date.now() - ledDetector.detectionTimestamp > 1000) {
+            choosenColor = "off";
+            chossenSpeed = "uncertain";
+
+            detectionResultDiv.textContent = "No LED detected";
+            detectionResultDiv.style.color = "black";
+            blinkingStatusDiv.textContent = "---";
+        }
+
+        if (
+            !rgHandled &&
+            rgDetector.lastMatchTime &&
+            rgDetector.firstMatchTime &&
+            rgDetector.lastMatchTime - rgDetector.firstMatchTime > 2000
+        ) {
+            rgHandled = true;
+            processingStopped = true;
+
+            scanEndTime = Date.now();
+            scanDuration = scanEndTime - scanStartTime;
+
+            callLogInfo('RG confirmed. Uploading latest 5 second scan video.');
+
+            let ledStatus = ledDetector.getStatus();
+
+            if (ledStatus) {
+                choosenColor = ledDetector.lastDetectedColor;
+                chossenSpeed = ledStatus.solid
+                    ? "solid"
+                    : (ledStatus.hz > .66 ? "fast" : "slow");
+            } else {
+                choosenColor = "off";
+                chossenSpeed = "uncertain";
+            }
+
+            uploadCurrentVideo('RG_CONFIRMED', true);
+
+            const msgObj = {
+                rgIdentified: true,
+                rgModel: "BGW320",
+                leds: {
+                    serviceLed: {
+                        color: choosenColor || "off",
+                        speed: chossenSpeed || "uncertain"
+                    },
+                    wpsLed: {
+                        color: "off",
+                        speed: "uncertain"
+                    }
+                },
+                debug: {
+                    failureReason: "",
+                    scanDuration: scanDuration
+                }
+            };
+
+            setTimeout(() => {
+                sendNativeMessage(msgObj);
+            }, 300);
+
+            frame.delete();
+            return;
+        }
+
+        const isIndexPage =
+            window.location.href.includes('index.html');
+
+        if (isIndexPage) {
+            ledDetector.drawResult(results, outputCanvas);
+            ledDetector.updateDebugDisplay();
+        }
+
+        frame.delete();
+
+        if (loopError) {
+            document.getElementById('error-message').textContent = '';
+            loopError = false;
+        }
 
     } catch (err) {
-        console.error('Error extracting/uploading last video:', err);
-        rgHandled = false;
-    }
-}
+        loopError = true;
 
+        callLogInfo('processFrame error=' + (err.message || err));
 
+        console.error("Error in main loop:", err);
 
-function callLogInfo(message) {
-    try {
-        const logFormData = new FormData();
-        logFormData.append('data', message);
+        const el = document.getElementById('error-message');
 
-        fetch('/eapi/1/aiService/logInfo', {
-            method: 'POST',
-            body: logFormData
-        })
-        .then(res => res.text())
-        .then(t => console.log('logInfo success:', t))
-        .catch(e => console.error('logInfo failed:', e));
-
-    } catch (e) {
-        console.error('callLogInfo exception:', e);
-    }
-}
-
-
-function sendNativeMessage(msgObj) {
-    const msg = JSON.stringify(msgObj);
-
-    try {
-        window.ReactNativeWebView.postMessage(msg);
-    } catch (e) {
-        console.error("ReactNativeWebView postMessage failed", e);
-    }
-
-    try {
-        window.ThinNative.postMessage(msg);
-    } catch (e) {
-        console.error("ThinNative postMessage failed", e);
-    }
-
-    try {
-        window.webkit.messageHandlers.nativeCallBack.postMessage(msg);
-    } catch (e) {
-        console.error("webkit nativeCallBack postMessage failed", e);
-    }
-}
-
-
-
-const msgObj = {
-    rgIdentified: true,
-    rgModel: "BGW320",
-    leds: {
-        serviceLed: {
-            color: choosenColor,
-            speed: chossenSpeed
-        },
-        wpsLed: {
-            color: "off",
-            speed: "uncertain"
+        if (el) {
+            el.textContent =
+                err && err.message ? err.message : String(err);
         }
-    },
-    debug: {
-        uploadVideoCalled: false,
-        uploadVideoSuccess: false,
-        uploadVideoError: "",
-        uploadVideoStatus: "",
-        ban: getQueryParam("ban") || "",
-        scanDuration: scanDuration
     }
-};
 
-
-
-
-.catch(err => {
-    msgObj.debug.uploadVideoSuccess = false;
-    msgObj.debug.uploadVideoError = err && err.message ? err.message : String(err);
-
-    sendNativeMessage(msgObj);
-});
-
-
-
-
-
-
-let last5Blob;
-
-try {
-    last5Blob = await withTimeout(
-        extractLastSeconds(fullBlob, BUFFER_SECONDS),
-        5000,
-        'extractLastSeconds timed out'
-    );
-} catch (e) {
-    callLogInfo('extractLastSeconds failed: ' + (e.message || e));
-
-    // fallback: upload full blob directly
-    last5Blob = fullBlob;
-
-    callLogInfo('Using fullBlob fallback. size=' + fullBlob.size);
+    setTimeout(processFrame, 50);
 }
 
 
-function withTimeout(promise, ms, errorMessage) {
-    return Promise.race([
-        promise,
-        new Promise((_, reject) =>
-            setTimeout(() => reject(new Error(errorMessage)), ms)
-        )
-    ]);
-}
-
-
-
-const MAX_SCAN_TIME_MS = 30000; // 30 seconds
-let failureUploadHandled = false;
-
-
-
-if (
-    !rgHandled &&
-    !failureUploadHandled &&
-    scanStartTime &&
-    (Date.now() - scanStartTime > MAX_SCAN_TIME_MS)
-) {
-    failureUploadHandled = true;
-
-    scanEndTime = Date.now();
-    scanDuration = scanEndTime - scanStartTime;
-
-    handleRgConfirmedAndUpload();
-}
