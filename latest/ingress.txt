@@ -386,3 +386,22 @@ function processFrame() {
 
     setTimeout(processFrame, 50);
 }
+
+
+log.info(
+    "Received uploadVideo request. " +
+    "ban: {}, " +
+    "videoByteSize: {}, " +
+    "scanTime: {}, " +
+    "blinkSpeed: {}, " +
+    "blinkColor: {}, " +
+    "rgIdentified: {}, " +
+    "failureReason: {}",
+    ban,
+    videoBytes != null ? videoBytes.length : 0,
+    scanTime,
+    blinkSpeed,
+    blinkColor,
+    rgIdentified,
+    failureReason
+);
