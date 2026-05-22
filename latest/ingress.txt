@@ -405,3 +405,13 @@ log.info(
     rgIdentified,
     failureReason
 );
+
+
+callLogInfo(
+    "processFrame status: readyState=" + preview.readyState +
+    ", tfRgFound=" + tfTester.rgFound +
+    ", tfLastSeen=" + tfTester.lastSeen +
+    ", rgFirst=" + rgDetector.firstMatchTime +
+    ", rgLast=" + rgDetector.lastMatchTime +
+    ", processingStopped=" + processingStopped
+);
