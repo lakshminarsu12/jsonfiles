@@ -128,14 +128,19 @@ function processFrame() {
         return;
     }
 
+    document.getElementById("cameraDimensions").textContent =
+        `${tfTester.rgConfidence} || ${rgDetector.lastMean.toFixed(1)}`;
+
     try {
         if (!scanStartTime) {
             scanStartTime = Date.now();
         }
 
+        // RG not confirmed within timeout - upload failed scan only once
         if (
             !rgHandled &&
             !failureUploadHandled &&
+            !uploadInProgress &&
             scanStartTime &&
             (Date.now() - scanStartTime > MAX_SCAN_TIME_MS)
         ) {
@@ -145,11 +150,11 @@ function processFrame() {
             scanEndTime = Date.now();
             scanDuration = scanEndTime - scanStartTime;
 
-            callLogInfo('RG not confirmed within timeout. Uploading failed scan video.');
+            callLogInfo("RG not confirmed timeout. Uploading video once.");
 
-            uploadCurrentVideo('RG_NOT_CONFIRMED_TIMEOUT', false);
+            uploadCurrentVideo("RG_NOT_CONFIRMED_TIMEOUT", false);
 
-            const msgObj = {
+            const msg = JSON.stringify({
                 rgIdentified: false,
                 rgModel: "UNKNOWN",
                 leds: {
@@ -166,43 +171,43 @@ function processFrame() {
                     failureReason: "RG_NOT_CONFIRMED_TIMEOUT",
                     scanDuration: scanDuration
                 }
-            };
+            });
 
-            setTimeout(() => {
-                sendNativeMessage(msgObj);
-            }, 300);
+            try {
+                window.ReactNativeWebView.postMessage(msg);
+            } catch (e) {}
+
+            try {
+                window.ThinNative.postMessage(msg);
+            } catch (e) {}
+
+            try {
+                window.webkit.messageHandlers.nativeCallBack.postMessage(msg);
+            } catch (e) {}
 
             return;
         }
-
-        document.getElementById("cameraDimensions").textContent =
-            `${tfTester.rgConfidence} || ${rgDetector.lastMean.toFixed(1)}`;
 
         if (preview.readyState !== 4) {
             setTimeout(processFrame, 50);
             return;
         }
 
-        hiddenContext.drawImage(
-            preview,
-            0,
-            0,
-            hiddenCanvas.width,
-            hiddenCanvas.height
-        );
+        hiddenContext.drawImage(preview, 0, 0, hiddenCanvas.width, hiddenCanvas.height);
 
         (async () => {
             await tfTester.predict(hiddenCanvas);
         })();
 
         if (!tfTester.rgFound) {
-            rgDetector.overlayImg.src = "ghost2.png";
+            if (!scanStartTime) {
+                scanStartTime = Date.now();
+            }
 
-            if (
-                tfTester.lastSeen !== 0 &&
-                (Date.now() - tfTester.lastSeen) > 1000
-            ) {
-                blinkingStatusDiv.textContent = "---";
+            this.overlayImg.src = "ghost2.png";
+
+            if (tfTester.lastSeen !== 0 && (Date.now() - tfTester.lastSeen) > 1000) {
+                blinkingStatusDiv.textContent = "--";
                 detectionResultDiv.textContent = "";
             }
 
@@ -211,45 +216,62 @@ function processFrame() {
         }
 
         let frame = cv.imread(hiddenCanvas);
-
         const results = ledDetector.detectLEDColor(frame);
-        rgDetector.checkIfRg(frame);
+        const rgFound = rgDetector.checkIfRg(frame);
+
+        // Display result text
+        choosenColor = null;
+        chossenSpeed = null;
 
         if (results.length > 0) {
+            if (results.length === 1) {
+                detectionResultDiv.textContent =
+                    `Detected: ${results[0].color} (Hue: ${Math.round(results[0].hue)})`;
+                detectionResultDiv.style.color = results[0].color.toLowerCase();
+            } else {
+                // Multiple LEDs detected
+                const colorList = results.map(r => `${r.color} (${Math.round(r.hue)})`).join(", ");
+                detectionResultDiv.textContent =
+                    `Detected ${results.length} LEDs: ${colorList}`;
+                detectionResultDiv.style.color = "black";
+            }
+            // Blinking status for the strongest detection
             const r0 = results[0];
-
-            choosenColor = r0.color;
+            let statusMsg = "";
 
             if (r0.isSolid) {
-                chossenSpeed = "solid";
+                statusMsg = `${r0.color}: steady`;
             } else if (r0.blinkHz && r0.blinkHz > 0) {
-                chossenSpeed = r0.blinkHz > .66 ? "fast" : "slow";
+                statusMsg = `${r0.color}: blinking ${r0.blinkHz} Hz`;
             } else {
-                chossenSpeed = "uncertain";
+                statusMsg = `${r0.color}: on (estimating…)`;
             }
 
-            detectionResultDiv.textContent =
-                `Detected: ${r0.color} (Hue: ${Math.round(r0.hue)})`;
+            blinkingStatusDiv.textContent = statusMsg;
+            // Colorize text to the detected color when readable
+            const cssColor = r0.color ? r0.color.toLowerCase() : "#fff";
+            blinkingStatusDiv.style.color = cssColor === "yellow" ? "#000" : "#fff";
+            blinkingStatusDiv.style.background =
+                cssColor === "yellow" ? "rgba(255,255,0,0.8)" : "rgba(0,0,0,0.6)";
 
-            detectionResultDiv.style.color =
-                r0.color.toLowerCase();
-
-            blinkingStatusDiv.textContent =
-                r0.isSolid
-                    ? `${r0.color}: steady`
-                    : `${r0.color}: blinking ${r0.blinkHz || 0} Hz`;
+            choosenColor = r0.color;
+            chossenSpeed = r0.blinkHz;
 
         } else if (Date.now() - ledDetector.detectionTimestamp > 1000) {
-            choosenColor = "off";
-            chossenSpeed = "uncertain";
-
             detectionResultDiv.textContent = "No LED detected";
             detectionResultDiv.style.color = "black";
-            blinkingStatusDiv.textContent = "---";
+            blinkingStatusDiv.textContent = "-";
+            blinkingStatusDiv.style.color = "#fff";
+            blinkingStatusDiv.style.background = "rgba(0,0,0,0.6)";
+            choosenColor = "off";
+            chossenSpeed = "uncertain";
         }
 
+        // RG confirmed - upload success scan only once
         if (
             !rgHandled &&
+            !failureUploadHandled &&
+            !uploadInProgress &&
             rgDetector.lastMatchTime &&
             rgDetector.firstMatchTime &&
             rgDetector.lastMatchTime - rgDetector.firstMatchTime > 2000
@@ -260,29 +282,28 @@ function processFrame() {
             scanEndTime = Date.now();
             scanDuration = scanEndTime - scanStartTime;
 
-            callLogInfo('RG confirmed. Uploading latest 5 second scan video.');
+            console.log("RG Confirmed!, Notifying App");
+            callLogInfo("RG confirmed. Uploading video once.");
 
             let ledStatus = ledDetector.getStatus();
 
             if (ledStatus) {
                 choosenColor = ledDetector.lastDetectedColor;
-                chossenSpeed = ledStatus.solid
-                    ? "solid"
-                    : (ledStatus.hz > .66 ? "fast" : "slow");
+                chossenSpeed = ledStatus.solid ? "solid" : (ledStatus.hz > .66 ? "fast" : "slow");
             } else {
                 choosenColor = "off";
                 chossenSpeed = "uncertain";
             }
 
-            uploadCurrentVideo('RG_CONFIRMED', true);
+            uploadCurrentVideo("RG_CONFIRMED", true);
 
-            const msgObj = {
+            let msg = JSON.stringify({
                 rgIdentified: true,
                 rgModel: "BGW320",
                 leds: {
                     serviceLed: {
-                        color: choosenColor || "off",
-                        speed: chossenSpeed || "uncertain"
+                        color: choosenColor,
+                        speed: chossenSpeed
                     },
                     wpsLed: {
                         color: "off",
@@ -293,47 +314,75 @@ function processFrame() {
                     failureReason: "",
                     scanDuration: scanDuration
                 }
-            };
+            });
 
             setTimeout(() => {
-                sendNativeMessage(msgObj);
+                try {
+                    window.ReactNativeWebView.postMessage(msg);
+                } catch (e) {}
+
+                try {
+                    window.ThinNative.postMessage(msg);
+                } catch (e) {}
+
+                try {
+                    window.webkit.messageHandlers.nativeCallBack.postMessage(msg);
+                } catch (e) {}
             }, 300);
 
             frame.delete();
             return;
         }
 
-        const isIndexPage =
-            window.location.href.includes('index.html');
-
+        // Draw visual indicators on the output canvas only when viewing index.html
+        const isIndexPage = window.location.href.includes("index.html");
         if (isIndexPage) {
             ledDetector.drawResult(results, outputCanvas);
             ledDetector.updateDebugDisplay();
         }
 
+        // Clean up
         frame.delete();
 
         if (loopError) {
-            document.getElementById('error-message').textContent = '';
+            document.getElementById("error-message").textContent = "";
             loopError = false;
         }
 
     } catch (err) {
         loopError = true;
-
-        callLogInfo('processFrame error=' + (err.message || err));
-
         console.error("Error in main loop:", err);
 
-        const el = document.getElementById('error-message');
+        const el = document.getElementById("error-message");
+        let stack = (err && err.stack) ? err.stack : "";
 
-        if (el) {
-            el.textContent =
-                err && err.message ? err.message : String(err);
+        if (!stack) {
+            try {
+                stack = new Error().stack || "";
+            } catch (_) {}
         }
+
+        let locationLine = "";
+
+        if (stack) {
+            const frames = stack.split("\n").map(l => l.trim());
+            const target = frames.find(l => /index\.html|\.(js|ts|mjs|jsx|tsx)/i.test(l)) || frames[1] || frames[0];
+            const m = target && target.match(/(?:\()?(.*?):(\d+):(\d+)\)?$/);
+
+            if (m) {
+                locationLine = `${m[1]}:${m[2]}:${m[3]}`;
+            }
+        }
+
+        const msg = [
+            `Loop Error: ${err && err.message ? err.message : String(err)}`,
+            locationLine ? `Location: ${locationLine}` : '',
+            stack ? `Stack trace:\n${stack}` : ''
+        ].filter(Boolean).join('\n');
+
+        console.error(msg);
+        el.textContent = msg;
     }
 
     setTimeout(processFrame, 50);
 }
-
-
